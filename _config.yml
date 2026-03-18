@@ -2,8 +2,7 @@ title: Portafolio Académico
 description: Desarrollo de Software · Semestre 2026-I
 author: Estiven Cano
 
-# Cambia esto por tu usuario real de GitHub
-baseurl: "/Portafolio_EstivenCano_IU_Pascualbravo"
+baseurl: "/Portafolio_EstivenCano_IU_PascualBravo"
 url: "https://estivencr.github.io"
 
 # Jekyll config
