@@ -1,0 +1,32 @@
+---
+layout: default
+---
+
+<header class="page-header">
+  <div class="container">
+    <div class="row align-items-start">
+      <div class="col-lg-9">
+        <div class="d-flex align-items-start gap-4 anim">
+          <div class="stamp d-none d-sm-block">
+            <div class="stamp-top">{{ page.stamp_label | default: "Materia" }}</div>
+            <div class="stamp-main">{{ page.code }}<br>{{ page.num }}</div>
+            <div class="stamp-sub">{{ site.semestre }}</div>
+          </div>
+          <div>
+            <div class="header-label">{{ page.header_label | default: "Portafolio de materia" }}</div>
+            <h1 class="page-title anim anim-1">{{ page.title_display | default: page.title }}</h1>
+            <p class="page-subtitle anim anim-2">{{ page.description }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 text-end d-none d-lg-block anim anim-1">
+        <div class="exp-number">{{ page.exp_display | default: page.code }}</div>
+        <div class="exp-label">{{ page.exp_label | default: "Código materia" }}</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container py-5">
+  {{ content }}
+</main>

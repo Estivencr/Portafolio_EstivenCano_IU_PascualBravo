@@ -1,0 +1,108 @@
+---
+layout: default
+---
+
+<header class="page-header">
+  <div class="container">
+    <div class="row align-items-start">
+      <div class="col-lg-10">
+        <div class="d-flex align-items-start gap-4 anim">
+          <div class="stamp d-none d-sm-block">
+            <div class="stamp-top">{{ page.subject_code }}</div>
+            <div class="stamp-main">Blog<br>No.{{ page.blog_num }}</div>
+            <div class="stamp-sub">{{ site.semestre }}</div>
+          </div>
+          <div>
+            <div class="header-label">{{ page.subject_name }} · {{ page.entry_type | default: "Entrada de portafolio" }}</div>
+            <h1 class="page-title anim anim-1">{{ page.title_display | default: page.title }}</h1>
+            <p class="page-subtitle anim anim-2">{{ page.description }} &nbsp;·&nbsp; {{ page.year | default: "2026" }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-2 text-end d-none d-lg-block anim anim-1">
+        <div class="exp-number">{{ page.exp_display }}</div>
+        <div class="exp-label">Temática</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container py-5 page-article">
+  <div class="row g-5" style="max-width:1100px; margin:0 auto;">
+
+    <div class="col-lg-8">
+
+      <!-- BREADCRUMB -->
+      <nav aria-label="breadcrumb" class="anim mb-4">
+        <ol class="breadcrumb" style="font-size:13px;">
+          <li class="breadcrumb-item">
+            <a href="{{ '/' | relative_url }}" style="color:var(--navy);text-decoration:none;">Índice general</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="{{ page.subject_url | relative_url }}" style="color:var(--navy);text-decoration:none;">{{ page.subject_name }}</a>
+          </li>
+          <li class="breadcrumb-item active" style="color:var(--muted);">{{ page.breadcrumb_current }}</li>
+        </ol>
+      </nav>
+
+      <div class="ornament">· · ✦ · ·</div>
+
+      {{ content }}
+
+      <div class="ornament mt-4">· · · · ·</div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="col-lg-4 d-none d-lg-block">
+
+      {% if page.toc %}
+      <div class="sidebar-toc">
+        <div class="toc-title">Contenido de la entrada</div>
+        <ol>
+          {% for item in page.toc %}
+          <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
+          {% endfor %}
+        </ol>
+      </div>
+      {% endif %}
+
+      {% if page.sidebar_entries %}
+      <div class="mt-4 p-4" style="background:var(--white);border:0.5px solid var(--rule);border-top:2px solid var(--gold);border-radius:0 0 3px 3px;">
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:0.5px solid var(--rule-lt);">
+          Entradas — {{ page.subject_code }}
+        </div>
+        {% for entry in page.sidebar_entries %}
+          {% if entry.url %}
+          <a href="{{ entry.url }}" style="display:block;text-decoration:none;margin-bottom:10px;">
+            <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;">{{ entry.num }}</div>
+            <div style="font-size:13px;color:var(--navy);font-family:'Playfair Display',serif;font-weight:700;line-height:1.35;">{{ entry.title }}</div>
+          </a>
+          {% else %}
+          <div style="font-size:13px;color:var(--muted);opacity:.5;font-style:italic;margin-top:10px;">
+            {{ entry.title }}<br><span style="font-size:11px;">Próximamente</span>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if page.sidebar_stat %}
+      <div class="mt-4 p-4" style="background:var(--navy-lt);border-radius:3px;">
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(229,160,13,0.7);margin-bottom:10px;">
+          {{ page.sidebar_stat.label }}
+        </div>
+        <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:#f0ece0;line-height:1;">
+          {{ page.sidebar_stat.value }}
+        </div>
+        <div style="font-size:13px;color:rgba(240,236,224,0.55);line-height:1.6;margin-top:6px;">
+          {{ page.sidebar_stat.description }}
+        </div>
+        <div style="font-size:10px;color:rgba(229,160,13,0.5);margin-top:8px;letter-spacing:1px;">
+          {{ page.sidebar_stat.source }}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>

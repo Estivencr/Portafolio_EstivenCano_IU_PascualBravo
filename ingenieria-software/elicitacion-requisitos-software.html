@@ -1,0 +1,400 @@
+---
+layout: blog
+title: Proceso de elicitación de requisitos y los tipos de requerimientos de software
+title_display: "Proceso de elicitación de requisitos y los <em>tipos de requerimientos de software</em>"
+description: Mapa conceptual e integración de los principales conceptos abordados en las lecturas
+subject_code: ISW-01
+subject_name: Ingeniería de Software 1
+subject_url: /ingenieria-software/
+blog_num: "II"
+entry_type: Mapa conceptual
+read_time: Lectura 8 min
+year: 2026
+exp_display: ELI
+breadcrumb_current: Proceso de Elicitación
+nav_back: Ingeniería de Software 1
+nav_back_url: /ingenieria-software/
+footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. II"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /ingenieria-software/
+toc:
+  - id: sec-1
+    label: Mapa conceptual
+  - id: sec-2
+    label: ¿Qué es la elicitación?
+  - id: sec-3
+    label: Tipos de requerimientos
+  - id: sec-4
+    label: Fases del proceso
+  - id: sec-5
+    label: Técnicas de elicitación
+  - id: sec-6
+    label: Conclusión
+sidebar_entries:
+  - num: Blog No. II
+    title: Proceso de elicitación de requisitos y tipos de requerimientos
+    url: /ingenieria-software/elicitacion-requisitos-software
+  - title: Diagramas UML
+sidebar_stat:
+  label: Técnicas de elicitación
+  value: "6"
+  description: técnicas principales para descubrir necesidades explícitas, implícitas y latentes
+  source: "— Sommerville, 2016"
+---
+
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+
+  .req-type-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 2px solid var(--navy);
+    border-radius: 0 0 3px 3px;
+    padding: 18px 18px 16px; height: 100%;
+  }
+  .req-type-card .req-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .req-type-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .req-type-card p  { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+  .req-type-card ul { font-size: 13.5px; color: var(--muted); padding-left: 18px; margin: 8px 0 0; line-height: 1.7; }
+
+  .technique-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px;
+    padding: 18px 20px; height: 100%;
+  }
+  .technique-card .tech-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900; font-style: italic;
+    color: var(--parchment3); line-height: 1; margin-bottom: 6px;
+  }
+  .technique-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .technique-card p { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  .process-step {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 20px 22px;
+  }
+  .process-step .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-style: italic; font-weight: 700;
+    color: var(--gold); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .process-step h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .process-step p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  .process-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--rule); font-size: 22px; padding: 2px 0;
+  }
+
+  .map-container {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 3px solid var(--gold);
+    border-radius: 0 0 4px 4px;
+    padding: 12px; margin: 8px 0 24px;
+    overflow: hidden; position: relative;
+  }
+  .page-article .map-container img {
+    display: block;
+    width: 100%; max-width: 100%; height: auto;
+    border-radius: 2px; object-fit: contain;
+    cursor: zoom-in; transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute; bottom: 20px; right: 20px;
+    background: rgba(15,52,96,0.82); color: #f0ece0;
+    font-size: 11px; letter-spacing: 1px;
+    padding: 5px 12px; border-radius: 2px;
+    pointer-events: none;
+    display: flex; align-items: center; gap: 6px;
+    opacity: 0; transition: opacity .25s;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    text-align: center; font-size: 12px; color: var(--muted);
+    margin-top: 10px; font-style: italic; letter-spacing: 0.3px;
+  }
+
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+</style>
+
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">La elicitación de requisitos es la actividad mediante la cual los ingenieros de software descubren, recopilan y documentan las necesidades de todos los actores involucrados en un sistema. Comprender este proceso y los distintos tipos de requerimientos que lo componen es esencial para construir software que resuelva los problemas correctos de la manera correcta.</p>
+</div>
+
+<!-- SECCIÓN I — MAPA CONCEPTUAL -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Mapa conceptual: <span class="gold">visión integrada</span></h2>
+  <p>El siguiente mapa conceptual sintetiza los principales conceptos abordados en las lecturas: el proceso de elicitación, sus técnicas, los tipos de requerimientos y su relación con el ciclo de vida del software.</p>
+
+  <!-- ✦ Reemplaza "tu-mapa-conceptual.png" con el nombre real de tu archivo -->
+  <div class="map-container">
+    <a href="tu-mapa-conceptual.png"
+       class="glightbox"
+       data-title="Proceso de elicitación de requisitos y tipos de requerimientos"
+       data-description="Mapa conceptual elaborado por el autor · Ingeniería de Software 1, ISW-01 · 2025">
+      <img
+        src="tu-mapa-conceptual.png"
+        alt="Mapa conceptual — Proceso de elicitación de requisitos y tipos de requerimientos de software"
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Mapa conceptual elaborado por el autor &nbsp;·&nbsp; Ingeniería de Software 1, ISW-01 &nbsp;·&nbsp; 2025
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <div class="concept-label">Nota sobre el mapa</div>
+    <p>El mapa conceptual integra los conceptos de elicitación, análisis y clasificación de requisitos establecidos en las lecturas del curso, mostrando las relaciones jerárquicas y transversales entre cada elemento del proceso.</p>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — QUÉ ES ELICITACIÓN -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>¿Qué es la <span class="gold">elicitación de requisitos?</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Definición</div>
+    <p>La elicitación de requisitos es el proceso sistemático de identificar, recopilar, comprender y documentar las necesidades, expectativas y restricciones de los stakeholders de un sistema de software, con el fin de construir una base sólida para su desarrollo. — <em>Sommerville, 2016</em></p>
+  </div>
+
+  <p>No se trata simplemente de "preguntar qué quiere el cliente". Es una disciplina que combina habilidades comunicativas, técnicas de investigación y conocimiento del dominio para descubrir tanto los requisitos <strong>explícitos</strong> (los que el cliente sabe que necesita), como los <strong>implícitos</strong> (los que da por sentado) y los <strong>latentes</strong> (los que aún no han sido reconocidos como necesidades).</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — TIPOS DE REQUERIMIENTOS -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Tipos de <span class="gold">requerimientos de software</span></h2>
+  <p>Los requerimientos se clasifican según su naturaleza y el aspecto del sistema que describen. Cada tipo cumple un rol distinto durante el desarrollo y las pruebas del sistema.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 01</div>
+        <h4>Funcionales</h4>
+        <p>Describen los servicios, comportamientos y funciones que el sistema debe proporcionar. Definen el <em>qué hace</em> el software.</p>
+        <ul>
+          <li>Funcionalidades del sistema</li>
+          <li>Reglas de negocio</li>
+          <li>Flujos de trabajo</li>
+          <li>Respuestas ante entradas específicas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 02</div>
+        <h4>No funcionales</h4>
+        <p>Definen restricciones sobre los servicios del sistema. Describen el <em>cómo se comporta</em> bajo ciertas condiciones.</p>
+        <ul>
+          <li>Rendimiento y tiempos de respuesta</li>
+          <li>Seguridad y disponibilidad</li>
+          <li>Usabilidad y accesibilidad</li>
+          <li>Escalabilidad y mantenibilidad</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 03</div>
+        <h4>De dominio</h4>
+        <p>Provienen del entorno del negocio y reflejan restricciones propias del sector o industria donde opera el sistema.</p>
+        <ul>
+          <li>Normativas legales y regulatorias</li>
+          <li>Estándares del sector</li>
+          <li>Restricciones de interoperabilidad</li>
+          <li>Vocabulario y conceptos del negocio</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 04</div>
+        <h4>De usuario</h4>
+        <p>Declaraciones en lenguaje natural de lo que los usuarios esperan que el sistema les permita hacer.</p>
+        <ul>
+          <li>Historias de usuario</li>
+          <li>Casos de uso de alto nivel</li>
+          <li>Escenarios de uso</li>
+          <li>Expectativas de experiencia</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — PROCESO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Fases del proceso de <span class="gold">elicitación</span></h2>
+  <p>La elicitación no ocurre en un único momento — es un proceso iterativo que avanza y se refina a lo largo del proyecto. Sus fases principales son:</p>
+
+  <div class="d-flex flex-column gap-2 mt-3">
+    <div class="process-step">
+      <div class="step-num">Fase I</div>
+      <h4>Identificación de stakeholders</h4>
+      <p>Se identifican todos los actores con interés en el sistema: usuarios finales, clientes, patrocinadores, equipo técnico y reguladores. Cada uno tiene perspectivas y necesidades distintas que deben ser recogidas.</p>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num">Fase II</div>
+      <h4>Descubrimiento de requisitos</h4>
+      <p>Aplicación de técnicas de elicitación para extraer las necesidades de los stakeholders, tanto las expresadas directamente como las implícitas o latentes que emergen durante la investigación.</p>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num">Fase III</div>
+      <h4>Clasificación y organización</h4>
+      <p>Los requisitos recabados se organizan en grupos coherentes según su tipo, prioridad y área de funcionalidad. Se eliminan duplicados y se resuelven contradicciones iniciales entre stakeholders.</p>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num">Fase IV</div>
+      <h4>Priorización y negociación</h4>
+      <p>Se negocian prioridades con los stakeholders usando técnicas como MoSCoW (Must, Should, Could, Won't) o la matriz de valor/esfuerzo, dado que no todos los requisitos pueden implementarse con los recursos disponibles.</p>
+    </div>
+    <div class="process-arrow">↓</div>
+    <div class="process-step">
+      <div class="step-num">Fase V</div>
+      <h4>Documentación y validación</h4>
+      <p>Los requisitos priorizados se documentan formalmente y se validan con los stakeholders mediante revisiones o prototipos, confirmando que el equipo comprendió correctamente las necesidades antes de iniciar el desarrollo.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — TÉCNICAS -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Técnicas de <span class="gold">elicitación</span></h2>
+  <p>La elección de la técnica adecuada depende del contexto del proyecto, la disponibilidad de los stakeholders y la madurez de la organización.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">01</div>
+        <h4>Entrevistas</h4>
+        <p>Conversaciones estructuradas o semiestructuradas con los stakeholders. Permiten profundizar en necesidades específicas y descubrir requisitos implícitos.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">02</div>
+        <h4>Talleres (workshops)</h4>
+        <p>Sesiones colaborativas con múltiples stakeholders. Facilitan la negociación temprana de conflictos y generan consenso sobre los requisitos prioritarios.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">03</div>
+        <h4>Observación etnográfica</h4>
+        <p>El analista observa a los usuarios en su entorno real de trabajo, revelando requisitos que los propios usuarios no son capaces de verbalizar.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">04</div>
+        <h4>Casos de uso</h4>
+        <p>Descripciones narrativas de las interacciones entre actores y el sistema para alcanzar un objetivo. Estructuran los requisitos funcionales de forma visual y comprensible.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">05</div>
+        <h4>Prototipos</h4>
+        <p>Representaciones preliminares del sistema que permiten a los usuarios validar sus expectativas antes de que se inicie el desarrollo real.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num">06</div>
+        <h4>Análisis de documentos</h4>
+        <p>Revisión de manuales, contratos, formularios y sistemas existentes para extraer requisitos implícitos en los procesos actuales de la organización.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="pull-quote anim">
+  <p>La elicitación es tanto arte como ciencia. Requiere la capacidad técnica de un ingeniero para estructurar la información y la sensibilidad de un comunicador para entender lo que el cliente realmente necesita, no solo lo que dice querer.</p>
+  <cite>— Adaptado de Sommerville, Software Engineering, 10ª ed.</cite>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-6">
+  <h2>🏁 Conclusión</h2>
+  <p>La elicitación de requisitos es el punto de partida que determina la dirección de todo el proyecto de software. Comprender sus fases, aplicar las técnicas adecuadas y clasificar correctamente los tipos de requerimientos — funcionales, no funcionales, de dominio y de usuario — permite construir una base sólida sobre la cual el desarrollo, las pruebas y la entrega del producto cobran sentido y coherencia.</p>
+  <p>Como se evidencia en el mapa conceptual presentado, todos estos elementos están interconectados: no es posible gestionar bien un tipo de requisito sin considerar su relación con los demás, ni ejecutar una fase del proceso de elicitación de manera aislada sin afectar las siguientes.</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Sommerville, I. (2016). <em>Software Engineering, 10th Edition.</em> Pearson.</li>
+    <li>IEEE Std 830-1998. <em>Recommended Practice for Software Requirements Specifications.</em> IEEE.</li>
+    <li>ISO/IEC/IEEE 29148:2018. <em>Systems and Software Engineering — Requirements Engineering.</em></li>
+    <li>Pressman, R. S. (2014). <em>Software Engineering: A Practitioner's Approach, 8th Edition.</em> McGraw-Hill.</li>
+    <li>Swebok Guide v4 (2024). <em>Guide to the Software Engineering Body of Knowledge.</em> IEEE Computer Society.</li>
+  </ul>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#ElicitaciónDeRequisitos</span>
+  <span class="tag">#TiposDeRequerimientos</span>
+  <span class="tag">#IngenieríaDeSoftware</span>
+  <span class="tag">#MapaConceptual</span>
+  <span class="tag">#RequisitosNoFuncionales</span>
+  <span class="tag">#CasosDeUso</span>
+  <span class="tag">#SWEBOK</span>
+</div>

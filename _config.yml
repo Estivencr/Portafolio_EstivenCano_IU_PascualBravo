@@ -1,0 +1,21 @@
+title: Portafolio Académico
+description: Desarrollo de Software · Semestre 2026-I
+author: Estiven Cano
+
+# Cambia esto por tu usuario real de GitHub
+baseurl: "/Portafolio_EstivenCano_IU_Pascualbravo"
+url: "https://estivencr.github.io"
+
+# Jekyll config
+markdown: kramdown
+permalink: pretty
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+
+# Datos globales disponibles en todas las páginas
+semestre: "2026 — I"
+carrera: "Desarrollo de Software"
+expediente: "00001"
