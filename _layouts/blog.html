@@ -73,7 +73,7 @@ layout: default
         </div>
         {% for entry in page.sidebar_entries %}
           {% if entry.url %}
-          <a href="{{ entry.url }}" style="display:block;text-decoration:none;margin-bottom:10px;">
+          <a href="{{ entry.url | relative_url }}" style="display:block;text-decoration:none;margin-bottom:10px;">
             <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:3px;">{{ entry.num }}</div>
             <div style="font-size:13px;color:var(--navy);font-family:'Playfair Display',serif;font-weight:700;line-height:1.35;">{{ entry.title }}</div>
           </a>
