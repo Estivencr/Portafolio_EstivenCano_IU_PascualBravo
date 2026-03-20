@@ -1,0 +1,253 @@
+---
+layout: blog
+title: Android Studio
+title_display: "<em>Android Studio</em>"
+description: Tres ventajas significativas del entorno de desarrollo propuesto por Android Studio para el desarrollo de aplicaciones móviles
+subject_code: MOB-04
+subject_name: Programación de Dispositivos Móviles
+subject_url: /programacion-movil/
+blog_num: "I"
+entry_type: Entrada de portafolio · Unidad 2
+read_time: Lectura 6 min
+year: 2026
+exp_display: AND
+breadcrumb_current: Android Studio
+nav_back: Programación de Dispositivos Móviles
+nav_back_url: /programacion-movil/
+footer_label: "Programación de Dispositivos Móviles · MOB-04 · Blog No. I"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /programacion-movil/
+toc:
+  - id: sec-intro
+    label: ¿Qué es Android Studio?
+  - id: sec-1
+    label: Ventaja 1 — Emulador integrado
+  - id: sec-2
+    label: Ventaja 2 — Editor inteligente
+  - id: sec-3
+    label: Ventaja 3 — Herramientas de depuración
+  - id: sec-conclusion
+    label: Conclusión
+sidebar_entries:
+  - title: Próxima entrada
+sidebar_stat:
+  label: Plataforma objetivo
+  value: "Android"
+  description: el sistema operativo móvil más usado del mundo con más del 70% de cuota de mercado global
+  source: "— StatCounter, 2025"
+---
+ 
+<style>
+  .ventaja-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 3px solid var(--navy);
+    border-radius: 0 0 4px 4px;
+    padding: 28px 28px 24px;
+    margin-bottom: 36px;
+  }
+  .ventaja-card .ventaja-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-style: italic; font-weight: 700;
+    color: var(--gold); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .ventaja-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--navy); margin-bottom: 14px; line-height: 1.2;
+  }
+  .ventaja-card h3 em { font-style: italic; color: var(--gold); }
+  .ventaja-card p {
+    font-size: 16.5px; line-height: 1.85;
+    color: #2a2420; margin: 0 0 13px;
+  }
+  .ventaja-card p:last-child { margin-bottom: 0; }
+ 
+  .feature-list {
+    list-style: none;
+    padding: 0; margin: 16px 0 0;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 15px; line-height: 1.7; color: #2a2420;
+  }
+  .feature-list li::before {
+    content: '→';
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; flex-shrink: 0;
+    margin-top: 1px;
+  }
+ 
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+ 
+  .as-logo-area {
+    background: var(--navy-lt);
+    border-radius: 4px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .as-logo-area .as-icon {
+    font-size: 56px; line-height: 1; margin-bottom: 10px;
+  }
+  .as-logo-area p {
+    font-size: 13px; color: rgba(240,236,224,0.5);
+    margin: 0; letter-spacing: 0.5px;
+  }
+  .as-logo-area strong {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; color: #f0ece0;
+    display: block; margin-bottom: 4px;
+  }
+ 
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+</style>
+ 
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">Android Studio es el entorno de desarrollo integrado (IDE) oficial para la creación de aplicaciones Android, desarrollado por Google sobre la base de IntelliJ IDEA. Desde su lanzamiento estable en 2014, se ha consolidado como la herramienta de referencia para millones de desarrolladores móviles en todo el mundo, gracias a un ecosistema de funcionalidades diseñadas específicamente para las necesidades del desarrollo Android.</p>
+</div>
+ 
+<!-- QUÉ ES -->
+<div class="blog-section anim anim-2" id="sec-intro">
+  <div class="section-num">✦</div>
+  <h2>¿Qué es <span class="gold">Android Studio?</span></h2>
+ 
+  <div class="as-logo-area">
+    <div class="as-icon">🤖</div>
+    <strong>Android Studio</strong>
+    <p>IDE oficial para desarrollo Android · Google · Basado en IntelliJ IDEA</p>
+  </div>
+ 
+  <div class="concept-box">
+    <div class="concept-label">Definición</div>
+    <p>Android Studio es un entorno de desarrollo integrado (IDE) oficial de Google para el desarrollo de aplicaciones en la plataforma Android. Proporciona las herramientas más rápidas para crear aplicaciones para todo tipo de dispositivos Android. — <em>Google Developers, 2024</em></p>
+  </div>
+ 
+  <p>A diferencia de otros entornos genéricos, Android Studio fue construido desde el principio pensando en el ciclo completo del desarrollo móvil: desde la escritura y depuración del código hasta la generación del APK final listo para publicar en Google Play Store.</p>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- VENTAJA 1 -->
+<div class="blog-section anim" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Ventaja 1: <span class="gold">Emulador integrado de alta fidelidad</span></h2>
+ 
+  <div class="ventaja-card">
+    <div class="ventaja-num">Ventaja No. I · Emulador AVD</div>
+    <h3>Prueba en cualquier dispositivo sin hardware <em>físico</em></h3>
+    <p>Android Studio incluye el Android Virtual Device Manager (AVD), un emulador que permite crear y ejecutar dispositivos Android virtuales directamente en el computador. Esto elimina la dependencia de tener múltiples teléfonos físicos para probar la aplicación en diferentes configuraciones de pantalla, versiones de Android y densidades de píxeles.</p>
+    <p>El emulador soporta aceleración de hardware (mediante HAXM o KVM), lo que permite velocidades de ejecución cercanas a las de un dispositivo real. Además, es posible simular condiciones específicas como llamadas entrantes, cambios de red, orientación del dispositivo, geolocalización y nivel de batería.</p>
+    <ul class="feature-list">
+      <li>Soporte para múltiples versiones de Android (API 19 hasta la más reciente) en un solo equipo</li>
+      <li>Simulación de sensores: GPS, acelerómetro, cámara, giroscopio y huella dactilar</li>
+      <li>Snapshots para guardar el estado del dispositivo y retomar pruebas rápidamente</li>
+      <li>Compatible con aplicaciones que requieren Google Play Services</li>
+    </ul>
+  </div>
+ 
+  <p>Esta capacidad es especialmente valiosa en entornos académicos y de aprendizaje, donde no siempre se dispone de múltiples dispositivos físicos para realizar pruebas exhaustivas antes del despliegue.</p>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- VENTAJA 2 -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Ventaja 2: <span class="gold">Editor de código inteligente y productivo</span></h2>
+ 
+  <div class="ventaja-card">
+    <div class="ventaja-num">Ventaja No. II · Editor Inteligente</div>
+    <h3>Autocompletado, refactorización y <em>análisis estático</em> en tiempo real</h3>
+    <p>El editor de Android Studio hereda el poder de IntelliJ IDEA y lo amplía con funcionalidades específicas para Android. El autocompletado inteligente (IntelliSense) sugiere clases, métodos, atributos XML y recursos de la aplicación en tiempo real, reduciendo significativamente los errores tipográficos y el tiempo de escritura.</p>
+    <p>El análisis de código estático detecta problemas potenciales antes de ejecutar la aplicación: desde advertencias de rendimiento y uso innecesario de memoria, hasta problemas de compatibilidad con versiones anteriores de Android. La herramienta Lint realiza esta verificación automáticamente en cada compilación.</p>
+    <ul class="feature-list">
+      <li>Autocompletado contextual para Java, Kotlin, C++ y XML</li>
+      <li>Refactorización segura: renombrar clases, extraer métodos y reorganizar paquetes sin romper referencias</li>
+      <li>Inspecciones Lint que identifican vulnerabilidades de seguridad, problemas de accesibilidad y errores de traducción</li>
+      <li>Editor visual de layouts con vista previa en tiempo real para múltiples tamaños de pantalla simultáneamente</li>
+    </ul>
+  </div>
+ 
+  <div class="concept-box">
+    <div class="concept-label">Kotlin como lenguaje preferido</div>
+    <p>Desde 2019, Google declaró Kotlin como el lenguaje preferido para el desarrollo Android. Android Studio ofrece soporte de primera clase para Kotlin, incluyendo conversión automática de código Java a Kotlin y corrutinas para programación asíncrona.</p>
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- VENTAJA 3 -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Ventaja 3: <span class="gold">Herramientas de depuración y perfilado</span></h2>
+ 
+  <div class="ventaja-card">
+    <div class="ventaja-num">Ventaja No. III · Profiler y Debugger</div>
+    <h3>Diagnóstico profundo del rendimiento <em>en tiempo real</em></h3>
+    <p>Android Studio integra el Android Profiler, una suite de herramientas que permite analizar el comportamiento de la aplicación en tiempo de ejecución con un nivel de detalle excepcional. Esto es fundamental para identificar y resolver problemas de rendimiento que solo se manifiestan en condiciones reales de uso.</p>
+    <p>El depurador permite establecer puntos de interrupción convencionales y condicionales, inspeccionar el estado de variables y objetos, y navegar por el hilo de ejecución paso a paso, tanto en código Java/Kotlin como en código nativo C++. La integración con el emulador y dispositivos físicos vía ADB (Android Debug Bridge) es transparente y no requiere configuración adicional.</p>
+    <ul class="feature-list">
+      <li><strong>CPU Profiler:</strong> identifica métodos con mayor tiempo de ejecución y cuellos de botella en el hilo principal</li>
+      <li><strong>Memory Profiler:</strong> detecta fugas de memoria, objetos no liberados y uso excesivo del heap</li>
+      <li><strong>Network Profiler:</strong> analiza todas las peticiones HTTP/HTTPS de la app con sus tiempos de respuesta y payloads</li>
+      <li><strong>Energy Profiler:</strong> mide el consumo energético para optimizar la duración de la batería</li>
+    </ul>
+  </div>
+ 
+  <p>La disponibilidad de estas herramientas directamente en el IDE, sin necesidad de instalar software externo, convierte a Android Studio en un entorno autosuficiente que acompaña al desarrollador desde la primera línea de código hasta la optimización final para producción.</p>
+</div>
+ 
+<div class="pull-quote anim">
+  <p>Android Studio no es solo un editor de texto; es un ecosistema completo que integra todo lo necesario para construir, probar, depurar y optimizar aplicaciones Android de calidad profesional sin salir del entorno.</p>
+  <cite>— Google Developers Documentation, 2024</cite>
+</div>
+ 
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-conclusion">
+  <h2>🏁 Conclusión</h2>
+  <p>Android Studio se consolida como el entorno de desarrollo más completo y eficiente para la creación de aplicaciones Android gracias a la sinergia entre sus tres ventajas principales: el emulador integrado que democratiza las pruebas multi-dispositivo, el editor inteligente que acelera la escritura de código de calidad, y las herramientas de depuración y perfilado que garantizan aplicaciones robustas y optimizadas.</p>
+  <p>Para un desarrollador móvil en formación, dominar Android Studio no es solo aprender una herramienta — es adoptar el flujo de trabajo estándar de la industria y acceder al mismo ecosistema que utilizan los equipos de desarrollo de las aplicaciones más descargadas del mundo.</p>
+</div>
+ 
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Google LLC. (2024). <em>Android Studio User Guide.</em> Google Developers. https://developer.android.com/studio/intro</li>
+    <li>Google LLC. (2024). <em>Android Virtual Device Manager.</em> Android Developers. https://developer.android.com/studio/run/managing-avds</li>
+    <li>Google LLC. (2024). <em>Profile your app performance.</em> Android Developers. https://developer.android.com/studio/profile</li>
+    <li>Griffiths, D. &amp; Griffiths, D. (2021). <em>Head First Android Development, 3rd Edition.</em> O'Reilly Media.</li>
+    <li>StatCounter Global Stats. (2025). <em>Mobile Operating System Market Share Worldwide.</em> https://gs.statcounter.com</li>
+  </ul>
+</div>
+ 
+<div class="tags mt-4">
+  <span class="tag">#AndroidStudio</span>
+  <span class="tag">#DesarrolloMóvil</span>
+  <span class="tag">#Android</span>
+  <span class="tag">#IDE</span>
+  <span class="tag">#Kotlin</span>
+  <span class="tag">#MOB-04</span>
+  <span class="tag">#GoogleDevelopers</span>
+</div>
