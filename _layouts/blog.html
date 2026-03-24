@@ -55,16 +55,10 @@ layout: default
     <!-- SIDEBAR -->
     <div class="col-lg-4 d-none d-lg-block">
 
-      {% if page.toc %}
-      <div class="sidebar-toc">
+      <div class="sidebar-toc" id="js-toc" style="display:none;">
         <div class="toc-title">Contenido de la entrada</div>
-        <ol>
-          {% for item in page.toc %}
-          <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
-          {% endfor %}
-        </ol>
+        <ol id="js-toc-list"></ol>
       </div>
-      {% endif %}
 
       {% if page.sidebar_entries %}
       <div class="mt-4 p-4" style="background:var(--white);border:0.5px solid var(--rule);border-top:2px solid var(--gold);border-radius:0 0 3px 3px;">
@@ -106,3 +100,21 @@ layout: default
     </div>
   </div>
 </div>
+
+<script>
+  (function () {
+    var sections = document.querySelectorAll('.blog-section[id] h2, .conclusion[id] h2');
+    if (!sections.length) return;
+    var list = document.getElementById('js-toc-list');
+    sections.forEach(function (h2) {
+      var section = h2.closest('[id]');
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + section.id;
+      a.textContent = h2.textContent;
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    document.getElementById('js-toc').style.display = '';
+  })();
+</script>
