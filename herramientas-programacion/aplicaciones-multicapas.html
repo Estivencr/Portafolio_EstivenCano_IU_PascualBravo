@@ -1,0 +1,543 @@
+---
+layout: blog
+title: Creación de Aplicaciones Multicapas
+title_display: "Creación de Aplicaciones <em>Multicapas</em>"
+description: Concepto, principios y patrones de diseño aplicados en la arquitectura multicapas con C# — DAO y Repository
+subject_code: HDP-02
+subject_name: Herramientas de Programación 3
+subject_url: /herramientas-programacion/
+blog_num: "IV"
+entry_type: Entrada de portafolio
+read_time: Lectura 7 min
+year: 2026
+exp_display: MLC
+breadcrumb_current: Aplicaciones Multicapas
+nav_back: Herramientas de Programación 3
+nav_back_url: /herramientas-programacion/
+footer_label: "Herramientas de Programación 3 · HDP-02 · Blog No. IV"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /herramientas-programacion/
+toc:
+  - id: sec-1
+    label: ¿Qué es la arquitectura multicapas?
+  - id: sec-2
+    label: Principios fundamentales
+  - id: sec-3
+    label: Las capas y sus responsabilidades
+  - id: sec-4
+    label: Patrón DAO
+  - id: sec-5
+    label: Patrón Repository
+  - id: sec-6
+    label: DAO vs. Repository
+  - id: sec-conclusion
+    label: Conclusión
+sidebar_entries:
+  - num: Blog No. I
+    title: Interfaz Gráfica Moderna en Aplicaciones de Escritorio
+    url: /herramientas-programacion/interfaz-grafica-moderna
+  - num: Blog No. II
+    title: ADO.NET con SQL Server
+    url: /herramientas-programacion/adonet-sql-server
+  - num: Blog No. III
+    title: Desarrollo de Aplicaciones Cliente-Servidor
+    url: /herramientas-programacion/desarrollo-cliente-servidor
+sidebar_stat:
+  label: Principio clave
+  value: "SRP"
+  description: Single Responsibility Principle — cada capa tiene una única razón para cambiar, fundamento de la arquitectura multicapas
+  source: "— Robert C. Martin, Clean Architecture"
+---
+
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+
+  .code-block {
+    background: var(--navy-lt);
+    border-radius: 3px;
+    padding: 22px 24px;
+    margin: 20px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #f0ece0;
+    overflow-x: auto;
+  }
+  .code-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px; display: block;
+  }
+  .c-keyword { color: #79c0ff; }
+  .c-type    { color: #ffa657; }
+  .c-string  { color: #a5d6ff; }
+  .c-comment { color: rgba(240,236,224,0.35); font-style: italic; }
+  .c-value   { color: #7ee787; }
+  .c-method  { color: #d2a8ff; }
+
+  /* LAYER STACK */
+  .layer-stack {
+    display: flex; flex-direction: column;
+    gap: 4px; margin: 28px 0;
+  }
+  .layer-item {
+    display: grid;
+    grid-template-columns: 180px 1fr 120px;
+    border: 0.5px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .layer-item:hover { box-shadow: 0 4px 16px rgba(15,52,96,0.1); }
+  .layer-side {
+    padding: 16px 18px;
+    display: flex; flex-direction: column;
+    justify-content: center; gap: 3px;
+    border-right: 0.5px solid var(--rule);
+  }
+  .layer-side .l-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-style: italic; color: var(--gold); font-weight: 700;
+  }
+  .layer-side .l-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy);
+  }
+  .layer-body {
+    padding: 14px 18px;
+    font-size: 13.5px; line-height: 1.65; color: var(--muted);
+    display: flex; align-items: center;
+  }
+  .layer-tech {
+    padding: 14px 16px;
+    background: var(--parchment2);
+    border-left: 0.5px solid var(--rule);
+    font-size: 11px; color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; line-height: 1.5;
+  }
+  .layer-item.l-ui   .layer-side { background: var(--white); }
+  .layer-item.l-biz  .layer-side { background: var(--parchment2); }
+  .layer-item.l-dao  .layer-side { background: var(--parchment); }
+  .layer-item.l-db   .layer-side { background: var(--navy); }
+  .layer-item.l-db   .l-name,
+  .layer-item.l-db   .l-num { color: #f0ece0; }
+  .layer-item.l-db   .layer-body { color: rgba(240,236,224,0.6); background: var(--navy-lt); }
+  .layer-item.l-db   .layer-tech { background: rgba(255,255,255,0.05); border-left-color: rgba(255,255,255,0.1); color: rgba(240,236,224,0.4); }
+  .layer-arrow {
+    text-align: center; font-size: 18px; color: var(--rule);
+    padding: 2px 0; letter-spacing: 2px;
+  }
+
+  /* PRINCIPLE CARDS */
+  .principle-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 2px solid var(--navy);
+    border-radius: 0 0 3px 3px;
+    padding: 20px 18px; height: 100%;
+  }
+  .principle-card .p-label {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px; font-weight: 600;
+  }
+  .principle-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .principle-card p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  /* COMPARE TABLE */
+  .compare-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0; border: 0.5px solid var(--rule);
+    border-radius: 4px; overflow: hidden; margin: 24px 0;
+  }
+  .compare-header {
+    padding: 12px 20px; font-size: 10px; letter-spacing: 2px;
+    text-transform: uppercase; font-weight: 600; text-align: center;
+  }
+  .compare-header.dao  { background: var(--parchment3); color: var(--muted); border-right: 0.5px solid var(--rule); }
+  .compare-header.repo { background: var(--navy); color: rgba(240,236,224,0.8); }
+  .compare-row { display: grid; grid-template-columns: 1fr 1fr; border-top: 0.5px solid var(--rule-lt); }
+  .compare-cell {
+    padding: 12px 18px; font-size: 13.5px; line-height: 1.6;
+    color: #2a2420; display: flex; align-items: flex-start; gap: 8px;
+  }
+  .compare-cell.right { border-left: 0.5px solid var(--rule-lt); background: var(--white); }
+  .compare-cell.left  { background: var(--parchment2); color: var(--muted); }
+
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+</style>
+
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">A medida que las aplicaciones de software crecen en complejidad, mantener todo el código en un único lugar se convierte en un problema crítico. La arquitectura multicapas surge como respuesta a esta necesidad: organizar el software en niveles independientes donde cada uno tiene una responsabilidad bien definida, facilitando el mantenimiento, las pruebas y la evolución del sistema a lo largo del tiempo.</p>
+</div>
+
+<!-- SECCIÓN I — CONCEPTO -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>¿Qué es la arquitectura <span class="gold">multicapas?</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Definición</div>
+    <p>La arquitectura multicapas (N-Layer Architecture) es un patrón de diseño de software en el que la aplicación se divide en capas lógicas separadas, cada una con una responsabilidad específica. Cada capa solo se comunica con las capas adyacentes y no tiene conocimiento directo de las capas no adyacentes, lo que reduce el acoplamiento y aumenta la cohesión del sistema. — <em>Microsoft Application Architecture Guide, 2nd ed.</em></p>
+  </div>
+
+  <p>Es importante distinguir entre <strong>multicapas lógicas</strong> (N-Layer) y <strong>multinivel físico</strong> (N-Tier). En la arquitectura N-Layer, las capas son divisiones lógicas del código que pueden residir en el mismo proceso o máquina. En la arquitectura N-Tier, las capas están físicamente separadas en diferentes servidores o procesos. En el desarrollo con C# y Windows Forms, trabajamos principalmente con N-Layer.</p>
+
+  <p>La diferencia fundamental respecto a la arquitectura cliente-servidor convencional reside en el grado de formalización: mientras que cliente-servidor define roles de comunicación, la arquitectura multicapas define cómo se organiza internamente el código de cada componente, estableciendo reglas estrictas sobre qué capa puede llamar a cuál.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — PRINCIPIOS -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Principios <span class="gold">fundamentales</span></h2>
+
+  <p>La arquitectura multicapas se sustenta en principios del diseño de software orientado a objetos que guían cómo se deben organizar y relacionar las capas:</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">SRP</div>
+        <h4>Responsabilidad única</h4>
+        <p>Cada capa tiene una única razón para cambiar. Si cambia la interfaz, solo se modifica la capa de presentación. Si cambia el motor de base de datos, solo se modifica la capa de datos.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">DIP</div>
+        <h4>Inversión de dependencias</h4>
+        <p>Las capas superiores no deben depender de los detalles de las capas inferiores. Ambas deben depender de abstracciones (interfaces), no de implementaciones concretas.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">OCP</div>
+        <h4>Abierto/Cerrado</h4>
+        <p>Las capas deben estar abiertas para extensión pero cerradas para modificación. Se puede agregar nueva funcionalidad sin alterar el código existente que ya funciona.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">DRY</div>
+        <h4>No te repitas</h4>
+        <p>Cada pieza de conocimiento debe tener una representación única. La lógica de acceso a datos no se repite en los formularios; la lógica de negocio no se repite en el DAO.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">SoC</div>
+        <h4>Separación de preocupaciones</h4>
+        <p>Cada módulo o capa se ocupa de un aspecto distinto del sistema. La interfaz no sabe SQL; el DAO no sabe cómo luce la pantalla.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="principle-card">
+        <div class="p-label">LoD</div>
+        <h4>Ley de Demeter</h4>
+        <p>Una capa solo debe hablar con sus vecinas inmediatas. La capa de presentación no accede directamente a la base de datos — siempre a través de la capa de datos.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — CAPAS -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Las capas y sus <span class="gold">responsabilidades</span></h2>
+
+  <p>En una aplicación C# con Windows Forms y SQL Server, la arquitectura multicapas se organiza en cuatro niveles lógicos. La comunicación fluye siempre de arriba hacia abajo — ninguna capa puede saltar niveles para comunicarse con capas no adyacentes:</p>
+
+  <div class="layer-stack">
+    <div class="layer-item l-ui">
+      <div class="layer-side">
+        <span class="l-num">Capa 1</span>
+        <span class="l-name">Presentación</span>
+      </div>
+      <div class="layer-body">Formularios Windows Forms. Captura eventos del usuario, muestra datos y delega toda lógica a la capa de negocio. No contiene SQL ni reglas de negocio.</div>
+      <div class="layer-tech">Forms/<br/>FrmProductos.cs</div>
+    </div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer-item l-biz">
+      <div class="layer-side">
+        <span class="l-num">Capa 2</span>
+        <span class="l-name">Negocio</span>
+      </div>
+      <div class="layer-body">Clases de entidad y servicios con las reglas del dominio. Valida datos, aplica cálculos y orquesta operaciones complejas que pueden involucrar múltiples entidades.</div>
+      <div class="layer-tech">Models/<br/>Producto.cs</div>
+    </div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer-item l-dao">
+      <div class="layer-side">
+        <span class="l-num">Capa 3</span>
+        <span class="l-name">Acceso a datos</span>
+      </div>
+      <div class="layer-body">Clases DAO o Repository que encapsulan toda la comunicación con SQL Server mediante ADO.NET. Es la única capa que conoce los detalles de la base de datos.</div>
+      <div class="layer-tech">Data/<br/>ProductoDAO.cs</div>
+    </div>
+    <div class="layer-arrow">↓</div>
+    <div class="layer-item l-db">
+      <div class="layer-side">
+        <span class="l-num">Capa 4</span>
+        <span class="l-name">Base de datos</span>
+      </div>
+      <div class="layer-body">SQL Server: tablas, vistas, procedimientos almacenados y funciones. Es la capa de persistencia física de los datos.</div>
+      <div class="layer-tech">SQL Server<br/>MiBaseDatos</div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — PATRÓN DAO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Patrón <span class="gold">DAO</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Data Access Object</div>
+    <p>El patrón DAO (Data Access Object) encapsula toda la lógica de acceso a una fuente de datos en una clase dedicada. Cada entidad del dominio tiene su propio DAO que expone métodos concretos para las operaciones CRUD. La capa de negocio interactúa con el DAO sin conocer los detalles de SQL ni de ADO.NET.</p>
+  </div>
+
+  <div class="code-block">
+    <span class="code-label">C# — Patrón DAO completo para Producto</span>
+<span class="c-comment">// Interfaz que define el contrato del DAO</span>
+<span class="c-keyword">public interface</span> <span class="c-type">IProductoDAO</span>
+{
+    <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">ObtenerTodos</span>();
+    <span class="c-type">Producto</span>         <span class="c-method">ObtenerPorId</span>(<span class="c-keyword">int</span> id);
+    <span class="c-keyword">bool</span>             <span class="c-method">Insertar</span>(<span class="c-type">Producto</span> p);
+    <span class="c-keyword">bool</span>             <span class="c-method">Actualizar</span>(<span class="c-type">Producto</span> p);
+    <span class="c-keyword">bool</span>             <span class="c-method">Eliminar</span>(<span class="c-keyword">int</span> id);
+}
+
+<span class="c-comment">// Implementación concreta con SQL Server</span>
+<span class="c-keyword">public class</span> <span class="c-type">ProductoDAO</span> : <span class="c-type">IProductoDAO</span>
+{
+    <span class="c-keyword">private readonly string</span> _cn = <span class="c-type">Conexion</span>.CadenaConexion;
+
+    <span class="c-keyword">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">ObtenerTodos</span>()
+    {
+        <span class="c-keyword">var</span> lista = <span class="c-keyword">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt;();
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(_cn))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(<span class="c-string">"SELECT * FROM Productos"</span>, con);
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> r = cmd.<span class="c-method">ExecuteReader</span>())
+                <span class="c-keyword">while</span> (r.<span class="c-method">Read</span>())
+                    lista.<span class="c-method">Add</span>(<span class="c-method">MapearProducto</span>(r));
+        }
+        <span class="c-keyword">return</span> lista;
+    }
+
+    <span class="c-keyword">public bool</span> <span class="c-method">Insertar</span>(<span class="c-type">Producto</span> p)
+    {
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(_cn))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(
+                <span class="c-string">"INSERT INTO Productos(Nombre,Precio,Stock) VALUES(@N,@P,@S)"</span>, con);
+            cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@N"</span>, p.Nombre);
+            cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@P"</span>, p.Precio);
+            cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@S"</span>, p.Stock);
+            <span class="c-keyword">return</span> cmd.<span class="c-method">ExecuteNonQuery</span>() > <span class="c-value">0</span>;
+        }
+    }
+
+    <span class="c-comment">// Método privado para mapear SqlDataReader → Producto</span>
+    <span class="c-keyword">private</span> <span class="c-type">Producto</span> <span class="c-method">MapearProducto</span>(<span class="c-type">SqlDataReader</span> r) => <span class="c-keyword">new</span> <span class="c-type">Producto</span>
+    {
+        Id     = r.<span class="c-method">GetInt32</span>(<span class="c-value">0</span>),
+        Nombre = r.<span class="c-method">GetString</span>(<span class="c-value">1</span>),
+        Precio = r.<span class="c-method">GetDecimal</span>(<span class="c-value">2</span>),
+        Stock  = r.<span class="c-method">GetInt32</span>(<span class="c-value">3</span>)
+    };
+}
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — PATRÓN REPOSITORY -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Patrón <span class="gold">Repository</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Repository Pattern</div>
+    <p>El patrón Repository es una evolución del DAO que añade una abstracción adicional entre la lógica de negocio y la fuente de datos. Mientras el DAO mapea directamente a operaciones de base de datos, el Repository expone una interfaz orientada al dominio que simula una colección en memoria de objetos, ocultando completamente los detalles de persistencia. — <em>Evans, E., Domain-Driven Design, 2003</em></p>
+  </div>
+
+  <div class="code-block">
+    <span class="code-label">C# — Patrón Repository con interfaz genérica</span>
+<span class="c-comment">// Interfaz genérica — aplica a cualquier entidad</span>
+<span class="c-keyword">public interface</span> <span class="c-type">IRepository</span>&lt;T&gt;
+{
+    <span class="c-type">IEnumerable</span>&lt;T&gt; <span class="c-method">GetAll</span>();
+    T               <span class="c-method">GetById</span>(<span class="c-keyword">int</span> id);
+    <span class="c-keyword">void</span>            <span class="c-method">Add</span>(T entity);
+    <span class="c-keyword">void</span>            <span class="c-method">Update</span>(T entity);
+    <span class="c-keyword">void</span>            <span class="c-method">Delete</span>(<span class="c-keyword">int</span> id);
+}
+
+<span class="c-comment">// Repositorio específico de Producto</span>
+<span class="c-keyword">public interface</span> <span class="c-type">IProductoRepository</span> : <span class="c-type">IRepository</span>&lt;<span class="c-type">Producto</span>&gt;
+{
+    <span class="c-comment">// Métodos adicionales específicos del dominio</span>
+    <span class="c-type">IEnumerable</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">GetByStockMinimo</span>(<span class="c-keyword">int</span> minimo);
+    <span class="c-type">IEnumerable</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">GetByRangoPrecio</span>(<span class="c-keyword">decimal</span> min, <span class="c-keyword">decimal</span> max);
+}
+
+<span class="c-comment">// Implementación concreta con SQL Server</span>
+<span class="c-keyword">public class</span> <span class="c-type">ProductoRepository</span> : <span class="c-type">IProductoRepository</span>
+{
+    <span class="c-keyword">private readonly string</span> _cn = <span class="c-type">Conexion</span>.CadenaConexion;
+
+    <span class="c-keyword">public</span> <span class="c-type">IEnumerable</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">GetAll</span>()
+    {
+        <span class="c-keyword">var</span> productos = <span class="c-keyword">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt;();
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(_cn))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(<span class="c-string">"SELECT * FROM Productos"</span>, con))
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> r = cmd.<span class="c-method">ExecuteReader</span>())
+                <span class="c-keyword">while</span> (r.<span class="c-method">Read</span>())
+                    productos.<span class="c-method">Add</span>(<span class="c-method">Map</span>(r));
+        }
+        <span class="c-keyword">return</span> productos;
+    }
+
+    <span class="c-keyword">public</span> <span class="c-type">IEnumerable</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">GetByStockMinimo</span>(<span class="c-keyword">int</span> minimo)
+    {
+        <span class="c-keyword">var</span> lista = <span class="c-keyword">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt;();
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(_cn))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(
+                <span class="c-string">"SELECT * FROM Productos WHERE Stock >= @Min"</span>, con);
+            cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@Min"</span>, minimo);
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> r = cmd.<span class="c-method">ExecuteReader</span>())
+                <span class="c-keyword">while</span> (r.<span class="c-method">Read</span>())
+                    lista.<span class="c-method">Add</span>(<span class="c-method">Map</span>(r));
+        }
+        <span class="c-keyword">return</span> lista;
+    }
+
+    <span class="c-keyword">private</span> <span class="c-type">Producto</span> <span class="c-method">Map</span>(<span class="c-type">SqlDataReader</span> r) => <span class="c-keyword">new</span> <span class="c-type">Producto</span>
+    {
+        Id     = r.<span class="c-method">GetInt32</span>(<span class="c-value">0</span>),
+        Nombre = r.<span class="c-method">GetString</span>(<span class="c-value">1</span>),
+        Precio = r.<span class="c-method">GetDecimal</span>(<span class="c-value">2</span>),
+        Stock  = r.<span class="c-method">GetInt32</span>(<span class="c-value">3</span>)
+    };
+}
+
+<span class="c-comment">// Uso desde la capa de presentación — sin conocer SQL</span>
+<span class="c-keyword">private readonly</span> <span class="c-type">IProductoRepository</span> _repo = <span class="c-keyword">new</span> <span class="c-type">ProductoRepository</span>();
+
+<span class="c-keyword">private void</span> <span class="c-method">CargarProductos</span>()
+{
+    dgvProductos.DataSource = _repo.<span class="c-method">GetAll</span>().<span class="c-method">ToList</span>();
+}
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — DAO VS REPOSITORY -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+  <h2>DAO <span class="gold">vs. Repository</span></h2>
+
+  <p>Aunque ambos patrones encapsulan el acceso a datos, tienen diferencias conceptuales importantes que determinan cuándo usar cada uno:</p>
+
+  <div class="compare-grid">
+    <div class="compare-header dao">Patrón DAO</div>
+    <div class="compare-header repo">Patrón Repository</div>
+    <div class="compare-row">
+      <div class="compare-cell left">Orientado a la fuente de datos (tabla, vista, SP)</div>
+      <div class="compare-cell right">Orientado al dominio del negocio (colección de objetos)</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell left">Un DAO por tabla de la base de datos</div>
+      <div class="compare-cell right">Un Repository por entidad del dominio</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell left">Métodos reflejan operaciones SQL: Insertar, Actualizar</div>
+      <div class="compare-cell right">Métodos reflejan lenguaje del negocio: Add, GetByCategoria</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell left">Acoplamiento ligero a la base de datos</div>
+      <div class="compare-cell right">Desacoplamiento total mediante interfaces</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell left">Más simple y directo — ideal para aplicaciones pequeñas</div>
+      <div class="compare-cell right">Más expresivo y testeable — ideal para aplicaciones complejas</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-cell left">Facilita el cambio de BD modificando solo el DAO</div>
+      <div class="compare-cell right">Facilita las pruebas unitarias con implementaciones mock</div>
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <div class="concept-label">¿Cuál elegir?</div>
+    <p>Para aplicaciones académicas y pequeñas con Windows Forms y SQL Server, el patrón <strong>DAO</strong> es la elección más pragmática: es más simple de implementar y mantener. El patrón <strong>Repository</strong> brilla en aplicaciones medianas a grandes donde se requiere mayor testabilidad, flexibilidad para cambiar la fuente de datos o trabajo en equipo con múltiples desarrolladores.</p>
+  </div>
+</div>
+
+<div class="pull-quote anim">
+  <p>La arquitectura multicapas no complica el desarrollo — lo ordena. El tiempo que se invierte en separar responsabilidades al inicio se recupera con creces cuando llega el momento de corregir un error o agregar una funcionalidad nueva.</p>
+  <cite>— Martin, R. C., Clean Architecture, 2017</cite>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-conclusion">
+  <h2>🏁 Conclusión</h2>
+  <p>La arquitectura multicapas, sustentada en principios como SRP, DIP y separación de preocupaciones, transforma una aplicación difícil de mantener en un sistema organizado donde cada componente tiene un propósito claro. Los patrones DAO y Repository son las herramientas concretas que implementan esta separación en la capa de acceso a datos con C# y SQL Server.</p>
+  <p>La elección entre DAO y Repository no es dogmática — depende de la complejidad del proyecto, el tamaño del equipo y los requisitos de testabilidad. Lo que sí es invariable es la necesidad de separar la lógica de datos de la lógica de presentación y negocio, independientemente del patrón que se adopte.</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Martin, R. C. (2017). <em>Clean Architecture: A Craftsman's Guide to Software Structure and Design.</em> Prentice Hall.</li>
+    <li>Evans, E. (2003). <em>Domain-Driven Design: Tackling Complexity in the Heart of Software.</em> Addison-Wesley.</li>
+    <li>Microsoft. (2024). <em>N-tier architecture style.</em> Azure Architecture Center. https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/n-tier</li>
+    <li>Fowler, M. (2002). <em>Patterns of Enterprise Application Architecture.</em> Addison-Wesley.</li>
+    <li>Price, M. J. (2023). <em>C# 12 and .NET 8 — Modern Cross-Platform Development.</em> Packt Publishing.</li>
+  </ul>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#ArquitecturaMulticapas</span>
+  <span class="tag">#PatrónDAO</span>
+  <span class="tag">#PatrónRepository</span>
+  <span class="tag">#CSharp</span>
+  <span class="tag">#SQLServer</span>
+  <span class="tag">#HDP-02</span>
+  <span class="tag">#CleanArchitecture</span>
+  <span class="tag">#DiseñoDeSoftware</span>
+</div>

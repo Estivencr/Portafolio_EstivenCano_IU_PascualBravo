@@ -1,0 +1,547 @@
+---
+layout: blog
+title: Desarrollo de Aplicaciones Cliente-Servidor
+title_display: "Desarrollo de Aplicaciones <em>Cliente-Servidor</em>"
+description: Arquitectura, capas de aplicación, comunicación y desarrollo de aplicaciones cliente-servidor con C# y SQL Server
+subject_code: HDP-02
+subject_name: Herramientas de Programación 3
+subject_url: /herramientas-programacion/
+blog_num: "III"
+entry_type: Entrada de portafolio
+read_time: Lectura 8 min
+year: 2026
+exp_display: C/S
+breadcrumb_current: Desarrollo Cliente-Servidor
+nav_back: Herramientas de Programación 3
+nav_back_url: /herramientas-programacion/
+footer_label: "Herramientas de Programación 3 · HDP-02 · Blog No. III"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /herramientas-programacion/
+toc:
+  - id: sec-1
+    label: Concepto y arquitectura
+  - id: sec-2
+    label: Capas de la aplicación
+  - id: sec-3
+    label: Comunicación cliente-servidor
+  - id: sec-4
+    label: Implementación con C# y SQL Server
+  - id: sec-5
+    label: Flujo completo de una petición
+  - id: sec-conclusion
+    label: Conclusión
+sidebar_entries:
+  - num: Blog No. I
+    title: Interfaz Gráfica Moderna en Aplicaciones de Escritorio
+    url: /herramientas-programacion/interfaz-grafica-moderna
+  - num: Blog No. II
+    title: ADO.NET con SQL Server
+    url: /herramientas-programacion/adonet-sql-server
+  - title: Próxima entrada
+sidebar_stat:
+  label: Arquitectura dominante
+  value: "3 capas"
+  description: La arquitectura de tres capas — presentación, negocio y datos — es el estándar de facto en el desarrollo de aplicaciones empresariales cliente-servidor
+  source: "— Microsoft Application Architecture Guide"
+---
+ 
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+ 
+  .code-block {
+    background: var(--navy-lt);
+    border-radius: 3px;
+    padding: 22px 24px;
+    margin: 20px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #f0ece0;
+    overflow-x: auto;
+  }
+  .code-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px; display: block;
+  }
+  .c-keyword { color: #79c0ff; }
+  .c-type    { color: #ffa657; }
+  .c-string  { color: #a5d6ff; }
+  .c-comment { color: rgba(240,236,224,0.35); font-style: italic; }
+  .c-value   { color: #7ee787; }
+  .c-method  { color: #d2a8ff; }
+ 
+  /* ARQUITECTURA DIAGRAM */
+  .arch-diagram {
+    margin: 28px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .arch-tier {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    border-bottom: 0.5px solid var(--rule-lt);
+  }
+  .arch-tier:last-child { border-bottom: none; }
+  .arch-tier-label {
+    padding: 18px 16px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; gap: 4px;
+    border-right: 0.5px solid var(--rule);
+  }
+  .arch-tier-label .tier-icon { font-size: 22px; }
+  .arch-tier-label .tier-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-weight: 700; color: var(--navy);
+  }
+  .arch-tier-label .tier-code {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+  }
+  .arch-tier-body { padding: 16px 20px; }
+  .arch-tier-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .arch-tier-body p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+  .arch-tier-body ul { font-size: 13.5px; color: var(--muted); padding-left: 18px; margin: 8px 0 0; line-height: 1.7; }
+  .tier-presentation { background: var(--white); }
+  .tier-business     { background: var(--parchment2); }
+  .tier-data         { background: var(--parchment); }
+ 
+  /* FLOW STEPS */
+  .flow-steps {
+    display: flex; flex-direction: column; gap: 0;
+    border: 0.5px solid var(--rule); border-radius: 4px; overflow: hidden;
+    margin: 24px 0;
+  }
+  .flow-step {
+    display: flex; align-items: flex-start; gap: 0;
+    border-bottom: 0.5px solid var(--rule-lt);
+    transition: background .15s;
+  }
+  .flow-step:last-child { border-bottom: none; }
+  .flow-step:hover { background: var(--white); }
+  .flow-step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700; font-style: italic;
+    color: var(--gold); min-width: 56px;
+    padding: 16px 0 16px 20px; flex-shrink: 0;
+    line-height: 1;
+  }
+  .flow-step-body { padding: 14px 20px 14px 0; flex: 1; }
+  .flow-step-body .step-actor {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .flow-step-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 4px;
+  }
+  .flow-step-body p { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin: 0; }
+ 
+  /* COMM CARDS */
+  .comm-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 2px solid var(--navy);
+    border-radius: 0 0 3px 3px;
+    padding: 20px 18px; height: 100%;
+  }
+  .comm-card .comm-label {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .comm-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .comm-card p  { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+  .comm-card ul { font-size: 13.5px; color: var(--muted); padding-left: 18px; margin: 8px 0 0; line-height: 1.7; }
+ 
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+</style>
+ 
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">El modelo cliente-servidor es uno de los paradigmas más influyentes en el desarrollo de software moderno. Detrás de prácticamente toda aplicación empresarial — desde un sistema de inventario hasta una plataforma bancaria — existe una arquitectura donde los clientes solicitan servicios y los servidores los proveen, comunicándose a través de redes y protocolos bien definidos.</p>
+</div>
+ 
+<!-- SECCIÓN I — CONCEPTO Y ARQUITECTURA -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Concepto y <span class="gold">arquitectura cliente-servidor</span></h2>
+ 
+  <div class="concept-box">
+    <div class="concept-label">Definición</div>
+    <p>La arquitectura cliente-servidor es un modelo de diseño de software en el que las tareas y la carga de trabajo se distribuyen entre proveedores de recursos o servicios (servidores) y los que los solicitan (clientes). El cliente y el servidor se comunican a través de una red utilizando un protocolo de comunicación común. — <em>Tanenbaum, A. S., Distributed Systems, 2017</em></p>
+  </div>
+ 
+  <p>En este modelo, los roles están claramente definidos. El <strong>cliente</strong> es la aplicación que el usuario final utiliza — puede ser una aplicación de escritorio Windows Forms, una aplicación web o una app móvil. El <strong>servidor</strong> es el sistema que centraliza los datos y la lógica de negocio, típicamente SQL Server en el entorno que trabajamos.</p>
+ 
+  <p>Las ventajas más significativas de este modelo frente a las aplicaciones monolíticas son:</p>
+ 
+  <ul class="blog-section" style="margin-bottom:0;">
+    <li><strong>Centralización de datos:</strong> un único servidor garantiza que todos los clientes trabajan con la misma información actualizada</li>
+    <li><strong>Escalabilidad:</strong> es posible agregar más clientes sin modificar el servidor</li>
+    <li><strong>Mantenimiento simplificado:</strong> las actualizaciones de lógica de negocio se aplican en el servidor y se propagan a todos los clientes automáticamente</li>
+    <li><strong>Seguridad:</strong> el control de acceso se gestiona de manera centralizada en el servidor</li>
+  </ul>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- SECCIÓN II — CAPAS -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Capas de la <span class="gold">aplicación</span></h2>
+ 
+  <p>La arquitectura cliente-servidor moderna se organiza en tres capas bien diferenciadas, cada una con una responsabilidad específica. Esta separación — conocida como arquitectura de tres capas o <em>three-tier architecture</em> — es el estándar en el desarrollo de aplicaciones empresariales con C# y SQL Server.</p>
+ 
+  <div class="arch-diagram">
+    <div class="arch-tier tier-presentation">
+      <div class="arch-tier-label">
+        <div class="tier-icon">🖥️</div>
+        <div class="tier-name">Capa de Presentación</div>
+        <div class="tier-code">Cliente</div>
+      </div>
+      <div class="arch-tier-body">
+        <h4>Interfaz de usuario</h4>
+        <p>Es la capa con la que interactúa directamente el usuario. Se encarga exclusivamente de mostrar la información y capturar las acciones del usuario, sin contener lógica de negocio ni acceso a datos.</p>
+        <ul>
+          <li>Formularios Windows Forms (Form, DataGridView, TextBox, Button)</li>
+          <li>Validación básica de entradas del usuario</li>
+          <li>Llamadas a la capa de negocio para obtener o enviar datos</li>
+          <li>Presentación de resultados y mensajes al usuario</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arch-tier tier-business">
+      <div class="arch-tier-label">
+        <div class="tier-icon">⚙️</div>
+        <div class="tier-name">Capa de Negocio</div>
+        <div class="tier-code">Lógica</div>
+      </div>
+      <div class="arch-tier-body">
+        <h4>Reglas y procesos del negocio</h4>
+        <p>Contiene toda la lógica que define el comportamiento de la aplicación: cálculos, validaciones de negocio, flujos de trabajo y decisiones. Actúa como intermediaria entre la presentación y los datos.</p>
+        <ul>
+          <li>Clases de entidad que representan los objetos del dominio (Producto, Cliente, Factura)</li>
+          <li>Validaciones de negocio (stock mínimo, precios negativos, duplicados)</li>
+          <li>Cálculos y transformaciones de datos antes de persistirlos</li>
+          <li>Coordinación de múltiples operaciones de datos en una sola transacción</li>
+        </ul>
+      </div>
+    </div>
+    <div class="arch-tier tier-data">
+      <div class="arch-tier-label">
+        <div class="tier-icon">🗄️</div>
+        <div class="tier-name">Capa de Datos</div>
+        <div class="tier-code">Servidor</div>
+      </div>
+      <div class="arch-tier-body">
+        <h4>Acceso y persistencia de datos</h4>
+        <p>Gestiona toda la comunicación con SQL Server. Contiene el código ADO.NET para ejecutar consultas y procedimientos almacenados, y es la única capa que conoce los detalles de la base de datos.</p>
+        <ul>
+          <li>Clases DAO (Data Access Object) por entidad: ProductoDAO, ClienteDAO</li>
+          <li>Gestión de conexiones SqlConnection con bloques using</li>
+          <li>Ejecución de comandos SQL y procedimientos almacenados</li>
+          <li>Conversión de resultados SqlDataReader a objetos de la capa de negocio</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- SECCIÓN III — COMUNICACIÓN -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Comunicación <span class="gold">cliente-servidor</span></h2>
+ 
+  <p>En el contexto de aplicaciones de escritorio C# con SQL Server, la comunicación entre el cliente (Windows Forms) y el servidor (SQL Server) ocurre a través del protocolo TDS (Tabular Data Stream), el protocolo propietario de Microsoft para la comunicación con SQL Server, gestionado de forma transparente por ADO.NET.</p>
+ 
+  <div class="row g-3 mt-1 mb-4">
+    <div class="col-md-6">
+      <div class="comm-card">
+        <div class="comm-label">Modo 1</div>
+        <h4>Conexión directa</h4>
+        <p>El cliente establece una conexión directa con SQL Server mediante <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">SqlConnection</code>. Es el modelo más simple y adecuado para aplicaciones de escritorio en red local.</p>
+        <ul>
+          <li>Latencia mínima en red local</li>
+          <li>Ideal para aplicaciones LAN empresariales</li>
+          <li>Gestión de conexiones con Connection Pooling</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="comm-card">
+        <div class="comm-label">Modo 2</div>
+        <h4>Capa intermedia (API)</h4>
+        <p>El cliente se comunica con un servidor de aplicaciones (Web API REST) que a su vez accede a SQL Server. Adecuado para aplicaciones distribuidas o acceso remoto.</p>
+        <ul>
+          <li>Mayor seguridad — SQL Server no expuesto directamente</li>
+          <li>Escalabilidad para múltiples tipos de clientes</li>
+          <li>Comunicación mediante JSON sobre HTTP/HTTPS</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+ 
+  <div class="concept-box">
+    <div class="concept-label">Connection Pooling — ADO.NET</div>
+    <p>ADO.NET gestiona automáticamente un <strong>pool de conexiones</strong>: cuando se cierra una <code style="font-size:13px;">SqlConnection</code>, la conexión física no se destruye sino que regresa al pool para ser reutilizada por la próxima solicitud. Esto mejora significativamente el rendimiento en aplicaciones con muchos usuarios simultáneos.</p>
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- SECCIÓN IV — IMPLEMENTACIÓN -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Implementación con <span class="gold">C# y SQL Server</span></h2>
+ 
+  <p>La estructura de carpetas recomendada para una aplicación cliente-servidor de tres capas en C# Windows Forms es la siguiente:</p>
+ 
+  <div class="code-block">
+    <span class="code-label">Estructura del proyecto</span>
+MiAplicacion/
+├── Models/              <span class="c-comment">← Capa de Negocio: clases entidad</span>
+│   ├── Producto.cs
+│   └── Cliente.cs
+├── Data/                <span class="c-comment">← Capa de Datos: acceso a BD</span>
+│   ├── Conexion.cs
+│   ├── ProductoDAO.cs
+│   └── ClienteDAO.cs
+├── Forms/               <span class="c-comment">← Capa de Presentación: formularios</span>
+│   ├── FrmProductos.cs
+│   └── FrmClientes.cs
+└── App.config           <span class="c-comment">← Cadena de conexión centralizada</span>
+  </div>
+ 
+  <p>A continuación se muestra la implementación completa de cada capa para la entidad <strong>Producto</strong>:</p>
+ 
+  <!-- MODELO -->
+  <div class="code-block">
+    <span class="code-label">C# — Models/Producto.cs · Capa de negocio</span>
+<span class="c-keyword">public class</span> <span class="c-type">Producto</span>
+{
+    <span class="c-keyword">public int</span>     Id     { <span class="c-keyword">get</span>; <span class="c-keyword">set</span>; }
+    <span class="c-keyword">public string</span>  Nombre { <span class="c-keyword">get</span>; <span class="c-keyword">set</span>; }
+    <span class="c-keyword">public decimal</span> Precio { <span class="c-keyword">get</span>; <span class="c-keyword">set</span>; }
+    <span class="c-keyword">public int</span>     Stock  { <span class="c-keyword">get</span>; <span class="c-keyword">set</span>; }
+ 
+    <span class="c-comment">// Regla de negocio: un producto no puede tener precio negativo</span>
+    <span class="c-keyword">public bool</span> <span class="c-method">EsValido</span>()
+    {
+        <span class="c-keyword">return</span> !<span class="c-type">string</span>.<span class="c-method">IsNullOrEmpty</span>(Nombre)
+            &amp;&amp; Precio >= <span class="c-value">0</span>
+            &amp;&amp; Stock  >= <span class="c-value">0</span>;
+    }
+}
+  </div>
+ 
+  <!-- CONEXION -->
+  <div class="code-block">
+    <span class="code-label">C# — Data/Conexion.cs · Cadena de conexión centralizada</span>
+<span class="c-keyword">public static class</span> <span class="c-type">Conexion</span>
+{
+    <span class="c-keyword">public static string</span> CadenaConexion =>
+        <span class="c-type">ConfigurationManager</span>
+            .ConnectionStrings[<span class="c-string">"MiBaseDatos"</span>]
+            .ConnectionString;
+}
+  </div>
+ 
+  <!-- DAO -->
+  <div class="code-block">
+    <span class="code-label">C# — Data/ProductoDAO.cs · Capa de datos</span>
+<span class="c-keyword">public class</span> <span class="c-type">ProductoDAO</span>
+{
+    <span class="c-comment">// READ — Obtener todos los productos</span>
+    <span class="c-keyword">public</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt; <span class="c-method">ObtenerTodos</span>()
+    {
+        <span class="c-keyword">var</span> lista = <span class="c-keyword">new</span> <span class="c-type">List</span>&lt;<span class="c-type">Producto</span>&gt;();
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(<span class="c-type">Conexion</span>.CadenaConexion))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(<span class="c-string">"SELECT Id, Nombre, Precio, Stock FROM Productos"</span>, con);
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> reader = cmd.<span class="c-method">ExecuteReader</span>())
+            {
+                <span class="c-keyword">while</span> (reader.<span class="c-method">Read</span>())
+                {
+                    lista.<span class="c-method">Add</span>(<span class="c-keyword">new</span> <span class="c-type">Producto</span>
+                    {
+                        Id     = reader.<span class="c-method">GetInt32</span>(<span class="c-value">0</span>),
+                        Nombre = reader.<span class="c-method">GetString</span>(<span class="c-value">1</span>),
+                        Precio = reader.<span class="c-method">GetDecimal</span>(<span class="c-value">2</span>),
+                        Stock  = reader.<span class="c-method">GetInt32</span>(<span class="c-value">3</span>)
+                    });
+                }
+            }
+        }
+        <span class="c-keyword">return</span> lista;
+    }
+ 
+    <span class="c-comment">// CREATE — Insertar un producto</span>
+    <span class="c-keyword">public bool</span> <span class="c-method">Insertar</span>(<span class="c-type">Producto</span> p)
+    {
+        <span class="c-keyword">using</span> (<span class="c-keyword">var</span> con = <span class="c-keyword">new</span> <span class="c-type">SqlConnection</span>(<span class="c-type">Conexion</span>.CadenaConexion))
+        {
+            con.<span class="c-method">Open</span>();
+            <span class="c-keyword">var</span> sql = <span class="c-string">"INSERT INTO Productos(Nombre,Precio,Stock) VALUES(@N,@P,@S)"</span>;
+            <span class="c-keyword">using</span> (<span class="c-keyword">var</span> cmd = <span class="c-keyword">new</span> <span class="c-type">SqlCommand</span>(sql, con))
+            {
+                cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@N"</span>, p.Nombre);
+                cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@P"</span>, p.Precio);
+                cmd.Parameters.<span class="c-method">AddWithValue</span>(<span class="c-string">"@S"</span>, p.Stock);
+                <span class="c-keyword">return</span> cmd.<span class="c-method">ExecuteNonQuery</span>() > <span class="c-value">0</span>;
+            }
+        }
+    }
+}
+  </div>
+ 
+  <!-- FORMULARIO -->
+  <div class="code-block">
+    <span class="code-label">C# — Forms/FrmProductos.cs · Capa de presentación</span>
+<span class="c-keyword">public partial class</span> <span class="c-type">FrmProductos</span> : <span class="c-type">Form</span>
+{
+    <span class="c-keyword">private readonly</span> <span class="c-type">ProductoDAO</span> _dao = <span class="c-keyword">new</span> <span class="c-type">ProductoDAO</span>();
+ 
+    <span class="c-keyword">private void</span> <span class="c-method">CargarProductos</span>()
+    {
+        <span class="c-comment">// La presentación solo llama a la capa de datos, no sabe SQL</span>
+        dgvProductos.DataSource = _dao.<span class="c-method">ObtenerTodos</span>();
+    }
+ 
+    <span class="c-keyword">private void</span> btnGuardar_Click(<span class="c-keyword">object</span> sender, <span class="c-type">EventArgs</span> e)
+    {
+        <span class="c-keyword">var</span> producto = <span class="c-keyword">new</span> <span class="c-type">Producto</span>
+        {
+            Nombre = txtNombre.Text,
+            Precio = <span class="c-type">decimal</span>.<span class="c-method">Parse</span>(txtPrecio.Text),
+            Stock  = <span class="c-type">int</span>.<span class="c-method">Parse</span>(txtStock.Text)
+        };
+ 
+        <span class="c-comment">// Validación en la capa de negocio antes de persistir</span>
+        <span class="c-keyword">if</span> (!producto.<span class="c-method">EsValido</span>())
+        {
+            <span class="c-type">MessageBox</span>.<span class="c-method">Show</span>(<span class="c-string">"Datos del producto inválidos."</span>);
+            <span class="c-keyword">return</span>;
+        }
+ 
+        <span class="c-keyword">if</span> (_dao.<span class="c-method">Insertar</span>(producto))
+            <span class="c-method">CargarProductos</span>(); <span class="c-comment">// Refrescar la tabla</span>
+    }
+}
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<!-- SECCIÓN V — FLUJO -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Flujo completo de <span class="gold">una petición</span></h2>
+ 
+  <p>Para entender cómo interactúan las tres capas, el siguiente diagrama muestra el flujo completo de una operación de guardado desde que el usuario presiona el botón hasta que los datos quedan persistidos en SQL Server:</p>
+ 
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-step-num">1</div>
+      <div class="flow-step-body">
+        <div class="step-actor">Capa de Presentación · Cliente</div>
+        <h4>Usuario hace clic en "Guardar"</h4>
+        <p>El evento <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">btnGuardar_Click</code> captura los datos del formulario y crea un objeto <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">Producto</code> con los valores ingresados.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">2</div>
+      <div class="flow-step-body">
+        <div class="step-actor">Capa de Negocio · Validación</div>
+        <h4>Se validan las reglas de negocio</h4>
+        <p>El método <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">EsValido()</code> del modelo verifica que los datos cumplen las reglas antes de intentar persistirlos. Si falla, se muestra un mensaje al usuario y se detiene el flujo.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">3</div>
+      <div class="flow-step-body">
+        <div class="step-actor">Capa de Datos · DAO</div>
+        <h4>El DAO prepara y ejecuta el comando SQL</h4>
+        <p><code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">ProductoDAO.Insertar()</code> abre una <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">SqlConnection</code>, construye el <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">SqlCommand</code> con parámetros y ejecuta el INSERT.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">4</div>
+      <div class="flow-step-body">
+        <div class="step-actor">Servidor · SQL Server</div>
+        <h4>SQL Server procesa y persiste el registro</h4>
+        <p>El motor de base de datos recibe la instrucción, valida las restricciones de la tabla (claves, tipos, nulos) y persiste el registro. Devuelve el número de filas afectadas.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">5</div>
+      <div class="flow-step-body">
+        <div class="step-actor">Capa de Presentación · Respuesta</div>
+        <h4>La interfaz se actualiza con los nuevos datos</h4>
+        <p>El formulario llama a <code style="background:var(--parchment2);padding:1px 5px;border-radius:2px;font-size:12px;">CargarProductos()</code> para refrescar el DataGridView y el usuario ve el nuevo registro en la lista.</p>
+      </div>
+    </div>
+  </div>
+</div>
+ 
+<div class="pull-quote anim">
+  <p>La separación en capas no es una formalidad académica — es la diferencia entre una aplicación que un solo desarrollador puede mantener y una que puede crecer, adaptarse y sobrevivir al paso del tiempo en un entorno empresarial real.</p>
+  <cite>— Microsoft Application Architecture Guide, 2nd Edition</cite>
+</div>
+ 
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-conclusion">
+  <h2>🏁 Conclusión</h2>
+  <p>El desarrollo de aplicaciones cliente-servidor con C# y SQL Server, organizado en tres capas bien diferenciadas, representa el estándar profesional para la construcción de software empresarial. La capa de presentación gestiona la interfaz, la capa de negocio aplica las reglas del dominio y la capa de datos centraliza el acceso a SQL Server mediante ADO.NET.</p>
+  <p>Esta arquitectura no solo produce aplicaciones más mantenibles y escalables — también forma el criterio técnico del desarrollador para tomar decisiones de diseño fundamentadas, separando claramente las responsabilidades de cada componente del sistema.</p>
+</div>
+ 
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Microsoft. (2024). <em>Application Architecture Guide.</em> Microsoft Learn. https://learn.microsoft.com/en-us/azure/architecture/guide/</li>
+    <li>Microsoft. (2024). <em>N-tier architecture style.</em> Azure Architecture Center. https://learn.microsoft.com/en-us/azure/architecture/guide/architecture-styles/n-tier</li>
+    <li>Tanenbaum, A. S. &amp; Van Steen, M. (2017). <em>Distributed Systems: Principles and Paradigms, 3rd Edition.</em> Pearson.</li>
+    <li>Price, M. J. (2023). <em>C# 12 and .NET 8 — Modern Cross-Platform Development.</em> Packt Publishing.</li>
+    <li>Freeman, A. (2022). <em>Pro ASP.NET Core 6.</em> Apress.</li>
+  </ul>
+</div>
+ 
+<div class="tags mt-4">
+  <span class="tag">#ClienteServidor</span>
+  <span class="tag">#ArquitecturaTresCapas</span>
+  <span class="tag">#CSharp</span>
+  <span class="tag">#SQLServer</span>
+  <span class="tag">#ADONet</span>
+  <span class="tag">#HDP-02</span>
+  <span class="tag">#WindowsForms</span>
+  <span class="tag">#DAO</span>
+</div>
