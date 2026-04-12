@@ -327,6 +327,20 @@ body {
   }
 }
 
+//------Codeblock──────────────────────────────────────────────────
+.code-block {
+  background: var(--navy-lt);
+  border-radius: 3px;
+  padding: 22px 24px;
+  margin: 20px 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #f0ece0;
+  overflow-x: auto;
+  white-space: pre;
+}
+
 // ── EMPTY STATE ────────────────────────────────────────────
 .empty-state {
   text-align: center; padding: 48px 32px;
