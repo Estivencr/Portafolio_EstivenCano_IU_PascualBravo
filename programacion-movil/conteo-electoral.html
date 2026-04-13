@@ -1,0 +1,229 @@
+---
+layout: blog
+title: Práctica — Conteo Electoral (VotaApp)
+title_display: "Práctica: <em>VotaApp</em> — Conteo Electoral"
+description: Desarrollo de una aplicación Android en Kotlin con Android Studio para el conteo de votos con verificación de edad, determinación del ganador y opción de nueva votación — Saber 2, Unidad 2
+subject_code: MOB-04
+subject_name: Programación de Dispositivos Móviles
+subject_url: /programacion-movil/
+blog_num: "II"
+entry_type: Práctica · Saber 2 · Unidad 2
+year: 2026
+exp_display: APP
+breadcrumb_current: VotaApp — Conteo Electoral
+nav_back: Programación de Dispositivos Móviles
+nav_back_url: /programacion-movil/
+footer_label: "Programación de Dispositivos Móviles · MOB-04 · Blog No. II"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /programacion-movil/
+toc:
+  - id: sec-1
+    label: Descripción de la app
+  - id: sec-2
+    label: Funcionalidades implementadas
+  - id: sec-3
+    label: Tecnologías utilizadas
+  - id: sec-4
+    label: Capturas de la aplicación
+  - id: sec-5
+    label: Reflexión
+sidebar_entries:
+  - num: Blog No. I
+    title: Android Studio
+    url: /programacion-movil/android-studio
+  - title: Próxima entrada
+sidebar_stat:
+  label: Repositorio
+  value: "GitHub"
+  description: Código fuente disponible en github.com/Estivencr/VotaApp — 100% Kotlin
+  source: "— Estiven Cano, 2026"
+---
+ 
+<style>
+  .concept-box { background:var(--parchment2); border:0.5px solid var(--rule); border-left:3px solid var(--navy); border-radius:0 3px 3px 0; padding:18px 22px; margin:20px 0; }
+  .concept-box .concept-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--navy); margin-bottom:8px; font-weight:600; }
+  .concept-box p { font-size:15.5px; line-height:1.75; color:#2a2420; margin:0; }
+  .tech-stack { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0; }
+  .tech-badge { display:flex; align-items:center; gap:8px; background:var(--white); border:0.5px solid var(--rule); border-radius:3px; padding:8px 14px; }
+  .tech-badge .tb-icon { font-size:18px; }
+  .tech-badge .tb-name { font-family:'Playfair Display',serif; font-size:13px; font-weight:700; color:var(--navy); display:block; line-height:1.2; }
+  .tech-badge .tb-desc { font-size:11px; color:var(--muted); display:block; }
+  .feature-card { background:var(--white); border:0.5px solid var(--rule); border-top:2px solid var(--navy); border-radius:0 0 3px 3px; padding:18px 18px 16px; height:100%; }
+  .feature-card .fc-icon { font-size:22px; margin-bottom:8px; }
+  .feature-card h4 { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+  .feature-card p { font-size:14px; line-height:1.65; color:var(--muted); margin:0; }
+  .repo-card { background:var(--navy-lt); border-radius:4px; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:20px; margin:24px 0; flex-wrap:wrap; }
+  .repo-card .repo-label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:rgba(229,160,13,0.7); margin-bottom:6px; }
+  .repo-card .repo-name { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; color:#f0ece0; }
+  .repo-card .repo-desc { font-size:13px; color:rgba(240,236,224,0.5); margin-top:4px; line-height:1.5; }
+  .repo-card a.repo-btn { display:inline-flex; align-items:center; gap:8px; background:rgba(229,160,13,0.15); border:1px solid rgba(229,160,13,0.4); border-radius:3px; padding:8px 18px; font-size:13px; color:var(--gold); text-decoration:none; white-space:nowrap; transition:background .2s; flex-shrink:0; }
+  .repo-card a.repo-btn:hover { background:rgba(229,160,13,0.28); }
+  .screenshot-section { display:flex; flex-direction:column; gap:36px; margin:28px 0; }
+  .screenshot-item { background:var(--white); border:0.5px solid var(--rule); border-top:3px solid var(--navy); border-radius:0 0 4px 4px; overflow:hidden; }
+  .screenshot-header { padding:14px 20px; border-bottom:0.5px solid var(--rule-lt); display:flex; align-items:center; gap:12px; }
+  .sc-num { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; font-style:italic; color:var(--gold); line-height:1; }
+  .sc-title { font-family:'Playfair Display',serif; font-size:15px; font-weight:700; color:var(--navy); }
+  .sc-desc { font-size:12px; color:var(--muted); margin-top:2px; }
+  .screenshot-img-wrap { padding:16px; background:var(--parchment); display:flex; justify-content:center; align-items:center; min-height:200px; position:relative; overflow:hidden; }
+  .screenshot-img-wrap a { display:block; }
+  .screenshot-img-wrap img { display:block; max-width:100%; width:auto; max-height:520px; height:auto; border-radius:3px; box-shadow:0 4px 20px rgba(15,52,96,0.15); cursor:zoom-in; transition:opacity .2s; }
+  .screenshot-img-wrap img:hover { opacity:.88; }
+  .map-zoom-hint { position:absolute; bottom:24px; right:24px; background:rgba(15,52,96,0.82); color:#f0ece0; font-size:11px; letter-spacing:1px; padding:5px 12px; border-radius:2px; pointer-events:none; display:flex; align-items:center; gap:6px; opacity:0; transition:opacity .25s; }
+  .screenshot-img-wrap:hover .map-zoom-hint { opacity:1; }
+  .screenshot-caption { padding:10px 20px 14px; font-size:12px; color:var(--muted); font-style:italic; text-align:center; border-top:0.5px solid var(--rule-lt); }
+  .feature-list { list-style:none; padding:0; margin:16px 0; display:flex; flex-direction:column; gap:8px; }
+  .feature-list li { display:flex; align-items:flex-start; gap:10px; font-size:15.5px; line-height:1.7; color:#2a2420; }
+  .feature-list li::before { content:'→'; color:var(--gold); font-family:'Playfair Display',serif; font-weight:700; flex-shrink:0; margin-top:1px; }
+  .drop-cap::first-letter { font-family:'Playfair Display',serif; font-size:4.2em; font-weight:900; float:left; line-height:0.78; margin:6px 10px 0 0; color:var(--navy); }
+</style>
+ 
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">VotaApp es una aplicación Android desarrollada en Kotlin como práctica del Saber 2 de la Unidad 2. Permite realizar el conteo de votos entre tres o más candidatos definidos en la lógica de la aplicación, verificando la edad de cada votante, determinando el ganador cuando todos los participantes han votado y ofreciendo la posibilidad de iniciar una nueva votación.</p>
+</div>
+ 
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Descripción de <span class="gold">la aplicación</span></h2>
+  <div class="concept-box">
+    <div class="concept-label">VotaApp — Descripción oficial</div>
+    <p>Aplicación Android para el conteo de votos con 3 candidatos o más, definidos en la lógica de la aplicación. La app verifica la edad del votante, y cuando todos los participantes han votado muestra el ganador y habilita el botón de realizar otra votación.</p>
+  </div>
+  <p>La aplicación aborda un escenario realista de votación controlada donde el número de participantes y los candidatos están predefinidos. Esto permite explorar conceptos clave como la validación de entradas, la gestión del estado de la votación y la lógica de determinación de resultados en Android.</p>
+  <div class="repo-card">
+    <div>
+      <div class="repo-label">Código fuente</div>
+      <div class="repo-name">Estivencr / VotaApp</div>
+      <div class="repo-desc">100% Kotlin &nbsp;·&nbsp; Android Studio &nbsp;·&nbsp; 2026</div>
+    </div>
+    <a href="https://github.com/Estivencr/VotaApp" target="_blank" class="repo-btn">Ver en GitHub →</a>
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Funcionalidades <span class="gold">implementadas</span></h2>
+  <div class="row g-3 mt-1">
+    <div class="col-sm-6"><div class="feature-card"><div class="fc-icon">🗳️</div><h4>Conteo de votos</h4><p>Registra los votos para 3 o más candidatos definidos en la lógica. Cada voto actualiza el conteo en tiempo real en la interfaz.</p></div></div>
+    <div class="col-sm-6"><div class="feature-card"><div class="fc-icon">🎂</div><h4>Verificación de edad</h4><p>Antes de registrar el voto, la app valida que el votante cumpla con la edad mínima requerida para participar.</p></div></div>
+    <div class="col-sm-6"><div class="feature-card"><div class="fc-icon">🏆</div><h4>Determinación del ganador</h4><p>Cuando todos los participantes han votado, la aplicación calcula y muestra automáticamente el candidato ganador.</p></div></div>
+    <div class="col-sm-6"><div class="feature-card"><div class="fc-icon">🔄</div><h4>Nueva votación</h4><p>Una vez mostrado el resultado, se habilita un botón que reinicia el proceso completo para una nueva votación.</p></div></div>
+  </div>
+  <p class="mt-4">El flujo lógico de la aplicación sigue esta secuencia:</p>
+  <ul class="feature-list">
+    <li>El votante ingresa sus datos, incluyendo la edad para verificación</li>
+    <li>La app valida que la edad cumpla el requisito mínimo para votar</li>
+    <li>Si es válido, se muestran los candidatos y se registra el voto seleccionado</li>
+    <li>El contador del candidato elegido se actualiza en pantalla</li>
+    <li>Cuando el último participante vota, se determina y muestra el ganador</li>
+    <li>El botón "Realizar otra votación" reinicia todo el proceso desde cero</li>
+  </ul>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Tecnologías <span class="gold">utilizadas</span></h2>
+  <div class="tech-stack">
+    <div class="tech-badge"><div class="tb-icon">🤖</div><div><span class="tb-name">Android Studio</span><span class="tb-desc">IDE oficial · Google</span></div></div>
+    <div class="tech-badge"><div class="tb-icon">🟣</div><div><span class="tb-name">Kotlin</span><span class="tb-desc">100% · Lenguaje oficial Android</span></div></div>
+    <div class="tech-badge"><div class="tb-icon">📐</div><div><span class="tb-name">XML Layouts</span><span class="tb-desc">Diseño de interfaz</span></div></div>
+    <div class="tech-badge"><div class="tb-icon">📱</div><div><span class="tb-name">Android Emulator</span><span class="tb-desc">Pruebas en AVD</span></div></div>
+    <div class="tech-badge"><div class="tb-icon">⚙️</div><div><span class="tb-name">Gradle (KTS)</span><span class="tb-desc">Gestión de dependencias</span></div></div>
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Capturas de <span class="gold">la aplicación</span></h2>
+  <p>Las siguientes capturas muestran el funcionamiento de VotaApp ejecutada en el emulador de Android Studio, ilustrando las pantallas principales del flujo de votación.</p>
+ 
+  <div class="screenshot-section">
+ 
+    <div class="screenshot-item anim anim-1">
+      <div class="screenshot-header">
+        <div class="sc-num">I</div>
+        <div>
+          <div class="sc-title">Pantalla principal</div>
+          <div class="sc-desc">Vista inicial con los candidatos y el formulario de votación</div>
+        </div>
+      </div>
+      <div class="screenshot-img-wrap">
+        <a href="{{ '/img/conteo-1.png' | relative_url }}" class="glightbox" data-title="VotaApp — Pantalla principal" data-description="Vista inicial · MOB-04 · Saber 2 · 2026">
+          <img src="{{ '/img/conteo-1.png' | relative_url }}" alt="VotaApp — Pantalla principal"/>
+          <div class="map-zoom-hint"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Clic para ampliar</div>
+        </a>
+      </div>
+      <div class="screenshot-caption">Figura 1 — Pantalla principal de VotaApp &nbsp;·&nbsp; Android Studio · Kotlin &nbsp;·&nbsp; 2026</div>
+    </div>
+ 
+    <div class="screenshot-item anim anim-2">
+      <div class="screenshot-header">
+        <div class="sc-num">II</div>
+        <div>
+          <div class="sc-title">Votación en progreso</div>
+          <div class="sc-desc">Conteo actualizado mientras los participantes registran sus votos</div>
+        </div>
+      </div>
+      <div class="screenshot-img-wrap">
+        <a href="{{ '/img/conteo-2.png' | relative_url }}" class="glightbox" data-title="VotaApp — Votación en progreso" data-description="Conteo en tiempo real · MOB-04 · Saber 2 · 2026">
+          <img src="{{ '/img/conteo-2.png' | relative_url }}" alt="VotaApp — Votación en progreso"/>
+          <div class="map-zoom-hint"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Clic para ampliar</div>
+        </a>
+      </div>
+      <div class="screenshot-caption">Figura 2 — Votación en progreso con conteo en tiempo real &nbsp;·&nbsp; Android Studio · Kotlin &nbsp;·&nbsp; 2026</div>
+    </div>
+ 
+    <div class="screenshot-item anim anim-3">
+      <div class="screenshot-header">
+        <div class="sc-num">III</div>
+        <div>
+          <div class="sc-title">Resultado final — Ganador</div>
+          <div class="sc-desc">Pantalla de resultados con el ganador y botón de nueva votación habilitado</div>
+        </div>
+      </div>
+      <div class="screenshot-img-wrap">
+        <a href="{{ '/img/conteo-3.png' | relative_url }}" class="glightbox" data-title="VotaApp — Resultado final" data-description="Ganador y botón de nueva votación · MOB-04 · Saber 2 · 2026">
+          <img src="{{ '/img/conteo-3.png' | relative_url }}" alt="VotaApp — Resultado final con ganador"/>
+          <div class="map-zoom-hint"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>Clic para ampliar</div>
+        </a>
+      </div>
+      <div class="screenshot-caption">Figura 3 — Ganador determinado y botón de nueva votación habilitado &nbsp;·&nbsp; Android Studio · Kotlin &nbsp;·&nbsp; 2026</div>
+    </div>
+ 
+  </div>
+</div>
+ 
+<hr class="rule-double"/>
+ 
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Reflexión sobre <span class="gold">la práctica</span></h2>
+  <p>El desarrollo de VotaApp integró varios conceptos fundamentales del desarrollo Android con Kotlin en un caso de uso coherente. La verificación de edad introdujo la validación de entradas antes de procesar una acción — un patrón que se repite en prácticamente toda aplicación móvil profesional.</p>
+  <p>La lógica de determinar el ganador solo cuando todos los participantes han votado requirió gestionar el <strong>estado de la aplicación</strong>: llevar la cuenta de cuántos votos se han registrado y compararlo con el total de participantes. Esta es la base sobre la cual se construyen patrones más avanzados como ViewModel y LiveData en arquitectura MVVM.</p>
+  <div class="concept-box">
+    <div class="concept-label">Aprendizaje clave</div>
+    <p>El botón de "Realizar otra votación" ilustra el concepto de <strong>reinicio de estado</strong> en Android: resetear variables, limpiar campos y devolver la interfaz a su estado inicial sin recrear la actividad — técnica fundamental para aplicaciones con ciclos repetitivos de interacción.</p>
+  </div>
+</div>
+ 
+<div class="conclusion anim">
+  <h2>🏁 Conclusión</h2>
+  <p>VotaApp demuestra que con los fundamentos de Kotlin — variables, condicionales, eventos de clic y actualización de vistas — es posible construir una aplicación Android con lógica de negocio real: validación de datos, gestión de estado y presentación de resultados. Estos mismos fundamentos, aplicados con mayor sofisticación, son la base de cualquier aplicación Android profesional.</p>
+  <p>El código fuente está disponible en <a href="https://github.com/Estivencr/VotaApp" target="_blank" style="color:var(--navy);font-weight:600;">github.com/Estivencr/VotaApp</a> para referencia y estudio.</p>
+</div>
+ 
+<div class="tags mt-4">
+  <span class="tag">#VotaApp</span>
+  <span class="tag">#AndroidStudio</span>
+  <span class="tag">#Kotlin</span>
+  <span class="tag">#DesarrolloMóvil</span>
+  <span class="tag">#ConteoElectoral</span>
+  <span class="tag">#MOB-04</span>
+  <span class="tag">#Saber2</span>
+  <span class="tag">#Unidad2</span>
+</div>
