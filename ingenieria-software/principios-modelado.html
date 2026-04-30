@@ -1,0 +1,326 @@
+---
+layout: blog
+title: Principios de modelado, herramientas y el modelo 4 + 1
+title_display: "Principios de modelado de Pressman"||
+description: Mapa conceptual e integración de los principales conceptos abordados en las lecturas
+subject_code: ISW-01
+subject_name: Ingeniería de Software 1
+subject_url: /ingenieria-software/
+blog_num: "III"
+entry_type: Mapa conceptual
+read_time: 
+year: 2026
+exp_display: MOD
+breadcrumb_current: Principios de Modelado
+nav_back: Ingeniería de Software 1
+nav_back_url: /ingenieria-software/
+footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. III"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /ingenieria-software/
+sidebar_entries:
+  - num: Blog No. II
+    title: Proceso de elicitación de requisitos y tipos de requerimientos
+    url: /ingenieria-software/blog-requisitos
+  - title: Diagramas UML
+sidebar_stat:
+  label: Técnicas de elicitación
+  value: "6"
+  description: técnicas principales para descubrir necesidades explícitas, implícitas y latentes
+  source: "— Sommerville, 2016"
+---
+
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+
+  .req-type-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 2px solid var(--navy);
+    border-radius: 0 0 3px 3px;
+    padding: 18px 18px 16px; height: 100%;
+  }
+  .req-type-card .req-label {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .req-type-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .req-type-card p  { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+  .req-type-card ul { font-size: 13.5px; color: var(--muted); padding-left: 18px; margin: 8px 0 0; line-height: 1.7; }
+
+  .technique-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px;
+    padding: 18px 20px; height: 100%;
+  }
+  .technique-card .tech-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 900; font-style: italic;
+    color: var(--parchment3); line-height: 1; margin-bottom: 6px;
+  }
+  .technique-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .technique-card p { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  .process-step {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 20px 22px;
+  }
+  .process-step .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px; font-style: italic; font-weight: 700;
+    color: var(--gold); letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .process-step h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .process-step p { font-size: 14px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  .process-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--rule); font-size: 22px; padding: 2px 0;
+  }
+
+  .map-container {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-top: 3px solid var(--gold);
+    border-radius: 0 0 4px 4px;
+    padding: 12px; margin: 8px 0 24px;
+    overflow: hidden; position: relative;
+  }
+  .page-article .map-container img {
+    display: block;
+    width: 100%; max-width: 100%; height: auto;
+    border-radius: 2px; object-fit: contain;
+    cursor: zoom-in; transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute; bottom: 20px; right: 20px;
+    background: rgba(15,52,96,0.82); color: #f0ece0;
+    font-size: 11px; letter-spacing: 1px;
+    padding: 5px 12px; border-radius: 2px;
+    pointer-events: none;
+    display: flex; align-items: center; gap: 6px;
+    opacity: 0; transition: opacity .25s;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    text-align: center; font-size: 12px; color: var(--muted);
+    margin-top: 10px; font-style: italic; letter-spacing: 0.3px;
+  }
+
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+</style>
+
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">El modelado de software es uno de los pilares fundamentales de la ingeniería de software moderna. A través de técnicas formales y principios bien establecidos, los arquitectos e ingenieros pueden capturar la complejidad de los sistemas de software, comunicar diseños de manera clara y establecer bases sólidas para la implementación.</p>
+</div>
+
+<!-- SECCIÓN I — MAPA CONCEPTUAL -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Mapa conceptual: <span class="gold">visión integrada</span></h2>
+  <p>El siguiente mapa conceptual sintetiza los diferentes principios de modelado de Pressman y las herramientas de modelado, así como el modelo 4 + 1.</p>
+
+  <!-- ✦ Reemplaza "tu-mapa-conceptual.png" con el nombre real de tu archivo -->
+  <div class="map-container">
+    <a href="{{ '/img/principiosModelado.png' | relative_url }}"
+       class="glightbox"
+       data-title="Principios de modelado de Pressman y herrammientas de modelado"
+       data-description="Mapa conceptual elaborado por el autor · Ingeniería de Software 1, ISW-01 · 2025">
+      <img
+        src="{{ '/img/principiosModelado.png' | relative_url }}"
+        alt="Mapa conceptual — Principios de modelado de Pressman y herramientas de modelado                                                                                                                                                                                                                                                                                                                                                    "
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Mapa conceptual elaborado por EstivenCr &nbsp;·&nbsp; Ingeniería de Software 1, ISW-01 &nbsp;·&nbsp; 2026
+    </div>
+  </div>
+
+  <div class="concept-box">
+    <div class="concept-label">Nota sobre el mapa</div>
+    <p>El mapa conceptual integra los principios de modelado de Pressman y las herramientas de modelado, así como el modelo 4 + 1.</p>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — QUÉ ES ELICITACIÓN -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Principios de Modelado de <span class="gold">Pressman</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Definición</div>
+    <p>Los principios de modelado de Pressman son directrices fundamentales que guían el proceso de creación y uso de modelos en la ingeniería de software, asegurando que los modelos sean útiles, comprensibles y consistentes.</p>
+  </div>
+
+  <p>Estos principios ayudan a los ingenieros a diseñar modelos que capturen la esencia del sistema sin perder detalles importantes, facilitando la comunicación entre los diferentes actores del proceso de desarrollo.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — TIPOS DE REQUERIMIENTOS -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 01</div>
+        <h4>Principios Generales</h4>
+        <p>Los principios generales establecen las bases filosóficas del modelado:</p>
+ 
+        <ul>
+        <li><strong>Modelar lo importante</strong>: No todo requiere un modelo formal. Enfócate en los aspectos críticos del sistema que impacten directamente en su éxito.</li>
+        
+        <li><strong>Modelos simples y necesarios</strong>: La simplicidad es clave. Los modelos deben ser lo suficientemente complejos para capturar la esencia del problema, pero no excesivamente complicados.</li>
+        
+        <li><strong>Crear modelos que evolucionen</strong>: El software no es estático. Los modelos deben ser diseñados con la intención de que evolucionen con el tiempo, permitiendo cambios y mejoras iterativas.</li>
+        
+        <li><strong>Modelos útiles con propósito</strong>: Cada modelo debe servir un propósito específico. Un modelo sin propósito es un ejercicio académico sin valor práctico.</li>
+        
+        <li><strong>Confiar en tu instinto</strong>: La intuición y la experiencia son valiosas. Si algo no se siente correcto en el modelo, probablemente hay un problema subyacente.</li>
+        
+        <li><strong>No ser dogmático</strong>: La flexibilidad es esencial. No existe un conjunto rígido de reglas que funcione para todos los proyectos.</li>
+        
+        <li><strong>Recibir retroalimentación</strong>: Los modelos son herramientas de comunicación. La retroalimentación de los stakeholders y del equipo es crucial para validar y mejorar los modelos.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="req-type-card">
+        <div class="req-label">Tipo 02</div>
+        <h4>Principios de Modelado Específicos</h4>
+        <p>Estos principios se centran en aspectos técnicos del modelado:</p>
+
+        <ul>
+        <li><strong>Modelar con el nivel de detalle adecuado</strong>: El nivel de detalle debe ser suficiente para comunicar la información necesaria sin abrumar a los stakeholders.</li>
+        
+        <li><strong>Modelar con la audiencia en mente</strong>: Los modelos deben ser diseñados considerando quién los va a usar y qué información necesitan.</li>
+        
+        <li><strong>Modelar para la comunicación, no para la perfección</strong>: El objetivo principal del modelado es facilitar la comunicación, no crear un modelo perfecto o completo.</li>
+        
+        <li><strong>Modelar con consistencia</strong>: La consistencia entre diferentes modelos es crucial para evitar confusiones y malentendidos.</li>
+        
+        <li><strong>Modelar con herramientas adecuadas</strong>: La elección de las herramientas de modelado debe basarse en su capacidad para satisfacer las necesidades del proyecto y del equipo.</li>
+        
+        <li><strong>Modelar con iteración</strong>: El modelado es un proceso iterativo. Los modelos deben ser revisados y refinados a medida que se obtiene nueva información y se avanza en el proyecto.</li>
+        
+        <li><strong>Modelar con documentación clara</strong>: La documentación que acompaña a los modelos debe ser clara y concisa para facilitar su comprensión y uso.</li>
+        </ul>
+      </div>
+    </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — PROCESO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+    <h2>Herramientas de <span class="gold">modelado</span></h2>
+    <p>Las herramientas de modelado son esenciales para aplicar los principios de modelado de Pressman de manera efectiva. Estas herramientas permiten a los ingenieros crear representaciones visuales de sistemas complejos, facilitando la comunicación y la comprensión entre los diferentes stakeholders.</p>
+    <p>Algunas de las herramientas de modelado más comunes incluyen:</p>
+    <ul>
+      <li><strong>Diagramas de clases</strong>: Utilizados para representar la estructura estática de un sistema, mostrando las clases, sus atributos, métodos y las relaciones entre ellas.</li>
+      
+      <li><strong>Diagramas de secuencia</strong>: Representan la interacción entre objetos a lo largo del tiempo, mostrando cómo los objetos se comunican para llevar a cabo una función específica.</li>
+      
+      <li><strong>Diagramas de casos de uso</strong>: Describen las funcionalidades del sistema desde la perspectiva del usuario, mostrando los actores y sus interacciones con el sistema.</li>
+      
+      <li><strong>Diagramas de actividad</strong>: Representan los flujos de trabajo y los procesos dentro del sistema, mostrando las actividades y las decisiones que se toman.</li>
+      
+      <li><strong>Diagramas de estado</strong>: Muestran los diferentes estados por los que puede pasar un objeto a lo largo de su vida, así como las transiciones entre esos estados.</li>
+        <li><strong>Diagramas de componentes</strong>: Representan la organización y las dependencias entre los componentes de software, mostrando cómo se ensamblan para formar el sistema completo.</li>
+    </ul>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — TÉCNICAS -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+    <h2>Modelo <span class="gold">4 + 1</span></h2>
+    <p>El modelo 4 + 1 es un enfoque de modelado que organiza los modelos de software en cinco vistas distintas, cada una enfocada en un aspecto específico del sistema:</p>
+    <ul>
+      <li><strong>Vista lógica</strong>: Se centra en la funcionalidad del sistema, mostrando cómo se organizan las clases y los objetos para cumplir con los requisitos funcionales.</li>
+      
+      <li><strong>Vista de desarrollo</strong>: Describe la organización del software desde la perspectiva del desarrollador, mostrando los módulos, paquetes y componentes que conforman el sistema.</li>
+      
+      <li><strong>Vista de proceso</strong>: Se enfoca en la dinámica del sistema, mostrando cómo los procesos y subprocesos interactúan para llevar a cabo las funciones del sistema.</li>
+      
+      <li><strong>Vista física</strong>: Representa la arquitectura física del sistema, mostrando cómo se distribuyen los componentes de software en el hardware.</li>
+      
+      <li><strong>Vista de casos de uso</strong>: Proporciona una perspectiva centrada en el usuario, mostrando cómo los usuarios interactúan con el sistema para lograr sus objetivos.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="pull-quote anim">
+    <p>"El modelado de software es una herramienta poderosa para gestionar la complejidad y facilitar la comunicación en el desarrollo de software. Al seguir los principios de modelado de Pressman y utilizar herramientas adecuadas, los ingenieros pueden crear modelos que no solo representen el sistema de manera efectiva, sino que también evolucionen con él a lo largo del tiempo."</p>
+
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-6">
+  <h2>🏁 Conclusión</h2>
+  <p>El modelado de software es una práctica fundamental en el desarrollo de sistemas complejos. Proporciona una base sólida para la comunicación, la planificación y la implementación del software, permitiendo gestionar la complejidad y mejorar la calidad del producto final.</p>
+  
+</div>
+
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Pressman, R. S. (2010). <em>Software Engineering: A Practitioner's Approach</em>.</li>
+    <li>Kruchten, P. (1995). <em>The 4+1 View Model of Software Architecture</em>.</li>
+    <li>Booch, G., Rumbaugh, J., & Jacobson, I. (2006). <em>The Unified Modeling Language User Guide</em>.</li>
+    <li>UML 2.0 Specification (Object Management Group)</li>
+  </ul>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#ElicitaciónDeRequisitos</span>
+  <span class="tag">#TiposDeRequerimientos</span>
+  <span class="tag">#IngenieríaDeSoftware</span>
+  <span class="tag">#MapaConceptual</span>
+  <span class="tag">#RequisitosNoFuncionales</span>
+  <span class="tag">#CasosDeUso</span>
+  <span class="tag">#SWEBOK</span>
+</div>
