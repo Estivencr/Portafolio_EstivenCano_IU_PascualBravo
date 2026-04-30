@@ -1,0 +1,907 @@
+---
+layout: blog
+title: "Diagramas para la documentación de las vistas propuestas en el modelo 4+1"
+title_display: "Diagramas para la documentación de las <em>vistas propuestas en el modelo 4+1</em>"
+description: Texto expositivo sobre los diagramas UML que documentan cada vista del modelo arquitectónico 4+1 — clases, casos de uso, actividades, paquetes y despliegue.
+subject_code: ISW-01
+subject_name: Ingeniería de Software 1
+subject_url: /ingenieria-software/
+blog_num: "V"
+entry_type: Texto expositivo
+read_time: Lectura 13 min
+year: 2026
+exp_display: VIS
+breadcrumb_current: Diagramas 4+1
+nav_back: Ingeniería de Software 1
+nav_back_url: /ingenieria-software/
+footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. V"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /ingenieria-software/
+sidebar_entries:
+  - num: Blog No. I
+    title: Identificación de Requisitos de Software
+    url: /ingenieria-software/blog-requisitos
+  - num: Blog No. II
+    title: Proceso de elicitación de requisitos y tipos de requerimientos
+    url: /ingenieria-software/elicitacion-requisitos-software
+  - num: Blog No. III
+    title: Principios de modelado, herramientas y vistas 4+1
+    url: /ingenieria-software/principios-modelado
+  - num: Blog No. IV
+    title: Notaciones básicas y principales diagramas UML
+    url: /ingenieria-software/diagramasUML
+  - num: Blog No. V
+    title: Diagramas para la documentación de las vistas del modelo 4+1
+    url: /ingenieria-software/diagramas-vistas-4mas1
+sidebar_stat:
+  label: Diagramas analizados
+  value: "5"
+  description: diagramas UML estudiados como instrumentos de documentación para las vistas del modelo 4+1
+  source: "— Kruchten, 1995 · Booch et al., 2006"
+---
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+
+  /* Encabezado de vista — banda de color */
+  .vista-header {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; border-radius: 3px;
+    margin-bottom: 20px;
+  }
+  .vista-header.vh-logica      { background: #e8eef6; border-left: 4px solid #0f3460; }
+  .vista-header.vh-escenarios  { background: #fdf5e0; border-left: 4px solid #e5a00d; }
+  .vista-header.vh-proceso     { background: #f5ece5; border-left: 4px solid #8b4513; }
+  .vista-header.vh-desarrollo  { background: #e8f4ec; border-left: 4px solid #1a6b3c; }
+  .vista-header.vh-fisica      { background: #f0e8f5; border-left: 4px solid #5c1a8b; }
+
+  .vista-header .vh-icon {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-weight: 900; font-style: italic;
+    line-height: 1; flex-shrink: 0; opacity: 0.35;
+  }
+  .vista-header.vh-logica     .vh-icon { color: #0f3460; }
+  .vista-header.vh-escenarios .vh-icon { color: #9a6d00; }
+  .vista-header.vh-proceso    .vh-icon { color: #8b4513; }
+  .vista-header.vh-desarrollo .vh-icon { color: #1a6b3c; }
+  .vista-header.vh-fisica     .vh-icon { color: #5c1a8b; }
+
+  .vista-header .vh-text {}
+  .vista-header .vh-vista {
+    font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 3px;
+  }
+  .vista-header.vh-logica     .vh-vista { color: #0f3460; }
+  .vista-header.vh-escenarios .vh-vista { color: #9a6d00; }
+  .vista-header.vh-proceso    .vh-vista { color: #8b4513; }
+  .vista-header.vh-desarrollo .vh-vista { color: #1a6b3c; }
+  .vista-header.vh-fisica     .vh-vista { color: #5c1a8b; }
+
+  .vista-header .vh-diagrama {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px; font-weight: 700; color: var(--navy); line-height: 1.2;
+  }
+  .vista-header .vh-pregunta {
+    font-size: 12px; color: var(--muted); margin-top: 3px; font-style: italic;
+  }
+
+  /* Cuerpo expositivo */
+  .expositivo p {
+    font-size: 15px; line-height: 1.85; color: var(--ink);
+    margin-bottom: 16px; text-align: justify;
+  }
+  .expositivo p:last-child { margin-bottom: 0; }
+
+  /* Elementos-clave recuadro */
+  .elementos-clave {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 18px 20px;
+    margin: 20px 0;
+  }
+  .elementos-clave .ek-titulo {
+    font-size: 9px; letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 700; color: var(--gold); margin-bottom: 12px;
+  }
+  .elementos-clave .ek-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .elementos-clave .ek-item {
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .elementos-clave .ek-sym {
+    width: 28px; height: 28px; flex-shrink: 0;
+    border-radius: 2px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Courier New', monospace; font-size: 13px; font-weight: 700;
+    background: var(--parchment2); color: var(--navy); margin-top: 1px;
+  }
+  .elementos-clave .ek-info h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 13.5px; font-weight: 700; color: var(--navy); margin: 0 0 2px;
+  }
+  .elementos-clave .ek-info p {
+    font-size: 12px; color: var(--muted); margin: 0; line-height: 1.55;
+  }
+
+  /* Diagrama simulado — ejemplo visual */
+  .diag-sim {
+    background: var(--white); border: 0.5px solid var(--rule);
+    border-top: 3px solid var(--gold); border-radius: 0 0 3px 3px;
+    padding: 20px; margin: 20px 0; overflow-x: auto;
+  }
+  .diag-sim .ds-label {
+    font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted2); margin-bottom: 14px; font-weight: 600;
+  }
+  /* clases */
+  .ds-class {
+    display: inline-block; border: 1.5px solid var(--navy);
+    border-radius: 2px; min-width: 140px; font-size: 12px;
+    font-family: 'Courier New', monospace; vertical-align: top;
+    background: var(--white);
+  }
+  .ds-class .dc-name {
+    background: var(--navy); color: #f0ece0;
+    padding: 6px 12px; text-align: center; font-weight: 700; font-size: 12.5px;
+  }
+  .ds-class .dc-sec {
+    border-top: 1px solid var(--rule); padding: 5px 12px;
+    color: var(--ink); line-height: 1.75; font-size: 11.5px;
+  }
+  .ds-class .dc-sec .priv { color: #8b0000; }
+  .ds-class .dc-sec .pub  { color: #1a6b3c; }
+  .ds-class .dc-sec .prot { color: #8b4513; }
+  /* nodos UC */
+  .ds-uc-wrap {
+    display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+  }
+  .ds-actor {
+    display: flex; flex-direction: column; align-items: center;
+    font-size: 12px; color: var(--ink); gap: 4px;
+  }
+  .ds-actor .ac-figure {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 1.5px solid var(--navy); background: var(--white);
+  }
+  .ds-actor .ac-body {
+    width: 2px; height: 14px; background: var(--navy); margin: 0 auto;
+  }
+  .ds-actor .ac-arms {
+    width: 22px; height: 1.5px; background: var(--navy); margin: -8px auto 0;
+  }
+  .ds-actor .ac-legs {
+    width: 18px; display: flex; justify-content: space-between; margin: 0 auto;
+  }
+  .ds-actor .ac-legs span {
+    width: 1.5px; height: 12px; background: var(--navy);
+    transform-origin: top; display: block;
+  }
+  .ds-actor .ac-legs span:first-child { transform: rotate(-15deg); }
+  .ds-actor .ac-legs span:last-child  { transform: rotate(15deg); }
+  .ds-uc-box {
+    border: 1.5px solid var(--navy); border-radius: 50%;
+    padding: 8px 16px; font-size: 12px; color: var(--ink);
+    text-align: center; background: var(--parchment2); min-width: 110px;
+  }
+  .ds-sys-border {
+    border: 1.5px dashed var(--rule); border-radius: 3px;
+    padding: 14px 18px; display: inline-flex; flex-wrap: wrap; gap: 10px;
+  }
+  /* actividad */
+  .ds-act-node {
+    background: var(--parchment2); border: 1.5px solid var(--navy);
+    border-radius: 16px; padding: 7px 16px;
+    font-size: 12px; color: var(--ink); text-align: center; white-space: nowrap;
+  }
+  .ds-act-arrow {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--navy); font-size: 18px; padding: 2px 0;
+  }
+  .ds-diamond {
+    width: 36px; height: 36px; border: 1.5px solid var(--navy);
+    transform: rotate(45deg); background: var(--white);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin: 4px;
+  }
+  /* paquetes */
+  .ds-pkg {
+    border: 1.5px solid var(--navy); border-radius: 2px;
+    display: inline-block; min-width: 140px; font-family: 'Courier New', monospace;
+    background: var(--white); vertical-align: top;
+  }
+  .ds-pkg .dp-tab {
+    background: var(--navy); color: #f0ece0;
+    font-size: 11px; font-weight: 700; padding: 3px 10px;
+    display: inline-block; border-radius: 2px 2px 0 0;
+    margin-bottom: -1px; position: relative; z-index: 1;
+  }
+  .ds-pkg .dp-body {
+    border-top: 1.5px solid var(--navy);
+    padding: 8px 12px; font-size: 11.5px; color: var(--muted); line-height: 1.75;
+  }
+  /* despliegue */
+  .ds-nodo {
+    border: 1.5px solid var(--navy); border-radius: 2px;
+    background: var(--parchment2); display: inline-block;
+    min-width: 130px; vertical-align: top;
+  }
+  .ds-nodo .dn-name {
+    background: var(--navy); color: #f0ece0;
+    font-size: 10.5px; font-family: 'Courier New', monospace;
+    padding: 5px 10px; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .ds-nodo .dn-name .dn-stereo {
+    display: block; font-size: 9px; font-weight: 400;
+    font-style: italic; opacity: 0.75;
+  }
+  .ds-nodo .dn-artifact {
+    margin: 6px 8px; background: var(--white);
+    border: 0.5px solid var(--rule); border-radius: 2px;
+    padding: 4px 10px; font-size: 11px; font-family: 'Courier New', monospace;
+    color: var(--ink);
+  }
+
+  /* Tabla de correspondencia */
+  .corr-table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 16px;
+  }
+  .corr-table thead th {
+    background: var(--navy); color: #f0ece0;
+    padding: 11px 14px; text-align: left;
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px;
+  }
+  .corr-table tbody tr { border-bottom: 0.5px solid var(--rule-lt); }
+  .corr-table tbody tr:last-child { border-bottom: none; }
+  .corr-table tbody td { padding: 11px 14px; vertical-align: middle; }
+  .corr-table tbody td:first-child { font-weight: 700; color: var(--navy); font-family: 'Playfair Display', serif; }
+  .corr-table tbody tr:nth-child(even) { background: var(--parchment2); }
+  .corr-table .vista-chip {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 2px;
+  }
+  .corr-table .vc-logica     { background: #e8eef6; color: #0f3460; }
+  .corr-table .vc-escenarios { background: #fdf5e0; color: #9a6d00; }
+  .corr-table .vc-proceso    { background: #f5ece5; color: #8b4513; }
+  .corr-table .vc-desarrollo { background: #e8f4ec; color: #1a6b3c; }
+  .corr-table .vc-fisica     { background: #f0e8f5; color: #5c1a8b; }
+  .corr-table .cd-preg       { font-size: 12.5px; color: var(--muted); font-style: italic; }
+</style>
+
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">La arquitectura de un sistema de software no puede capturarse en un único diagrama. Para comunicarla de manera completa y sin ambigüedades, el modelo 4+1 propone distribuir esa descripción en cinco vistas complementarias, cada una orientada a un conjunto diferente de preocupaciones y audiencias. Los diagramas UML son los instrumentos con los que se dibuja cada una de esas vistas: el diagrama de clases articula la vista lógica, el de casos de uso sostiene la vista de escenarios, el de actividades ilumina la vista de proceso, el de paquetes estructura la vista de desarrollo y el de despliegue materializa la vista física.</p>
+</div>
+
+<!-- SECCIÓN I — RECAPITULACIÓN DEL MODELO 4+1 -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>El modelo 4+1 como <span class="gold">marco de documentación</span></h2>
+
+  <div class="expositivo">
+    <p>Propuesto por Philippe Kruchten en 1995, el modelo 4+1 parte de una premisa sencilla pero poderosa: la arquitectura de software es demasiado multidimensional para describirse desde un solo punto de vista. Cada grupo de interesados en el sistema — diseñadores, programadores, integradores, operadores, clientes — tiene preguntas distintas sobre él, y ningún diagrama puede responderlas todas a la vez con el nivel de detalle adecuado para cada audiencia.</p>
+    <p>La solución que propone Kruchten es organizar la documentación arquitectónica en cinco vistas concurrentes. Cuatro de ellas abordan preocupaciones técnicas específicas: la <strong>vista lógica</strong> describe la funcionalidad del sistema en términos de clases y objetos; la <strong>vista de desarrollo</strong> describe su organización en módulos y paquetes; la <strong>vista de proceso</strong> describe su comportamiento dinámico en tiempo de ejecución; y la <strong>vista física</strong> describe cómo se distribuye el software en la infraestructura de hardware. La quinta vista — el <strong>"+1"</strong>, la vista de escenarios — no añade información nueva sino que valida y articula las cuatro anteriores mediante los casos de uso más relevantes del sistema.</p>
+    <p>Lo que convierte a UML en la herramienta privilegiada para documentar este modelo es que sus distintos tipos de diagramas se alinean naturalmente con cada vista. No es necesario inventar nuevas notaciones: cada vista tiene ya su diagrama correspondiente en el estándar UML, y usarlos coherentemente produce una arquitectura documentada de manera rigurosa, legible e internacionalmente comprensible.</p>
+  </div>
+
+  <div class="concept-box">
+    <div class="concept-label">Principio guía</div>
+    <p>Un diagrama UML no es un fin en sí mismo: es un instrumento de comunicación arquitectónica. Su valor depende de que documente una vista específica con el nivel de abstracción apropiado para la audiencia que la va a leer. — <em>Booch, Rumbaugh &amp; Jacobson, 2006</em></p>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — DIAGRAMA DE CLASES / VISTA LÓGICA -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+
+  <div class="vista-header vh-logica">
+    <div class="vh-icon">I</div>
+    <div class="vh-text">
+      <div class="vh-vista">Vista Lógica</div>
+      <div class="vh-diagrama">Diagrama de Clases</div>
+      <div class="vh-pregunta">¿Cuáles son las abstracciones clave del sistema y cómo se relacionan?</div>
+    </div>
+  </div>
+
+  <div class="expositivo">
+    <p>La vista lógica describe la arquitectura del sistema desde el punto de vista de la funcionalidad: qué abstracciones existen, qué responsabilidades tienen y cómo interactúan para satisfacer los requisitos funcionales. El diagrama UML que la documenta por excelencia es el <strong>diagrama de clases</strong>.</p>
+    <p>Un diagrama de clases representa el vocabulario del sistema mediante clases — plantillas que agrupan atributos y operaciones —, y muestra cómo esas clases se relacionan entre sí a través de asociaciones, herencia, composición y dependencia. En la fase de análisis, las clases representan conceptos del dominio del negocio: <em>Cliente</em>, <em>Pedido</em>, <em>Producto</em>. En la fase de diseño, representan las estructuras que el programador va a implementar, con toda la precisión de tipos, visibilidades y multiplicidades que el lenguaje de programación va a requerir.</p>
+    <p>Lo que hace al diagrama de clases el instrumento natural de la vista lógica es que expresa la <em>estructura estática del conocimiento</em> del sistema. Cuando un arquitecto organiza el sistema en subsistemas orientados a objetos — capas de negocio, capa de acceso a datos, capa de presentación — y define las clases principales de cada subsistema junto con sus contratos de interfaz, está construyendo la vista lógica. Esa vista responde la pregunta que más interesa a los diseñadores: ¿el modelo de dominio que hemos definido puede efectivamente implementar las funcionalidades requeridas?</p>
+    <p>Es importante distinguir dos usos del diagrama de clases en este contexto. El <strong>modelo de dominio</strong> es un diagrama de clases de análisis: muestra las entidades del negocio y sus relaciones sin preocuparse por detalles de implementación como getters, setters o nombres de métodos técnicos. El <strong>diagrama de diseño</strong> es la evolución del anterior: incorpora patrones de diseño, interfaces explícitas, tipos de datos concretos y todas las decisiones que guiarán la implementación. Ambos documentan la vista lógica, pero con propósitos y audiencias distintos.</p>
+  </div>
+
+  <!-- Ejemplo visual -->
+  <div class="diag-sim">
+    <div class="ds-label">Ejemplo esquemático — Diagrama de clases</div>
+    <div style="display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap;">
+      <div class="ds-class">
+        <div class="dc-name">Cliente</div>
+        <div class="dc-sec">
+          <span class="priv">- id: Integer</span><br>
+          <span class="priv">- nombre: String</span><br>
+          <span class="priv">- email: String</span>
+        </div>
+        <div class="dc-sec">
+          <span class="pub">+ realizarPedido()</span><br>
+          <span class="pub">+ getPedidos()</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--navy);font-size:20px;padding-top:30px;">
+        <span title="asociación dirigida">1 ——→ *</span>
+      </div>
+      <div class="ds-class">
+        <div class="dc-name">Pedido</div>
+        <div class="dc-sec">
+          <span class="priv">- numero: Integer</span><br>
+          <span class="priv">- fecha: Date</span><br>
+          <span class="prot"># estado: String</span>
+        </div>
+        <div class="dc-sec">
+          <span class="pub">+ confirmar()</span><br>
+          <span class="pub">+ calcularTotal()</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;color:var(--navy);font-size:20px;padding-top:30px;">
+        <span title="composición">1 ◆——→ *</span>
+      </div>
+      <div class="ds-class">
+        <div class="dc-name">LineaDetalle</div>
+        <div class="dc-sec">
+          <span class="priv">- cantidad: Integer</span><br>
+          <span class="priv">- precioUnit: Double</span>
+        </div>
+        <div class="dc-sec">
+          <span class="pub">+ getSubtotal()</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="elementos-clave">
+    <div class="ek-titulo">Elementos principales del diagrama de clases</div>
+    <div class="ek-grid">
+      <div class="ek-item">
+        <div class="ek-sym">C</div>
+        <div class="ek-info">
+          <h5>Clase</h5>
+          <p>Rectángulo de 3 compartimentos: nombre, atributos y operaciones.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">I</div>
+        <div class="ek-info">
+          <h5>Interfaz</h5>
+          <p>Clase con estereotipo «interface». Solo declara operaciones, sin implementación.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">▷</div>
+        <div class="ek-info">
+          <h5>Herencia</h5>
+          <p>Flecha con triángulo hueco. La subclase especializa a la superclase.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">◆</div>
+        <div class="ek-info">
+          <h5>Composición</h5>
+          <p>Rombo relleno. La parte no existe sin el todo. Ciclo de vida compartido.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">◇</div>
+        <div class="ek-info">
+          <h5>Agregación</h5>
+          <p>Rombo vacío. La parte puede existir independientemente del todo.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">1.*</div>
+        <div class="ek-info">
+          <h5>Multiplicidad</h5>
+          <p>Cuántas instancias participan en cada extremo de la relación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — DIAGRAMA DE CASOS DE USO / VISTA DE ESCENARIOS -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+
+  <div class="vista-header vh-escenarios">
+    <div class="vh-icon">+1</div>
+    <div class="vh-text">
+      <div class="vh-vista">Vista de Escenarios (+1)</div>
+      <div class="vh-diagrama">Diagrama de Casos de Uso</div>
+      <div class="vh-pregunta">¿Qué puede hacer el sistema y quién lo utiliza?</div>
+    </div>
+  </div>
+
+  <div class="expositivo">
+    <p>En el modelo 4+1, la vista de escenarios ocupa un lugar especial: no es una vista más en el mismo nivel que las otras cuatro, sino el elemento articulador que las valida a todas. Los escenarios son instancias concretas de uso del sistema — secuencias de acciones con un objetivo específico — que sirven para verificar que las decisiones tomadas en las demás vistas permiten efectivamente que el sistema funcione como se espera. El diagrama UML que materializa esta vista es el <strong>diagrama de casos de uso</strong>.</p>
+    <p>Un diagrama de casos de uso describe el sistema desde la perspectiva externa del usuario: muestra quiénes interactúan con él — los <strong>actores</strong> — y qué pueden hacer — los <strong>casos de uso</strong>. Los actores no son necesariamente personas; pueden ser sistemas externos, dispositivos o cronómetros que desencadenan comportamientos. Cada caso de uso es una funcionalidad observable desde el exterior que entrega algún valor al actor que la utiliza.</p>
+    <p>Su fortaleza como instrumento de documentación reside precisamente en su accesibilidad. Mientras que los diagramas de clases o de componentes exigen formación técnica para ser interpretados, el diagrama de casos de uso puede ser leído y validado por clientes, usuarios finales, analistas de negocio y cualquier otro stakeholder sin experiencia en ingeniería de software. Este es el motivo por el que Kruchten lo posiciona como la vista "+1": es el puente entre el vocabulario del negocio y el vocabulario de la arquitectura.</p>
+    <p>El rol arquitectónico del diagrama de casos de uso no se limita a documentar requisitos funcionales. En el contexto del modelo 4+1, cada caso de uso de alto impacto debe poder trazarse a través de las otras cuatro vistas: ¿qué clases colaboran para ejecutarlo (vista lógica)? ¿Qué módulos de código se invocan (vista de desarrollo)? ¿Qué procesos o hilos se activan (vista de proceso)? ¿En qué nodos de hardware ocurre la ejecución (vista física)? Esta trazabilidad es la que confirma la coherencia de toda la arquitectura.</p>
+  </div>
+
+  <!-- Ejemplo visual -->
+  <div class="diag-sim">
+    <div class="ds-label">Ejemplo esquemático — Diagrama de casos de uso</div>
+    <div class="ds-uc-wrap">
+      <!-- Actor -->
+      <div class="ds-actor">
+        <div class="ac-figure"></div>
+        <div style="position:relative;width:20px;">
+          <div class="ac-body" style="margin:0 auto;"></div>
+          <div class="ac-arms" style="position:absolute;top:5px;left:-1px;"></div>
+        </div>
+        <div class="ac-legs">
+          <span></span><span></span>
+        </div>
+        <div style="margin-top:4px;font-size:11.5px;font-family:'Courier New',monospace;">Cliente</div>
+      </div>
+      <!-- Línea de asociación -->
+      <div style="width:20px;height:1.5px;background:var(--navy);margin-top:-18px;"></div>
+      <!-- Sistema -->
+      <div class="ds-sys-border">
+        <div style="font-size:9.5px;color:var(--muted);width:100%;margin-bottom:4px;font-style:italic;">Sistema de ventas</div>
+        <div class="ds-uc-box">Realizar pedido</div>
+        <div class="ds-uc-box">Consultar historial</div>
+        <div class="ds-uc-box">Cancelar pedido</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="elementos-clave">
+    <div class="ek-titulo">Elementos principales del diagrama de casos de uso</div>
+    <div class="ek-grid">
+      <div class="ek-item">
+        <div class="ek-sym">☺</div>
+        <div class="ek-info">
+          <h5>Actor</h5>
+          <p>Entidad externa que interactúa con el sistema. Puede ser persona, sistema o dispositivo.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">○</div>
+        <div class="ek-info">
+          <h5>Caso de uso</h5>
+          <p>Elipse con nombre en voz activa. Representa una funcionalidad observable con valor para un actor.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">□</div>
+        <div class="ek-info">
+          <h5>Límite del sistema</h5>
+          <p>Rectángulo que encierra los casos de uso. Define el alcance del sistema.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">«in»</div>
+        <div class="ek-info">
+          <h5>«include»</h5>
+          <p>Subflujo que siempre se ejecuta como parte del caso de uso base. Extrae comportamiento común.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">«ex»</div>
+        <div class="ek-info">
+          <h5>«extend»</h5>
+          <p>Comportamiento opcional que amplía el caso de uso base solo bajo ciertas condiciones.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">▷</div>
+        <div class="ek-info">
+          <h5>Herencia de actor</h5>
+          <p>Un actor especializado hereda los casos de uso del actor general.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — DIAGRAMA DE ACTIVIDADES / VISTA DE PROCESO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+
+  <div class="vista-header vh-proceso">
+    <div class="vh-icon">III</div>
+    <div class="vh-text">
+      <div class="vh-vista">Vista de Proceso</div>
+      <div class="vh-diagrama">Diagrama de Actividades</div>
+      <div class="vh-pregunta">¿Cómo fluye la ejecución? ¿Qué ocurre en paralelo?</div>
+    </div>
+  </div>
+
+  <div class="expositivo">
+    <p>La vista de proceso se ocupa de los aspectos dinámicos del sistema en tiempo de ejecución: la concurrencia, la sincronización entre tareas, la comunicación entre procesos y el flujo de control a través de actividades que pueden ejecutarse en paralelo. El diagrama UML que documenta esta vista con mayor expresividad es el <strong>diagrama de actividades</strong>.</p>
+    <p>Un diagrama de actividades es, en esencia, un diagrama de flujo enriquecido con semántica formal de concurrencia. Modela la secuencia de actividades que se realizan para completar un proceso — ya sea un flujo de trabajo de negocio, el algoritmo interno de una operación compleja o la coordinación entre múltiples hilos de ejecución — y permite representar explícitamente las bifurcaciones condicionales, las ramificaciones paralelas y los puntos de sincronización donde varios flujos se reúnen antes de continuar.</p>
+    <p>Su relación con la vista de proceso es directa: donde el modelo 4+1 pregunta qué tareas se ejecutan concurrentemente y cómo se coordinan, el diagrama de actividades responde con precisión. Las <strong>barras de bifurcación</strong> (<em>fork</em>) indican el punto donde una actividad se divide en múltiples flujos paralelos; las <strong>barras de unión</strong> (<em>join</em>) indican el punto donde esos flujos se sincronizan antes de continuar. Este mecanismo permite modelar con claridad, por ejemplo, que la validación del pago y la consulta de disponibilidad de inventario ocurren al mismo tiempo, y que el proceso solo avanza hacia la confirmación del pedido cuando ambas han concluido satisfactoriamente.</p>
+    <p>Una característica especialmente valiosa del diagrama de actividades en el contexto de la vista de proceso son las <strong>particiones</strong>, también llamadas <em>swimlanes</em> o carriles. Cada carril asigna un conjunto de actividades a un responsable — que puede ser un subsistema, un actor o un componente del sistema — dejando visible de un vistazo qué parte del sistema es responsable de qué parte del flujo. Esta dimensión hace que el diagrama de actividades sea también un puente entre la vista de proceso y la vista lógica: al asignar actividades a clasificadores, el diagrama conecta el comportamiento dinámico con las abstracciones estructurales que lo implementan.</p>
+  </div>
+
+  <!-- Ejemplo visual -->
+  <div class="diag-sim">
+    <div class="ds-label">Ejemplo esquemático — Diagrama de actividades</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;max-width:260px;margin:0 auto;">
+      <div style="width:14px;height:14px;border-radius:50%;background:var(--navy);"></div>
+      <div class="ds-act-arrow">↓</div>
+      <div class="ds-act-node">Recibir solicitud</div>
+      <div class="ds-act-arrow">↓</div>
+      <!-- Fork -->
+      <div style="width:120px;height:4px;background:var(--navy);border-radius:2px;"></div>
+      <div style="display:flex;gap:24px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <div class="ds-act-arrow">↓</div>
+          <div class="ds-act-node">Validar pago</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+          <div class="ds-act-arrow">↓</div>
+          <div class="ds-act-node">Verificar stock</div>
+        </div>
+      </div>
+      <!-- Join -->
+      <div style="width:120px;height:4px;background:var(--navy);border-radius:2px;margin-top:8px;"></div>
+      <div class="ds-act-arrow">↓</div>
+      <div class="ds-act-node">Confirmar pedido</div>
+      <div class="ds-act-arrow">↓</div>
+      <div style="width:14px;height:14px;border-radius:50%;border:2px solid var(--navy);background:var(--white);display:flex;align-items:center;justify-content:center;">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--navy);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="elementos-clave">
+    <div class="ek-titulo">Elementos principales del diagrama de actividades</div>
+    <div class="ek-grid">
+      <div class="ek-item">
+        <div class="ek-sym">●</div>
+        <div class="ek-info">
+          <h5>Nodo inicial</h5>
+          <p>Círculo relleno negro. Marca el inicio del flujo de actividades.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">▭</div>
+        <div class="ek-info">
+          <h5>Actividad</h5>
+          <p>Rectángulo con esquinas redondeadas. Representa una acción atómica o un subproceso.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">◇</div>
+        <div class="ek-info">
+          <h5>Decisión / Unión</h5>
+          <p>Rombo. Con condiciones de guarda en las aristas salientes. Una entrada o múltiples salidas.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">═══</div>
+        <div class="ek-info">
+          <h5>Fork / Join</h5>
+          <p>Barra gruesa. Fork: divide el flujo en paralelo. Join: sincroniza los flujos paralelos.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">|  |</div>
+        <div class="ek-info">
+          <h5>Swimlane (carril)</h5>
+          <p>Partición vertical u horizontal que asigna actividades a un responsable o componente.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">⊗</div>
+        <div class="ek-info">
+          <h5>Nodo final</h5>
+          <p>Círculo con punto interior rodeado de aro. Marca el fin del flujo de actividades.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — DIAGRAMA DE PAQUETES / VISTA DE DESARROLLO -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+
+  <div class="vista-header vh-desarrollo">
+    <div class="vh-icon">II</div>
+    <div class="vh-text">
+      <div class="vh-vista">Vista de Desarrollo</div>
+      <div class="vh-diagrama">Diagrama de Paquetes</div>
+      <div class="vh-pregunta">¿Cómo se organiza el código fuente en módulos y cuáles son sus dependencias?</div>
+    </div>
+  </div>
+
+  <div class="expositivo">
+    <p>La vista de desarrollo describe el sistema desde la perspectiva del programador: cómo está dividido el código fuente en unidades manejables — módulos, paquetes, bibliotecas, subsistemas — y cuáles son las dependencias de compilación o importación entre esas unidades. El diagrama UML que documenta esta vista es el <strong>diagrama de paquetes</strong>.</p>
+    <p>Un diagrama de paquetes organiza los elementos del modelo en grupos lógicos llamados <strong>paquetes</strong>, representados con el ícono de una carpeta con etiqueta. Cada paquete agrupa clases, interfaces o incluso otros paquetes que pertenecen a una misma área de responsabilidad del sistema. Las relaciones entre paquetes — importación, fusión, acceso — muestran de qué otros paquetes depende cada uno para compilar y ejecutarse correctamente.</p>
+    <p>El valor arquitectónico del diagrama de paquetes radica en que expone la <strong>estructura de capas y módulos</strong> del sistema de una manera que el diagrama de clases, por su granularidad, no puede mostrar eficientemente. En un sistema mediano o grande, el diagrama de clases completo puede contener cientos de elementos; el diagrama de paquetes, en cambio, muestra la misma arquitectura en una docena de cajas con sus dependencias, permitiendo evaluar de un vistazo si la estructura respeta los principios de diseño deseados: ¿las capas superiores dependen de las inferiores y no al revés? ¿Existen dependencias circulares entre módulos? ¿La organización del código refleja la arquitectura lógica del sistema?</p>
+    <p>En la práctica del desarrollo ágil, el diagrama de paquetes también sirve como guía para la división del trabajo entre equipos. Cuando múltiples equipos trabajan en paralelo sobre el mismo sistema, la vista de desarrollo define cuáles son los límites entre sus responsabilidades, qué interfaces deben acordar y cómo se integrarán sus contribuciones. Es, en este sentido, un contrato de colaboración técnica tanto como un artefacto de documentación.</p>
+  </div>
+
+  <!-- Ejemplo visual -->
+  <div class="diag-sim">
+    <div class="ds-label">Ejemplo esquemático — Diagrama de paquetes</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div class="ds-pkg">
+        <div class="dp-tab">presentacion</div>
+        <div class="dp-body">
+          ControladorPedido<br>
+          ControladorCliente
+        </div>
+      </div>
+      <div style="color:var(--navy);font-size:14px;font-style:italic;">«import» ↓</div>
+      <div class="ds-pkg">
+        <div class="dp-tab">servicio</div>
+        <div class="dp-body">
+          PedidoService<br>
+          ClienteService
+        </div>
+      </div>
+      <div style="color:var(--navy);font-size:14px;font-style:italic;">«import» ↓</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+        <div class="ds-pkg">
+          <div class="dp-tab">dominio</div>
+          <div class="dp-body">
+            Pedido · Cliente<br>
+            LineaDetalle
+          </div>
+        </div>
+        <div class="ds-pkg">
+          <div class="dp-tab">repositorio</div>
+          <div class="dp-body">
+            IPedidoRepo<br>
+            IClienteRepo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="elementos-clave">
+    <div class="ek-titulo">Elementos principales del diagrama de paquetes</div>
+    <div class="ek-grid">
+      <div class="ek-item">
+        <div class="ek-sym">📁</div>
+        <div class="ek-info">
+          <h5>Paquete</h5>
+          <p>Carpeta con etiqueta. Agrupa elementos relacionados bajo un espacio de nombres común.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">«im»</div>
+        <div class="ek-info">
+          <h5>«import»</h5>
+          <p>El paquete origen importa los elementos públicos del destino a su espacio de nombres.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">«ac»</div>
+        <div class="ek-info">
+          <h5>«access»</h5>
+          <p>El paquete origen puede acceder a los elementos del destino sin importarlos públicamente.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">«mg»</div>
+        <div class="ek-info">
+          <h5>«merge»</h5>
+          <p>Los contenidos del paquete destino se fusionan con los del origen, extendiéndolos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — DIAGRAMA DE DESPLIEGUE / VISTA FÍSICA -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+
+  <div class="vista-header vh-fisica">
+    <div class="vh-icon">IV</div>
+    <div class="vh-text">
+      <div class="vh-vista">Vista Física</div>
+      <div class="vh-diagrama">Diagrama de Despliegue</div>
+      <div class="vh-pregunta">¿Cómo se distribuye el software en la infraestructura de hardware?</div>
+    </div>
+  </div>
+
+  <div class="expositivo">
+    <p>La vista física responde las preguntas que más interesan a los ingenieros de operaciones y a los arquitectos de infraestructura: ¿en qué servidores o nodos se ejecuta cada componente del sistema?, ¿cómo se comunican esos nodos entre sí?, ¿cómo se garantiza la disponibilidad cuando uno de ellos falla? El diagrama UML que documenta esta vista es el <strong>diagrama de despliegue</strong>.</p>
+    <p>Un diagrama de despliegue muestra la topología del sistema en tiempo de ejecución mediante dos tipos de elementos. Los <strong>nodos</strong> representan recursos de procesamiento: servidores físicos, máquinas virtuales, contenedores Docker, dispositivos de red, servicios gestionados en la nube. Los <strong>artefactos</strong> representan las unidades físicas de software que se despliegan sobre esos nodos: archivos JAR, imágenes de contenedor, archivos de configuración, scripts ejecutables. Las relaciones entre nodos — los canales de comunicación — expresan los protocolos mediante los cuales se comunican: HTTP, HTTPS, JDBC, AMQP, gRPC.</p>
+    <p>La relevancia arquitectónica del diagrama de despliegue va más allá de documentar dónde se ejecuta el software. Es también el instrumento con el que se razonan las decisiones de escalabilidad, redundancia y distribución geográfica. Cuando un arquitecto decide replicar un componente en tres instancias detrás de un balanceador de carga para garantizar disponibilidad, o separar el servidor de aplicaciones del servidor de base de datos para reducir la superficie de ataque de seguridad, esas decisiones se expresan y documentan en el diagrama de despliegue.</p>
+    <p>En el contexto de las arquitecturas de software modernas — microservicios, plataformas cloud, contenedores orquestados con Kubernetes — el diagrama de despliegue adquiere una importancia aún mayor. La distancia entre el código fuente y la infraestructura donde se ejecuta es mayor que nunca: un repositorio puede contener decenas de servicios que se despliegan como imágenes separadas en múltiples regiones geográficas, con configuraciones de red, almacenamiento y seguridad que no tienen ninguna representación en el código. El diagrama de despliegue es el artefacto que cierra esa brecha y garantiza que la arquitectura física esté documentada con el mismo rigor que la arquitectura lógica.</p>
+  </div>
+
+  <!-- Ejemplo visual -->
+  <div class="diag-sim">
+    <div class="ds-label">Ejemplo esquemático — Diagrama de despliegue</div>
+    <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+      <div class="ds-nodo">
+        <div class="dn-name">
+          <span class="dn-stereo">«device»</span>
+          Navegador Web
+        </div>
+        <div class="dn-artifact">app.js</div>
+      </div>
+      <div style="display:flex;align-items:center;padding-top:20px;color:var(--navy);font-size:12px;gap:4px;">
+        <span>HTTPS</span><span>→</span>
+      </div>
+      <div class="ds-nodo">
+        <div class="dn-name">
+          <span class="dn-stereo">«server»</span>
+          Servidor de App
+        </div>
+        <div class="dn-artifact">api-server.jar</div>
+        <div class="dn-artifact">config.yml</div>
+      </div>
+      <div style="display:flex;align-items:center;padding-top:20px;color:var(--navy);font-size:12px;gap:4px;">
+        <span>JDBC</span><span>→</span>
+      </div>
+      <div class="ds-nodo">
+        <div class="dn-name">
+          <span class="dn-stereo">«database»</span>
+          Servidor DB
+        </div>
+        <div class="dn-artifact">schema.sql</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="elementos-clave">
+    <div class="ek-titulo">Elementos principales del diagrama de despliegue</div>
+    <div class="ek-grid">
+      <div class="ek-item">
+        <div class="ek-sym">□₃</div>
+        <div class="ek-info">
+          <h5>Nodo</h5>
+          <p>Cubo 3D. Recurso de procesamiento: servidor, VM, contenedor, dispositivo.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">📄</div>
+        <div class="ek-info">
+          <h5>Artefacto</h5>
+          <p>Rectángulo con «artifact». Unidad física de software desplegada en un nodo.</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">—</div>
+        <div class="ek-info">
+          <h5>Canal de comunicación</h5>
+          <p>Línea entre nodos etiquetada con el protocolo (HTTP, TCP, AMQP, etc.).</p>
+        </div>
+      </div>
+      <div class="ek-item">
+        <div class="ek-sym">« »</div>
+        <div class="ek-info">
+          <h5>Estereotipos de nodo</h5>
+          <p>«server», «device», «database», «container», «cloud» — precisan el tipo de nodo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VII — TABLA DE CORRESPONDENCIA -->
+<div class="blog-section anim" id="sec-7">
+  <div class="section-num">VII</div>
+  <h2>Correspondencia entre <span class="gold">diagramas y vistas</span></h2>
+  <p>La siguiente tabla sintetiza la relación entre cada diagrama estudiado, la vista del modelo 4+1 que documenta y la pregunta arquitectónica que responde. Esta correspondencia no es exclusiva — un diagrama puede contribuir a más de una vista — pero sí establece la afinidad principal de cada uno.</p>
+
+  <table class="corr-table">
+    <thead>
+      <tr>
+        <th>Diagrama UML</th>
+        <th>Vista del modelo 4+1</th>
+        <th>Pregunta que responde</th>
+        <th>Audiencia principal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Diagrama de Clases</td>
+        <td><span class="vista-chip vc-logica">Vista Lógica</span></td>
+        <td class="cd-preg">¿Cuáles son las abstracciones del sistema y cómo se relacionan?</td>
+        <td style="font-size:13px;color:var(--muted);">Diseñadores, arquitectos, desarrolladores</td>
+      </tr>
+      <tr>
+        <td>Diagrama de Casos de Uso</td>
+        <td><span class="vista-chip vc-escenarios">Vista de Escenarios +1</span></td>
+        <td class="cd-preg">¿Qué puede hacer el sistema y quién lo utiliza?</td>
+        <td style="font-size:13px;color:var(--muted);">Todos los stakeholders, clientes, analistas</td>
+      </tr>
+      <tr>
+        <td>Diagrama de Actividades</td>
+        <td><span class="vista-chip vc-proceso">Vista de Proceso</span></td>
+        <td class="cd-preg">¿Cómo fluye la ejecución? ¿Qué ocurre en paralelo?</td>
+        <td style="font-size:13px;color:var(--muted);">Integradores, arquitectos de rendimiento, QA</td>
+      </tr>
+      <tr>
+        <td>Diagrama de Paquetes</td>
+        <td><span class="vista-chip vc-desarrollo">Vista de Desarrollo</span></td>
+        <td class="cd-preg">¿Cómo se organiza el código en módulos y qué dependencias existen?</td>
+        <td style="font-size:13px;color:var(--muted);">Programadores, líderes técnicos, gestores</td>
+      </tr>
+      <tr>
+        <td>Diagrama de Despliegue</td>
+        <td><span class="vista-chip vc-fisica">Vista Física</span></td>
+        <td class="cd-preg">¿Cómo se distribuye el software en la infraestructura?</td>
+        <td style="font-size:13px;color:var(--muted);">Operaciones, DevOps, arquitectos de infraestructura</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pull-quote anim">
+  <p>"Documentar la arquitectura de un sistema no consiste en producir diagramas bonitos — consiste en capturar las decisiones de diseño que serían costosas de descubrir leyendo el código, y comunicarlas a la persona correcta en el formato correcto. Las cinco vistas del modelo 4+1, documentadas con los diagramas UML apropiados, son exactamente ese conjunto de decisiones."</p>
+  <cite>— Adaptado de Bass, Clements &amp; Kazman, <em>Software Architecture in Practice</em>, 3ª ed., Addison-Wesley, 2012</cite>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-8">
+  <h2>Conclusión</h2>
+  <p>El modelo 4+1 de Kruchten establece que una arquitectura de software bien documentada requiere al menos cinco perspectivas complementarias. Los diagramas UML estudiados en este texto — de clases, de casos de uso, de actividades, de paquetes y de despliegue — son los instrumentos estandarizados con los que se construye esa documentación, cada uno alineado con la vista que mejor responde sus preguntas características.</p>
+  <p>El diagrama de clases describe el vocabulario estructural del sistema; el de casos de uso articula su propósito desde la perspectiva del usuario; el de actividades captura la dinámica de sus procesos y flujos concurrentes; el de paquetes organiza su código fuente en módulos con dependencias explícitas; y el de despliegue mapea el software a la infraestructura física donde se ejecuta. Juntos, estos cinco diagramas ofrecen una imagen arquitectónica completa, coherente y comunicable a cualquier audiencia técnica o no técnica.</p>
+  <p>Dominar estos instrumentos no es solo una cuestión de conocer su notación: es comprender para qué sirve cada vista, a quién va dirigida y qué decisiones de diseño debe capturar. Esa comprensión es la que transforma a un dibujante de diagramas en un arquitecto de software.</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Kruchten, P. (1995). <em>The 4+1 View Model of Software Architecture.</em> IEEE Software, 12(6), 42–50.</li>
+    <li>Booch, G., Rumbaugh, J., &amp; Jacobson, I. (2006). <em>The Unified Modeling Language User Guide, 2nd Edition.</em> Addison-Wesley.</li>
+    <li>Bass, L., Clements, P., &amp; Kazman, R. (2012). <em>Software Architecture in Practice, 3rd Edition.</em> Addison-Wesley.</li>
+    <li>Fowler, M. (2003). <em>UML Distilled: A Brief Guide to the Standard Object Modeling Language, 3rd Edition.</em> Addison-Wesley.</li>
+    <li>Pressman, R. S. (2010). <em>Software Engineering: A Practitioner's Approach, 7th Edition.</em> McGraw-Hill.</li>
+    <li>Object Management Group. (2017). <em>OMG Unified Modeling Language Specification, Version 2.5.1.</em> OMG.</li>
+  </ul>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#Modelo4más1</span>
+  <span class="tag">#Kruchten</span>
+  <span class="tag">#DiagramaDeClases</span>
+  <span class="tag">#DiagramaDeCasosDeUso</span>
+  <span class="tag">#DiagramaDeActividades</span>
+  <span class="tag">#DiagramaDePaquetes</span>
+  <span class="tag">#DiagramaDeDespliegue</span>
+  <span class="tag">#ArquitecturaDeSoftware</span>
+  <span class="tag">#UML</span>
+  <span class="tag">#TextoExpositivo</span>
+</div>

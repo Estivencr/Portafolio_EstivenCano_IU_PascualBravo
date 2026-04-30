@@ -1,0 +1,816 @@
+---
+layout: blog
+title: "Notaciones básicas y principales diagramas UML — Informe técnico"
+title_display: "Notaciones básicas y principales <em>diagramas UML</em>"
+description: Informe técnico sobre el Lenguaje de Modelado Unificado — notaciones fundamentales, relaciones, multiplicidad y los catorce tipos de diagramas organizados por categoría.
+subject_code: ISW-01
+subject_name: Ingeniería de Software 1
+subject_url: /ingenieria-software/
+blog_num: "IV"
+entry_type: Informe técnico
+read_time: Lectura 15 min
+year: 2026
+exp_display: UML
+breadcrumb_current: Diagramas UML
+nav_back: Ingeniería de Software 1
+nav_back_url: /ingenieria-software/
+footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. IV"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /ingenieria-software/
+sidebar_entries:
+  - num: Blog No. I
+    title: Identificación de Requisitos de Software
+    url: /ingenieria-software/blog-requisitos
+  - num: Blog No. II
+    title: Proceso de elicitación de requisitos y tipos de requerimientos
+    url: /ingenieria-software/elicitacion-requisitos-software
+  - num: Blog No. III
+    title: Principios de modelado, herramientas y vistas 4+1
+    url: /ingenieria-software/principios-modelado
+  - num: Blog No. IV
+    title: Notaciones básicas y principales diagramas UML
+    url: /ingenieria-software/diagramasUML
+sidebar_stat:
+  label: Diagramas en UML 2.x
+  value: "14"
+  description: tipos de diagramas estandarizados por el OMG, divididos en estructurales y de comportamiento
+  source: "— OMG UML 2.5.1, 2017"
+---
+<style>
+  .concept-box {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 18px 22px; margin: 20px 0;
+  }
+  .concept-box .concept-label {
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--navy); margin-bottom: 8px; font-weight: 600;
+  }
+  .concept-box p { font-size: 15.5px; line-height: 1.75; color: #2a2420; margin: 0; }
+
+  .technique-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px;
+    padding: 18px 20px; height: 100%;
+  }
+  .technique-card .tech-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 900; font-style: italic;
+    color: var(--parchment3); line-height: 1; margin-bottom: 6px;
+  }
+  .technique-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .technique-card p  { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin: 0 0 8px; }
+  .technique-card ul { font-size: 13px; color: var(--muted); padding-left: 16px; margin: 0; line-height: 1.8; }
+
+  .drop-cap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2em; font-weight: 900;
+    float: left; line-height: 0.78;
+    margin: 6px 10px 0 0; color: var(--navy);
+  }
+
+  /* Tabla de notación */
+  .notation-table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 16px 0;
+  }
+  .notation-table thead th {
+    background: var(--navy); color: #f0ece0;
+    padding: 10px 14px; text-align: left;
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px;
+  }
+  .notation-table tbody tr { border-bottom: 0.5px solid var(--rule-lt); }
+  .notation-table tbody tr:last-child { border-bottom: none; }
+  .notation-table tbody td { padding: 10px 14px; color: var(--muted); vertical-align: middle; }
+  .notation-table tbody td:first-child { color: var(--ink); font-weight: 700; font-size: 13px; }
+  .notation-table tbody tr:nth-child(even) { background: var(--parchment2); }
+  .notation-table .sym {
+    font-family: 'Courier New', monospace;
+    background: var(--parchment3); color: var(--navy);
+    padding: 2px 8px; border-radius: 2px; font-size: 13px; font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Clase UML simulada */
+  .uml-class {
+    border: 1.5px solid var(--navy);
+    border-radius: 2px; display: inline-block;
+    min-width: 180px; font-size: 13px;
+    font-family: 'Courier New', monospace;
+    margin: 6px 0; background: var(--white);
+  }
+  .uml-class .cls-name {
+    background: var(--navy); color: #f0ece0;
+    padding: 7px 14px; text-align: center;
+    font-weight: 700; font-size: 13.5px; letter-spacing: 0.5px;
+  }
+  .uml-class .cls-name .cls-stereo {
+    display: block; font-size: 10px; font-weight: 400;
+    font-style: italic; opacity: 0.8; margin-bottom: 2px;
+  }
+  .uml-class .cls-section {
+    border-top: 1px solid var(--rule); padding: 7px 14px;
+    line-height: 1.8; color: var(--ink); font-size: 12.5px;
+  }
+  .uml-class .cls-section .vis-pub  { color: #1a6b3c; }
+  .uml-class .cls-section .vis-priv { color: #8b0000; }
+  .uml-class .cls-section .vis-prot { color: #8b4513; }
+  .uml-class .cls-section .vis-pkg  { color: #5c1a8b; }
+
+  /* Relación flecha */
+  .uml-rel {
+    display: flex; align-items: center; gap: 0;
+    font-size: 12.5px; font-family: 'Courier New', monospace;
+    margin: 6px 0; color: var(--ink);
+  }
+  .uml-rel .rel-box {
+    border: 1.5px solid var(--navy); background: var(--white);
+    padding: 5px 12px; border-radius: 2px; white-space: nowrap;
+  }
+  .uml-rel .rel-line {
+    flex: 1; position: relative; display: flex;
+    align-items: center; min-width: 80px; max-width: 160px;
+  }
+  .uml-rel .rel-line hr {
+    width: 100%; border: none; border-top: 1.5px solid var(--navy); margin: 0;
+  }
+  .uml-rel .rel-line .rel-label {
+    position: absolute; top: -16px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 10.5px; color: var(--muted); white-space: nowrap;
+  }
+  .uml-rel .rel-line .rel-mult-l {
+    position: absolute; left: 2px; bottom: 2px;
+    font-size: 11px; color: var(--gold); font-weight: 700;
+  }
+  .uml-rel .rel-line .rel-mult-r {
+    position: absolute; right: 2px; bottom: 2px;
+    font-size: 11px; color: var(--gold); font-weight: 700;
+  }
+
+  /* Diagrama card */
+  .diag-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 20px 20px 16px;
+    height: 100%;
+    border-top: 3px solid var(--navy);
+  }
+  .diag-card.dc-comportamiento { border-top-color: var(--gold); }
+  .diag-card .diag-cat {
+    font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 700; margin-bottom: 8px;
+  }
+  .diag-card.dc-estructural .diag-cat   { color: #0f3460; }
+  .diag-card.dc-comportamiento .diag-cat { color: #9a6d00; }
+  .diag-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 6px;
+  }
+  .diag-card p  { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin-bottom: 8px; }
+  .diag-card ul { font-size: 13px; color: var(--muted); padding-left: 16px; margin: 0; line-height: 1.8; }
+  .diag-card .diag-elementos {
+    font-size: 10.5px; letter-spacing: 1px; text-transform: uppercase;
+    color: var(--muted2); margin-top: 10px; font-weight: 600;
+  }
+  .diag-card .diag-cuando {
+    background: var(--parchment2); border-radius: 2px;
+    padding: 8px 12px; margin-top: 10px;
+    font-size: 12.5px; color: var(--muted); font-style: italic;
+  }
+
+  /* Sección de visibilidad */
+  .vis-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px;
+  }
+  .vis-item {
+    background: var(--white); border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 14px 16px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .vis-symbol {
+    font-family: 'Courier New', monospace;
+    font-size: 22px; font-weight: 900; line-height: 1;
+    flex-shrink: 0; width: 24px; text-align: center; margin-top: 2px;
+  }
+  .vis-item:nth-child(1) .vis-symbol { color: #1a6b3c; }
+  .vis-item:nth-child(2) .vis-symbol { color: #8b0000; }
+  .vis-item:nth-child(3) .vis-symbol { color: #8b4513; }
+  .vis-item:nth-child(4) .vis-symbol { color: #5c1a8b; }
+  .vis-info h5 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px; font-weight: 700; color: var(--navy); margin: 0 0 4px;
+  }
+  .vis-info p { font-size: 12.5px; color: var(--muted); margin: 0; line-height: 1.55; }
+
+  /* Cuándo usar tabla */
+  .when-table {
+    width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0;
+  }
+  .when-table thead th {
+    background: var(--parchment3); color: var(--ink);
+    padding: 9px 13px; text-align: left;
+    font-weight: 700; font-size: 12px; letter-spacing: 0.5px;
+  }
+  .when-table tbody tr { border-bottom: 0.5px solid var(--rule-lt); }
+  .when-table tbody td { padding: 9px 13px; color: var(--muted); vertical-align: top; }
+  .when-table tbody td:first-child { color: var(--navy); font-weight: 600; white-space: nowrap; }
+  .when-table tbody tr:nth-child(odd) { background: var(--white); }
+
+  /* Multiplicidad badge */
+  .mult-badge {
+    display: inline-block; font-family: 'Courier New', monospace;
+    font-size: 12px; font-weight: 700; color: var(--navy);
+    background: var(--parchment2); border: 0.5px solid var(--rule);
+    padding: 2px 8px; border-radius: 2px; margin: 2px 3px;
+  }
+</style>
+
+<!-- INTRO -->
+<div class="intro-block anim anim-1">
+  <p class="drop-cap">UML — el Lenguaje de Modelado Unificado — es el vocabulario visual con el que la ingeniería de software describe sistemas antes de construirlos. Entender sus notaciones no es un ejercicio académico: es el dominio de un idioma compartido que permite que un diagrama dibujado hoy sea interpretado sin ambigüedad por cualquier ingeniero en el mundo. Este informe técnico cubre desde los símbolos más básicos hasta los catorce tipos de diagramas del estándar OMG 2.5.1.</p>
+</div>
+
+<!-- SECCIÓN I — ORIGEN E HISTORIA -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Origen y contexto <span class="gold">de UML</span></h2>
+
+  <div class="concept-box">
+    <div class="concept-label">Definición oficial</div>
+    <p>UML (Unified Modeling Language) es un lenguaje visual de propósito general para la especificación, visualización, construcción y documentación de artefactos de sistemas de software. Es un estándar del Object Management Group (OMG) desde 1997 y actualmente se encuentra en su versión 2.5.1. — <em>OMG, 2017</em></p>
+  </div>
+
+  <p>UML surgió en los años noventa como respuesta a la proliferación de metodologías de modelado orientado a objetos incompatibles entre sí. Los tres grandes métodos del momento — el método de Booch, OMT (Rumbaugh) y OOSE (Jacobson) — tenían notaciones diferentes que hacían imposible compartir modelos entre equipos que usaran distintas metodologías.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">1994</div>
+        <h4>Origen en Rational</h4>
+        <p>Grady Booch, James Rumbaugh e Ivar Jacobson — los "Tres Amigos" — se unen en Rational Software y comienzan a unificar sus tres métodos en un único lenguaje.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">1997</div>
+        <h4>UML 1.1 — Estándar OMG</h4>
+        <p>El OMG adopta UML 1.1 como estándar de la industria. Por primera vez existe un lenguaje de modelado común e independiente de herramientas y metodologías.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">2017</div>
+        <h4>UML 2.5.1 — Vigente</h4>
+        <p>La versión actual define 14 tipos de diagramas, semántica formal para cada elemento y reglas de composición. Es el estándar utilizado en toda herramienta CASE moderna.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — NOTACIONES BÁSICAS -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Notaciones básicas: <span class="gold">los bloques fundamentales</span></h2>
+  <p>Antes de explorar los tipos de diagramas, es indispensable dominar los elementos de notación que aparecen en prácticamente todos ellos. Estos son los símbolos y convenciones que definen la gramática visual de UML.</p>
+
+  <!-- 2.1 La clase -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 10px;">2.1 El clasificador: la clase</h3>
+  <p>La <strong>clase</strong> es el clasificador más importante de UML. Se representa como un rectángulo dividido en tres compartimentos: nombre, atributos y operaciones.</p>
+
+  <div style="overflow-x:auto;margin:16px 0 24px;">
+    <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap;">
+      <div>
+        <div class="uml-class">
+          <div class="cls-name">Pedido</div>
+          <div class="cls-section">
+            <span class="vis-priv">- id: Integer</span><br>
+            <span class="vis-priv">- fecha: Date</span><br>
+            <span class="vis-prot"># estado: String</span><br>
+            <span class="vis-pub">+ total: Double</span>
+          </div>
+          <div class="cls-section">
+            <span class="vis-pub">+ calcularTotal(): Double</span><br>
+            <span class="vis-pub">+ confirmar(): void</span><br>
+            <span class="vis-priv">- validar(): Boolean</span>
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:6px;text-align:center;font-style:italic;">Clase concreta — 3 compartimentos</div>
+      </div>
+      <div>
+        <div class="uml-class">
+          <div class="cls-name">
+            <span class="cls-stereo">«interface»</span>
+            Persistible
+          </div>
+          <div class="cls-section" style="color:var(--muted);font-style:italic;">
+            + guardar(): void<br>
+            + eliminar(): void<br>
+            + buscarPorId(id): Object
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:6px;text-align:center;font-style:italic;">Interfaz — estereotipo «interface»</div>
+      </div>
+      <div>
+        <div class="uml-class">
+          <div class="cls-name" style="font-style:italic;">EntidadBase</div>
+          <div class="cls-section">
+            <span class="vis-prot"># id: Integer</span><br>
+            <span class="vis-prot"># creadoEn: Date</span>
+          </div>
+          <div class="cls-section">
+            <span style="font-style:italic;color:var(--muted);">+ validar(): Boolean</span>
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:6px;text-align:center;font-style:italic;">Clase abstracta — nombre en cursiva</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 Visibilidad -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 10px;">2.2 Modificadores de visibilidad</h3>
+  <p>Los modificadores de visibilidad se colocan inmediatamente antes del nombre del atributo u operación e indican quién puede acceder a ese miembro.</p>
+
+  <div class="vis-grid">
+    <div class="vis-item">
+      <div class="vis-symbol">+</div>
+      <div class="vis-info">
+        <h5>Public</h5>
+        <p>Accesible desde cualquier clase o componente del sistema. Sin restricciones de acceso.</p>
+      </div>
+    </div>
+    <div class="vis-item">
+      <div class="vis-symbol">-</div>
+      <div class="vis-info">
+        <h5>Private</h5>
+        <p>Solo accesible desde la propia clase. Es el modificador más restrictivo y el recomendado para atributos.</p>
+      </div>
+    </div>
+    <div class="vis-item">
+      <div class="vis-symbol">#</div>
+      <div class="vis-info">
+        <h5>Protected</h5>
+        <p>Accesible desde la clase y todas sus subclases (jerarquía de herencia). Invisible para clases ajenas.</p>
+      </div>
+    </div>
+    <div class="vis-item">
+      <div class="vis-symbol">~</div>
+      <div class="vis-info">
+        <h5>Package</h5>
+        <p>Accesible desde cualquier clase dentro del mismo paquete. Equivale al acceso por defecto en Java.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.3 Multiplicidad -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 10px;">2.3 Multiplicidad</h3>
+  <p>La multiplicidad se coloca en los extremos de las relaciones e indica <em>cuántas instancias</em> de una clase pueden estar asociadas a una instancia de la otra. Es fundamental para expresar las cardinalidades del modelo de dominio.</p>
+
+  <table class="notation-table">
+    <thead>
+      <tr><th>Notación</th><th>Significado</th><th>Ejemplo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="sym">1</span></td>
+        <td>Exactamente uno</td>
+        <td>Un Pedido pertenece a exactamente 1 Cliente</td>
+      </tr>
+      <tr>
+        <td><span class="sym">0..1</span></td>
+        <td>Cero o uno (opcional)</td>
+        <td>Un Empleado puede tener 0 o 1 Supervisor directo</td>
+      </tr>
+      <tr>
+        <td><span class="sym">*</span> o <span class="sym">0..*</span></td>
+        <td>Cero o muchos</td>
+        <td>Un Carrito puede contener 0 o más Productos</td>
+      </tr>
+      <tr>
+        <td><span class="sym">1..*</span></td>
+        <td>Uno o muchos (al menos uno)</td>
+        <td>Una Factura tiene 1 o más líneas de detalle</td>
+      </tr>
+      <tr>
+        <td><span class="sym">n</span></td>
+        <td>Exactamente n instancias</td>
+        <td>Un Equipo tiene exactamente 5 Jugadores</td>
+      </tr>
+      <tr>
+        <td><span class="sym">m..n</span></td>
+        <td>Entre m y n instancias</td>
+        <td>Un Vuelo tiene entre 2..4 Tripulantes de cabina</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 Relaciones -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 10px;">2.4 Tipos de relaciones</h3>
+  <p>Las relaciones definen cómo se conectan los clasificadores entre sí. Cada tipo expresa una semántica diferente sobre la naturaleza del vínculo.</p>
+
+  <table class="notation-table">
+    <thead>
+      <tr><th>Relación</th><th>Notación gráfica</th><th>Semántica</th><th>Ejemplo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Asociación</td>
+        <td><span class="sym">A ——————— B</span></td>
+        <td>Relación estructural genérica. A conoce a B y puede interactuar con él.</td>
+        <td>Cliente — Pedido</td>
+      </tr>
+      <tr>
+        <td>Asociación dirigida</td>
+        <td><span class="sym">A ——————→ B</span></td>
+        <td>A conoce a B, pero B no necesariamente conoce a A. Navegabilidad unidireccional.</td>
+        <td>Controlador → Servicio</td>
+      </tr>
+      <tr>
+        <td>Agregación</td>
+        <td><span class="sym">A ◇——————— B</span></td>
+        <td>Relación todo-parte débil. B puede existir independientemente de A. El rombo está en el "todo".</td>
+        <td>Departamento ◇— Empleado</td>
+      </tr>
+      <tr>
+        <td>Composición</td>
+        <td><span class="sym">A ◆——————— B</span></td>
+        <td>Relación todo-parte fuerte. B no puede existir sin A. Si A se destruye, B también. Rombo relleno.</td>
+        <td>Factura ◆— LineaDetalle</td>
+      </tr>
+      <tr>
+        <td>Herencia</td>
+        <td><span class="sym">A ————————▷ B</span></td>
+        <td>A es un tipo especializado de B. A hereda atributos y operaciones de B. Flecha con triángulo hueco.</td>
+        <td>Gerente ▷ Empleado</td>
+      </tr>
+      <tr>
+        <td>Realización</td>
+        <td><span class="sym">A - - - - - -▷ B</span></td>
+        <td>A implementa el contrato definido por la interfaz B. Línea punteada con triángulo hueco.</td>
+        <td>PedidoService ▷ IPedidoService</td>
+      </tr>
+      <tr>
+        <td>Dependencia</td>
+        <td><span class="sym">A - - - - - → B</span></td>
+        <td>A depende de B en tiempo de compilación o ejecución, pero no mantiene una referencia persistente. Línea punteada.</td>
+        <td>Controlador → DTO</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 2.5 Notas y restricciones -->
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 10px;">2.5 Notas, restricciones y estereotipos</h3>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:18px;">📝</div>
+        <h4>Nota (Comment)</h4>
+        <p>Rectángulo con la esquina superior derecha doblada, unido al elemento que comenta mediante una línea punteada. Sirve para añadir información textual adicional que no tiene representación formal en UML.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:18px;">{ }</div>
+        <h4>Restricción (Constraint)</h4>
+        <p>Expresión entre llaves que impone una condición sobre un elemento. Puede escribirse en lenguaje natural o en OCL (Object Constraint Language): <code style="font-size:11px;">{edad &gt;= 18}</code>.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:18px;">« »</div>
+        <h4>Estereotipo (Stereotype)</h4>
+        <p>Extiende la semántica de un elemento existente. Se escribe entre guillemets. Los más comunes: <code style="font-size:11px;">«interface»</code>, <code style="font-size:11px;">«abstract»</code>, <code style="font-size:11px;">«service»</code>, <code style="font-size:11px;">«entity»</code>, <code style="font-size:11px;">«actor»</code>.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — DIAGRAMAS ESTRUCTURALES -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Diagramas <span class="gold">estructurales</span></h2>
+  <p>Los diagramas estructurales representan la anatomía estática del sistema — qué elementos existen y cómo se organizan — sin considerar el tiempo ni el comportamiento. Responden a la pregunta: <strong>¿cómo está construido el sistema?</strong></p>
+
+  <div class="row g-3 mt-1">
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural · El más usado</div>
+        <h4>Diagrama de Clases</h4>
+        <p>Es el diagrama central de UML y el más utilizado en la práctica. Muestra las clases del sistema, sus atributos, operaciones y las relaciones entre ellas (asociación, herencia, composición, etc.).</p>
+        <p>Sirve simultáneamente como modelo de dominio (en análisis) y como guía de implementación (en diseño). Su estructura se corresponde directamente con el código orientado a objetos.</p>
+        <ul>
+          <li>Elementos: clases, interfaces, enumeraciones, tipos de datos</li>
+          <li>Relaciones: asociación, herencia, composición, agregación, realización, dependencia</li>
+          <li>Adornos: multiplicidad, visibilidad, roles, restricciones</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se necesite diseñar la estructura de clases, documentar el modelo de dominio o comunicar el diseño OO al equipo de desarrollo.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica · Desarrollo</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural</div>
+        <h4>Diagrama de Componentes</h4>
+        <p>Describe la organización y las dependencias entre los componentes de software — unidades físicas de código como bibliotecas, módulos, ejecutables o servicios. Los componentes se conectan a través de interfaces provistas y requeridas.</p>
+        <p>Es la vista de desarrollo de la arquitectura: cómo se divide el sistema en partes que pueden compilarse, desplegarse y reutilizarse de forma independiente.</p>
+        <ul>
+          <li>Elementos: componentes, interfaces provistas (chicle), interfaces requeridas (socket), puertos</li>
+          <li>Relaciones: dependencia, realización, uso</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se diseñe una arquitectura en capas, microservicios o sistemas con componentes reutilizables entre proyectos.</div>
+        <div class="diag-elementos">Vista 4+1: Desarrollo</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural</div>
+        <h4>Diagrama de Despliegue</h4>
+        <p>Muestra la arquitectura física del sistema en tiempo de ejecución: los nodos de hardware (servidores, dispositivos, contenedores), los artefactos de software que se ejecutan en ellos y los canales de comunicación entre nodos.</p>
+        <p>Es la vista más cercana a la infraestructura real. En entornos cloud, modela instancias EC2, contenedores Docker, balanceadores de carga, bases de datos gestionadas y su conectividad de red.</p>
+        <ul>
+          <li>Elementos: nodos, artefactos (JAR, WAR, .exe, imagen Docker), dispositivos</li>
+          <li>Relaciones: comunicación (con protocolo), despliegue (artifact sobre nodo)</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se planifique infraestructura, se documenten entornos de producción/staging o se diseñen estrategias de alta disponibilidad.</div>
+        <div class="diag-elementos">Vista 4+1: Física</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural</div>
+        <h4>Diagrama de Paquetes</h4>
+        <p>Organiza los elementos del modelo en grupos lógicos llamados paquetes, y muestra las dependencias entre esos grupos. Es análogo a la estructura de namespaces o carpetas del proyecto.</p>
+        <p>Resulta especialmente útil en sistemas grandes para identificar dependencias circulares entre módulos, verificar que la arquitectura en capas se respeta y planificar la división del trabajo entre equipos.</p>
+        <ul>
+          <li>Elementos: paquetes (carpeta con etiqueta), elementos contenidos</li>
+          <li>Relaciones: importación (<code style="font-size:11px;">«import»</code>), fusión (<code style="font-size:11px;">«merge»</code>), acceso (<code style="font-size:11px;">«access»</code>)</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: el sistema sea suficientemente grande para necesitar una vista de su estructura de módulos independiente del diagrama de clases.</div>
+        <div class="diag-elementos">Vista 4+1: Desarrollo</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural</div>
+        <h4>Diagrama de Objetos</h4>
+        <p>Representa instancias concretas de clases en un momento específico de la ejecución. Donde el diagrama de clases muestra la plantilla, el diagrama de objetos muestra una "foto" del sistema con valores reales de atributos.</p>
+        <ul>
+          <li>Elementos: objetos (nombre:Clase subrayado), enlaces (instancias de asociaciones), valores de atributos</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se quiera validar un diagrama de clases con un ejemplo concreto, o documentar el estado del sistema ante un escenario de prueba particular.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-estructural">
+        <div class="diag-cat">Estructural</div>
+        <h4>Diagrama de Estructura Compuesta</h4>
+        <p>Describe la estructura interna de un clasificador — clase, componente o colaboración — mostrando sus partes internas, puertos y conectores. Permite modelar patrones de diseño complejos como Mediator, Proxy o arquitecturas de plugins.</p>
+        <ul>
+          <li>Elementos: partes (parts), puertos, conectores, colaboraciones</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: la estructura interna de un componente o clase sea suficientemente compleja para necesitar su propio diagrama independiente del diagrama de clases.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica · Desarrollo</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — DIAGRAMAS DE COMPORTAMIENTO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Diagramas de <span class="gold">comportamiento</span></h2>
+  <p>Los diagramas de comportamiento capturan la dinámica del sistema — cómo cambia a lo largo del tiempo, cómo responde a eventos y cómo colaboran sus partes para producir resultados. Responden a la pregunta: <strong>¿qué hace el sistema?</strong></p>
+
+  <div class="row g-3 mt-1">
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento · Alta visibilidad</div>
+        <h4>Diagrama de Casos de Uso</h4>
+        <p>Describe las funcionalidades del sistema desde la perspectiva del usuario. Muestra los actores (quiénes usan el sistema), los casos de uso (qué pueden hacer) y las relaciones entre ellos.</p>
+        <p>Es el diagrama más legible para stakeholders no técnicos y el punto de partida habitual del proceso de análisis. No describe <em>cómo</em> se implementa una función, solo <em>qué</em> puede hacer el sistema y <em>quién</em> lo usa.</p>
+        <ul>
+          <li>Elementos: actores (muñeco), casos de uso (elipse), límite del sistema (rectángulo)</li>
+          <li>Relaciones: asociación actor–caso, <code style="font-size:11px;">«include»</code> (subflujo obligatorio), <code style="font-size:11px;">«extend»</code> (subflujo opcional), herencia de actores</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se levanten requisitos funcionales, se acuerde el alcance del sistema con el cliente o se identifiquen los actores del sistema.</div>
+        <div class="diag-elementos">Vista 4+1: Escenarios (+1)</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento · Interacción</div>
+        <h4>Diagrama de Secuencia</h4>
+        <p>Muestra cómo los objetos colaboran intercambiando mensajes en un orden temporal preciso. El tiempo fluye de arriba hacia abajo; los objetos participantes aparecen en la parte superior con líneas de vida (lifelines) verticales.</p>
+        <p>Es el diagrama de comportamiento más detallado y preciso. Permite verificar que la estructura de clases propuesta puede efectivamente ejecutar los casos de uso requeridos.</p>
+        <ul>
+          <li>Elementos: lifelines, activaciones (barras), mensajes síncronos (→), asíncronos (→ sin relleno), retorno (--→)</li>
+          <li>Fragmentos combinados: <code style="font-size:11px;">alt</code> (condicional), <code style="font-size:11px;">loop</code> (iteración), <code style="font-size:11px;">opt</code> (opcional), <code style="font-size:11px;">par</code> (paralelo)</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se detalle el diseño de un caso de uso, se diseñen APIs o se analice la secuencia de llamadas en un flujo crítico del sistema.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica · Proceso</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento</div>
+        <h4>Diagrama de Actividad</h4>
+        <p>Modela flujos de trabajo y procesos — tanto de negocio como internos del software — mediante actividades, decisiones, bifurcaciones paralelas y uniones. Es equivalente a un diagrama de flujo, pero con semántica formal UML.</p>
+        <p>Puede usarse para modelar el algoritmo interno de una operación compleja, el proceso de negocio que el sistema soporta, o el flujo de trabajo de un caso de uso con múltiples caminos alternativos.</p>
+        <ul>
+          <li>Elementos: nodo inicial (●), actividades (rectángulo redondeado), decisión (◇), bifurcación/unión (barra gruesa), nodo final (⊗)</li>
+          <li>Particiones (swimlanes): dividen las actividades por responsable u objeto</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se modelen procesos de negocio, algoritmos con lógica condicional compleja o flujos de trabajo con actividades paralelas.</div>
+        <div class="diag-elementos">Vista 4+1: Proceso</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento</div>
+        <h4>Diagrama de Máquina de Estados</h4>
+        <p>Modela los estados por los que puede pasar un objeto a lo largo de su ciclo de vida y las transiciones que ocurren en respuesta a eventos. Cada transición puede tener una condición guarda y una acción asociada.</p>
+        <p>Es especialmente valioso para modelar objetos con comportamiento dependiente del estado, como pedidos (Creado → Confirmado → En despacho → Entregado) o conexiones de red (Cerrada → Abierta → Escuchando).</p>
+        <ul>
+          <li>Elementos: estado inicial (●), estados (rectángulo redondeado), transiciones (flechas etiquetadas), estado final (⊗)</li>
+          <li>Notación de transición: <code style="font-size:11px;">evento [guarda] / acción</code></li>
+          <li>Estados compuestos, estados ortogonales (concurrentes)</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: un objeto tenga un ciclo de vida bien definido con estados discretos, o se modelen protocolos de comunicación y flujos de estado.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica · Proceso</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento · Interacción</div>
+        <h4>Diagrama de Comunicación</h4>
+        <p>Muestra las mismas interacciones que el diagrama de secuencia, pero con énfasis en las relaciones estructurales entre los objetos en vez de en el orden temporal. Los mensajes se numeran para indicar secuencia.</p>
+        <ul>
+          <li>Elementos: objetos, enlaces de comunicación, mensajes numerados (1:, 1.1:, 2:, etc.)</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: sea más importante visualizar qué objetos colaboran y cómo están conectados que el orden preciso de los mensajes.</div>
+        <div class="diag-elementos">Vista 4+1: Lógica</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento · Interacción</div>
+        <h4>Diagrama de Tiempo (Timing)</h4>
+        <p>Muestra cómo cambia el estado de uno o varios objetos a lo largo del tiempo real. Es la versión de UML de un diagrama de cronograma (timing diagram) y resulta esencial en sistemas embebidos y de tiempo real.</p>
+        <ul>
+          <li>Elementos: líneas de vida con eje temporal horizontal, estados como franjas horizontales, eventos que producen cambios de estado</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: se modelen sistemas con restricciones temporales explícitas, como sistemas embebidos, protocolos de red o sistemas de control industrial.</div>
+        <div class="diag-elementos">Vista 4+1: Proceso</div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-6">
+      <div class="diag-card dc-comportamiento">
+        <div class="diag-cat">Comportamiento · Interacción</div>
+        <h4>Diagrama de Vista de Interacción</h4>
+        <p>Variante del diagrama de actividad donde cada nodo no es una actividad simple, sino un diagrama de interacción completo (secuencia o comunicación). Permite modelar escenarios de alto nivel que orquestan múltiples interacciones.</p>
+        <ul>
+          <li>Elementos: nodos de interacción (recuadros con ref o diagrama inline), flujo de control entre interacciones</li>
+        </ul>
+        <div class="diag-cuando">Usar cuando: un flujo de proceso de alto nivel esté compuesto de múltiples interacciones entre subsistemas que ya tienen sus propios diagramas de secuencia.</div>
+        <div class="diag-elementos">Vista 4+1: Proceso</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — CUÁNDO USAR CADA DIAGRAMA -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Guía práctica: <span class="gold">¿cuándo usar cada diagrama?</span></h2>
+  <p>La elección del diagrama correcto depende de la pregunta que se necesita responder y de la fase del proyecto en que se está. El error más común es usar siempre el mismo tipo de diagrama para todo.</p>
+
+  <table class="when-table">
+    <thead>
+      <tr>
+        <th>Momento del proyecto</th>
+        <th>Pregunta a responder</th>
+        <th>Diagrama recomendado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Análisis de requisitos</td>
+        <td>¿Qué puede hacer el sistema y quién lo usa?</td>
+        <td>Casos de uso</td>
+      </tr>
+      <tr>
+        <td>Análisis de dominio</td>
+        <td>¿Cuáles son las entidades del negocio y cómo se relacionan?</td>
+        <td>Clases (nivel análisis)</td>
+      </tr>
+      <tr>
+        <td>Diseño arquitectónico</td>
+        <td>¿Cómo se divide el sistema en componentes o capas?</td>
+        <td>Componentes, Paquetes</td>
+      </tr>
+      <tr>
+        <td>Diseño detallado</td>
+        <td>¿Cómo implemento esta funcionalidad en clases?</td>
+        <td>Clases (nivel diseño) + Secuencia</td>
+      </tr>
+      <tr>
+        <td>Modelado de procesos</td>
+        <td>¿Cómo fluye el proceso de negocio o el algoritmo?</td>
+        <td>Actividad</td>
+      </tr>
+      <tr>
+        <td>Ciclo de vida de entidades</td>
+        <td>¿Por qué estados pasa un objeto durante su vida?</td>
+        <td>Máquina de estados</td>
+      </tr>
+      <tr>
+        <td>Diseño de infraestructura</td>
+        <td>¿Cómo se distribuye el software en el hardware?</td>
+        <td>Despliegue</td>
+      </tr>
+      <tr>
+        <td>Validación del diseño</td>
+        <td>¿La estructura de clases puede ejecutar este caso de uso?</td>
+        <td>Secuencia + Comunicación</td>
+      </tr>
+      <tr>
+        <td>Documentación</td>
+        <td>¿Cómo se explica el sistema a alguien nuevo?</td>
+        <td>Clases + Componentes + Despliegue</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="concept-box" style="margin-top:20px;">
+    <div class="concept-label">Principio del mínimo diagrama necesario</div>
+    <p>Un equipo no necesita producir los catorce tipos de diagramas en cada proyecto. La regla es producir <em>el diagrama más simple que responda la pregunta en discusión</em>. En proyectos ágiles, los diagramas son bocetos de comunicación, no documentación permanente.</p>
+  </div>
+</div>
+
+<div class="pull-quote anim">
+  <p>"Los modelos son para pensar, no para archivar. El valor de un diagrama UML no está en haberlo dibujado, sino en la conversación que provocó y la decisión de diseño que la respaldó."</p>
+  <cite>— Adaptado de Fowler, <em>UML Distilled, 3rd Edition</em>, Addison-Wesley, 2003</cite>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-6">
+  <h2>Conclusión</h2>
+  <p>UML no es un fin en sí mismo: es una herramienta de pensamiento y comunicación. Sus notaciones básicas — visibilidad, multiplicidad, tipos de relaciones — son el vocabulario mínimo que todo ingeniero debe dominar para participar productivamente en conversaciones de diseño.</p>
+  <p>Los catorce diagramas del estándar cubren desde la estructura estática del código (clases, componentes) hasta su comportamiento dinámico (secuencia, estados, actividad) y su distribución física (despliegue). Ningún diagrama es completo por sí solo: la arquitectura de un sistema se entiende plenamente solo cuando se examinan sus múltiples perspectivas, tal como prescribe el modelo 4+1 de Kruchten.</p>
+  <p>El dominio de UML es, en definitiva, el dominio del pensamiento estructurado sobre sistemas complejos — la habilidad de separar el problema en partes comprensibles, visualizarlas con precisión y comunicarlas sin ambigüedad a cualquier interlocutor técnico.</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
+  <div class="section-label">Referencias bibliográficas</div>
+  <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
+    <li>Object Management Group. (2017). <em>OMG Unified Modeling Language Specification, Version 2.5.1.</em> OMG. Disponible en omg.org.</li>
+    <li>Booch, G., Rumbaugh, J., &amp; Jacobson, I. (2006). <em>The Unified Modeling Language User Guide, 2nd Edition.</em> Addison-Wesley.</li>
+    <li>Fowler, M. (2003). <em>UML Distilled: A Brief Guide to the Standard Object Modeling Language, 3rd Edition.</em> Addison-Wesley.</li>
+    <li>Pressman, R. S. (2010). <em>Software Engineering: A Practitioner's Approach, 7th Edition.</em> McGraw-Hill.</li>
+    <li>Rumbaugh, J., Jacobson, I., &amp; Booch, G. (2004). <em>The Unified Modeling Language Reference Manual, 2nd Edition.</em> Addison-Wesley.</li>
+    <li>Larman, C. (2004). <em>Applying UML and Patterns: An Introduction to Object-Oriented Analysis and Design, 3rd Edition.</em> Prentice Hall.</li>
+  </ul>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#UML</span>
+  <span class="tag">#DiagramasUML</span>
+  <span class="tag">#NotaciónUML</span>
+  <span class="tag">#DiagramaDeClases</span>
+  <span class="tag">#DiagramaDeSecuencia</span>
+  <span class="tag">#CasosDeUso</span>
+  <span class="tag">#ArquitecturaDeSoftware</span>
+  <span class="tag">#IngenieríaDeSoftware</span>
+  <span class="tag">#InformeTécnico</span>
+</div>
