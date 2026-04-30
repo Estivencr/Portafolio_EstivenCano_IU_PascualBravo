@@ -1,32 +1,38 @@
 ---
 layout: blog
-title: Proceso de elicitación de requisitos y los tipos de requerimientos de software
-title_display: "Proceso de elicitación de requisitos y los <em>tipos de requerimientos de software</em>"
-description: Mapa conceptual e integración de los principales conceptos abordados en las lecturas
+title: "Principios de modelado de Pressman, herramientas UML y vistas 4+1"
+title_display: "Principios de modelado, <em>herramientas UML</em> y vistas 4+1"
+description: Exploración profunda de los principios de modelado de Pressman, las herramientas UML y el modelo arquitectónico de vistas 4+1 de Kruchten
 subject_code: ISW-01
 subject_name: Ingeniería de Software 1
 subject_url: /ingenieria-software/
-blog_num: "II"
-entry_type: Mapa conceptual
-read_time: Lectura 8 min
+blog_num: "III"
+entry_type: Entrada de portafolio
+read_time: Lectura 12 min
 year: 2026
-exp_display: ELI
-breadcrumb_current: Proceso de Elicitación
+exp_display: MOD
+breadcrumb_current: Principios de Modelado
 nav_back: Ingeniería de Software 1
 nav_back_url: /ingenieria-software/
-footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. II"
+footer_label: "Ingeniería de Software 1 · ISW-01 · Blog No. III"
 footer_link_text: "← Volver a la materia"
 footer_link_url: /ingenieria-software/
 sidebar_entries:
+  - num: Blog No. I
+    title: Requisitos de software
+    url: /ingenieria-software/blog-requisitos
   - num: Blog No. II
     title: Proceso de elicitación de requisitos y tipos de requerimientos
-    url: /ingenieria-software/blog-requisitos
-  - title: Diagramas UML
+    url: /ingenieria-software/elicitacion-requisitos-software
+  - num: Blog No. III
+    title: Principios de modelado, herramientas y vistas 4+1
+    url: /ingenieria-software/principios-modelado
+  - title: Diagramas UML avanzados
 sidebar_stat:
-  label: Técnicas de elicitación
-  value: "6"
-  description: técnicas principales para descubrir necesidades explícitas, implícitas y latentes
-  source: "— Sommerville, 2016"
+  label: Vistas del modelo 4+1
+  value: "5"
+  description: perspectivas arquitectónicas que permiten describir un sistema de software de forma completa y sin ambigüedades
+  source: "— Kruchten, 1995"
 ---
 <style>
   .concept-box {
@@ -134,28 +140,151 @@ sidebar_stat:
     float: left; line-height: 0.78;
     margin: 6px 10px 0 0; color: var(--navy);
   }
+
+  /* Vista cards para el modelo 4+1 */
+  .vista-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px;
+    padding: 22px 22px 18px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .vista-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .vista-card.v-logica::before   { background: #0f3460; }
+  .vista-card.v-desarrollo::before { background: #1a6b3c; }
+  .vista-card.v-proceso::before  { background: #8b4513; }
+  .vista-card.v-fisica::before   { background: #5c1a8b; }
+  .vista-card.v-escenarios::before { background: #e5a00d; }
+
+  .vista-card .vista-badge {
+    display: inline-block;
+    font-size: 8.5px; letter-spacing: 2.5px; text-transform: uppercase;
+    font-weight: 700; padding: 3px 8px; border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .vista-card.v-logica   .vista-badge { background: #e8eef6; color: #0f3460; }
+  .vista-card.v-desarrollo .vista-badge { background: #e8f4ec; color: #1a6b3c; }
+  .vista-card.v-proceso  .vista-badge { background: #f5ece5; color: #8b4513; }
+  .vista-card.v-fisica   .vista-badge { background: #f0e8f5; color: #5c1a8b; }
+  .vista-card.v-escenarios .vista-badge { background: #fdf5e0; color: #9a6d00; }
+
+  .vista-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .vista-card .vista-pregunta {
+    font-size: 12px; font-style: italic; color: var(--muted);
+    margin-bottom: 12px; border-bottom: 0.5px solid var(--rule-lt); padding-bottom: 10px;
+  }
+  .vista-card p  { font-size: 14px; line-height: 1.65; color: var(--muted); margin-bottom: 10px; }
+  .vista-card ul { font-size: 13px; color: var(--muted); padding-left: 16px; margin: 0; line-height: 1.8; }
+  .vista-card .vista-diagramas {
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--muted2); margin-top: 12px; font-weight: 600;
+  }
+
+  /* Principios — numeración grande */
+  .principio-card {
+    display: flex; gap: 18px; align-items: flex-start;
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 18px 20px;
+  }
+  .principio-card .p-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px; font-weight: 900; font-style: italic;
+    color: var(--parchment3); line-height: 1; flex-shrink: 0; width: 36px;
+    margin-top: -4px;
+  }
+  .principio-card .p-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px; font-weight: 700; color: var(--navy); margin-bottom: 5px;
+  }
+  .principio-card .p-body p { font-size: 13.5px; line-height: 1.65; color: var(--muted); margin: 0; }
+
+  /* Tabla de diagramas UML */
+  .uml-table {
+    width: 100%; border-collapse: collapse; font-size: 13.5px;
+    margin-top: 16px;
+  }
+  .uml-table thead th {
+    background: var(--navy); color: #f0ece0;
+    padding: 10px 14px; text-align: left;
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+  .uml-table tbody tr { border-bottom: 0.5px solid var(--rule-lt); }
+  .uml-table tbody tr:last-child { border-bottom: none; }
+  .uml-table tbody td { padding: 10px 14px; color: var(--muted); vertical-align: top; }
+  .uml-table tbody td:first-child { color: var(--ink); font-weight: 600; font-size: 13px; white-space: nowrap; }
+  .uml-table tbody tr:nth-child(even) { background: var(--parchment2); }
+
+  .type-badge {
+    display: inline-block; font-size: 9px; letter-spacing: 1.5px;
+    text-transform: uppercase; font-weight: 700;
+    padding: 2px 7px; border-radius: 2px;
+  }
+  .type-badge.estructural { background: #e8eef6; color: #0f3460; }
+  .type-badge.comportamiento { background: #fdf5e0; color: #9a6d00; }
+
+  /* Diagrama integración 4+1 */
+  .cuatro-mas-uno {
+    background: var(--parchment2);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px; padding: 28px 24px;
+    text-align: center; margin: 24px 0;
+  }
+  .cuatro-mas-uno .centro {
+    display: inline-block;
+    background: var(--gold); color: var(--ink);
+    font-family: 'Playfair Display', serif;
+    font-size: 13px; font-weight: 700;
+    padding: 14px 20px; border-radius: 3px;
+    margin-bottom: 18px;
+  }
+  .cuatro-mas-uno .vistas-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 10px; max-width: 480px; margin: 0 auto;
+  }
+  .cuatro-mas-uno .vista-chip {
+    background: var(--white); border: 0.5px solid var(--rule);
+    border-radius: 3px; padding: 10px 14px;
+    font-size: 12.5px; font-weight: 600; color: var(--navy);
+  }
+  .cuatro-mas-uno .vista-chip .chip-sub {
+    font-size: 11px; color: var(--muted); font-weight: 400; margin-top: 2px;
+  }
+  .cuatro-mas-uno .flecha-grid {
+    display: flex; justify-content: center; align-items: center;
+    gap: 8px; margin: 12px 0; color: var(--muted2); font-size: 20px;
+  }
 </style>
 
 <!-- INTRO -->
 <div class="intro-block anim anim-1">
-  <p class="drop-cap">El modelado de software es uno de los pilares fundamentales de la ingeniería de software moderna. A través de técnicas formales y principios bien establecidos, los arquitectos e ingenieros pueden capturar la complejidad de los sistemas de software, comunicar diseños de manera clara y establecer bases sólidas para la implementación.</p>
+  <p class="drop-cap">El modelado es el lenguaje que hablan los ingenieros de software cuando el código aún no existe. Antes de escribir una sola línea, los sistemas complejos deben ser pensados, discutidos y representados visualmente. Los principios de Pressman, las notaciones UML y el modelo arquitectónico de vistas 4+1 de Kruchten conforman el núcleo conceptual que permite hacer eso con rigor y consistencia.</p>
 </div>
 
 <!-- SECCIÓN I — MAPA CONCEPTUAL -->
 <div class="blog-section anim anim-2" id="sec-1">
   <div class="section-num">I</div>
   <h2>Mapa conceptual: <span class="gold">visión integrada</span></h2>
-  <p>El siguiente mapa conceptual sintetiza los diferentes principios de modelado de Pressman y las herramientas de modelado, así como el modelo 4 + 1.</p>
+  <p>El siguiente mapa conceptual sintetiza los principios de modelado de Pressman, las herramientas de modelado UML y el modelo de vistas 4+1, mostrando cómo estos tres ejes se articulan en la práctica de la arquitectura de software.</p>
 
-  <!-- ✦ Reemplaza "tu-mapa-conceptual.png" con el nombre real de tu archivo -->
   <div class="map-container">
     <a href="{{ '/img/principiosModelado.png' | relative_url }}"
        class="glightbox"
-       data-title="Principios de modelado de Pressman y herrammientas de modelado"
-       data-description="Mapa conceptual elaborado por el autor · Ingeniería de Software 1, ISW-01 · 2025">
+       data-title="Principios de modelado, herramientas UML y vistas 4+1"
+       data-description="Mapa conceptual elaborado por EstivenCr · Ingeniería de Software 1, ISW-01 · 2026">
       <img
         src="{{ '/img/principiosModelado.png' | relative_url }}"
-        alt="Mapa conceptual — Principios de modelado de Pressman y herramientas de modelado                                                                                                                                                                                                                                                                                                                                                    "
+        alt="Mapa conceptual — Principios de modelado de Pressman, herramientas UML y modelo de vistas 4+1"
       />
       <div class="map-zoom-hint">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -173,153 +302,469 @@ sidebar_stat:
 
   <div class="concept-box">
     <div class="concept-label">Nota sobre el mapa</div>
-    <p>El mapa conceptual integra los principios de modelado de Pressman y las herramientas de modelado, así como el modelo 4 + 1.</p>
+    <p>El mapa integra tres ejes temáticos: los principios filosóficos del modelado (Pressman), los diagramas que provee UML como notación estándar, y el modelo 4+1 de Kruchten como marco arquitectónico que organiza las distintas perspectivas del sistema.</p>
   </div>
 </div>
 
 <hr class="rule-double"/>
 
-<!-- SECCIÓN II — QUÉ ES ELICITACIÓN -->
+<!-- SECCIÓN II — QUÉ ES MODELADO -->
 <div class="blog-section anim" id="sec-2">
   <div class="section-num">II</div>
-  <h2>Principios de Modelado de <span class="gold">Pressman</span></h2>
+  <h2>¿Qué es el <span class="gold">modelado de software?</span></h2>
 
   <div class="concept-box">
     <div class="concept-label">Definición</div>
-    <p>Los principios de modelado de Pressman son directrices fundamentales que guían el proceso de creación y uso de modelos en la ingeniería de software, asegurando que los modelos sean útiles, comprensibles y consistentes.</p>
+    <p>El modelado de software es el proceso de crear representaciones abstractas de un sistema de software con el fin de comprender, comunicar y documentar su estructura, comportamiento y propiedades antes — y durante — su implementación. — <em>Pressman, 2010</em></p>
   </div>
 
-  <p>Estos principios ayudan a los ingenieros a diseñar modelos que capturen la esencia del sistema sin perder detalles importantes, facilitando la comunicación entre los diferentes actores del proceso de desarrollo.</p>
+  <p>Un modelo no es el sistema: es una <strong>simplificación deliberada</strong> de la realidad que resalta ciertos aspectos mientras suprime otros. Al igual que un arquitecto produce planos antes de construir un edificio, el ingeniero de software produce modelos antes de construir el sistema. Esta abstracción tiene tres propósitos fundamentales:</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">01</div>
+        <h4>Comunicación</h4>
+        <p>Los modelos permiten que desarrolladores, clientes y arquitectos compartan un lenguaje común. Reducen la ambigüedad inherente al lenguaje natural.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">02</div>
+        <h4>Comprensión</h4>
+        <p>Fuerzan al equipo a pensar con precisión sobre el sistema. Las inconsistencias y vacíos lógicos aparecen en el modelo antes de aparecer en el código.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="technique-card">
+        <div class="tech-num">03</div>
+        <h4>Documentación</h4>
+        <p>Los modelos son artefactos duraderos que capturan decisiones de diseño y justificaciones arquitectónicas que el código por sí solo no puede expresar.</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <hr class="rule-double"/>
 
-<!-- SECCIÓN III — TIPOS DE REQUERIMIENTOS -->
+<!-- SECCIÓN III — PRINCIPIOS DE PRESSMAN -->
 <div class="blog-section anim" id="sec-3">
   <div class="section-num">III</div>
+  <h2>Principios de modelado de <span class="gold">Pressman</span></h2>
+  <p>Roger Pressman, en <em>Software Engineering: A Practitioner's Approach</em>, establece siete principios fundamentales que deben guiar toda actividad de modelado. No son reglas técnicas sobre cómo dibujar diagramas, sino principios filosóficos sobre <strong>por qué y cómo modelar</strong>.</p>
+
+  <div class="d-flex flex-column gap-2 mt-3">
+
+    <div class="principio-card anim">
+      <div class="p-num">1</div>
+      <div class="p-body">
+        <h4>Modelar solo lo que es relevante</h4>
+        <p>No todo sistema requiere un modelo formal de cada uno de sus componentes. El ingeniero debe identificar qué aspectos del sistema son suficientemente complejos, críticos o ambiguos para justificar la inversión de tiempo en un modelo. Modelar en exceso consume recursos sin aportar valor; modelar de menos genera malentendidos en la implementación.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">2</div>
+      <div class="p-body">
+        <h4>El valor de un modelo depende de su perspectiva</h4>
+        <p>Cada modelo representa el sistema desde una perspectiva específica. Un diagrama de clases responde preguntas distintas a las que responde un diagrama de secuencia. La clave está en elegir la perspectiva correcta para la pregunta que se está respondiendo, no en intentar que un solo modelo lo explique todo.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">3</div>
+      <div class="p-body">
+        <h4>Los mejores modelos están conectados a la realidad</h4>
+        <p>Un modelo que se divorcia de la realidad del sistema es peor que no tener modelo: da una falsa sensación de comprensión. Los modelos deben actualizarse cuando el sistema evoluciona. Un modelo desactualizado es una fuente activa de desinformación para el equipo.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">4</div>
+      <div class="p-body">
+        <h4>Ningún modelo único es suficiente</h4>
+        <p>Un sistema de software de mediana complejidad tiene múltiples dimensiones — estructura estática, comportamiento dinámico, distribución física, organización del código — que no pueden capturarse en un solo diagrama. Los mejores equipos producen <em>conjuntos de modelos complementarios</em>, cada uno iluminando una faceta diferente del sistema.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">5</div>
+      <div class="p-body">
+        <h4>Establecer el propósito del modelo antes de crearlo</h4>
+        <p>Antes de abrir cualquier herramienta de modelado, el equipo debe responder: ¿para quién es este modelo y qué decisión va a apoyar? Un modelo para negociar requisitos con el cliente tiene un propósito diferente al que se usa para guiar a un desarrollador. El propósito determina el nivel de detalle, la notación y el medio.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">6</div>
+      <div class="p-body">
+        <h4>Adaptar el nivel de abstracción a la audiencia</h4>
+        <p>El nivel de detalle en un modelo debe corresponder al nivel de conocimiento técnico de quien lo va a consumir. Un ejecutivo de negocio necesita un diagrama de casos de uso de alto nivel; un arquitecto necesita un diagrama de componentes con interfaces explícitas. El mismo modelo para audiencias distintas suele fallar en comunicar con ambas.</p>
+      </div>
+    </div>
+
+    <div class="principio-card anim">
+      <div class="p-num">7</div>
+      <div class="p-body">
+        <h4>Los modelos deben evolucionar iterativamente</h4>
+        <p>El modelado no es una actividad que ocurre una vez al inicio del proyecto. A medida que el equipo aprende más sobre el dominio del problema y toma decisiones de diseño, los modelos deben refinarse. Un modelo que no se actualiza durante el desarrollo pierde su utilidad y, eventualmente, su credibilidad como artefacto de referencia.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — HERRAMIENTAS DE MODELADO -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Herramientas de <span class="gold">modelado: UML</span></h2>
+  <p>El Lenguaje de Modelado Unificado (<strong>UML</strong>, por sus siglas en inglés) es el estándar de facto para el modelado visual de sistemas software. Fue adoptado como estándar por el Object Management Group (OMG) en 1997 y en su versión 2.x define <strong>catorce tipos de diagramas</strong> organizados en dos grandes categorías.</p>
+
+  <div class="concept-box">
+    <div class="concept-label">¿Qué es UML?</div>
+    <p>UML no es una metodología ni un proceso de desarrollo: es una <em>notación visual estandarizada</em>. Define símbolos, relaciones y reglas semánticas para que los diagramas producidos por diferentes equipos, en diferentes herramientas, puedan ser interpretados de manera consistente. — <em>Booch, Rumbaugh &amp; Jacobson, 2006</em></p>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 6px;">Diagramas estructurales</h3>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:12px;">Responden a la pregunta <strong>¿cómo está construido el sistema?</strong> Representan la anatomía estática del software.</p>
+
+  <table class="uml-table">
+    <thead>
+      <tr>
+        <th>Diagrama</th>
+        <th>Propósito</th>
+        <th>Uso típico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Clases</td>
+        <td>Muestra clases, atributos, métodos y relaciones (herencia, asociación, dependencia)</td>
+        <td>Diseño orientado a objetos, modelo de dominio</td>
+      </tr>
+      <tr>
+        <td>Objetos</td>
+        <td>Instancias concretas de clases en un momento dado</td>
+        <td>Validar relaciones del diagrama de clases con ejemplos reales</td>
+      </tr>
+      <tr>
+        <td>Componentes</td>
+        <td>Organización de módulos de software y sus interfaces</td>
+        <td>Arquitectura de componentes, microservicios</td>
+      </tr>
+      <tr>
+        <td>Despliegue</td>
+        <td>Distribución del software en nodos de hardware</td>
+        <td>Infraestructura, cloud, DevOps</td>
+      </tr>
+      <tr>
+        <td>Paquetes</td>
+        <td>Agrupación lógica de elementos del modelo</td>
+        <td>Organización de capas y módulos</td>
+      </tr>
+      <tr>
+        <td>Estructura compuesta</td>
+        <td>Estructura interna de una clase o componente</td>
+        <td>Patrones de diseño complejos</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 6px;">Diagramas de comportamiento</h3>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:12px;">Responden a la pregunta <strong>¿cómo se comporta el sistema?</strong> Representan la dinámica del software a lo largo del tiempo.</p>
+
+  <table class="uml-table">
+    <thead>
+      <tr>
+        <th>Diagrama</th>
+        <th>Propósito</th>
+        <th>Uso típico</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Casos de uso</td>
+        <td>Funcionalidades del sistema desde la perspectiva del actor</td>
+        <td>Captura de requisitos funcionales, comunicación con el cliente</td>
+      </tr>
+      <tr>
+        <td>Actividad</td>
+        <td>Flujo de actividades y decisiones dentro de un proceso</td>
+        <td>Modelado de procesos de negocio, lógica algorítmica</td>
+      </tr>
+      <tr>
+        <td>Máquina de estados</td>
+        <td>Estados de un objeto y transiciones ante eventos</td>
+        <td>Ciclos de vida de entidades, protocolos de comunicación</td>
+      </tr>
+      <tr>
+        <td>Secuencia</td>
+        <td>Intercambio de mensajes entre objetos a lo largo del tiempo</td>
+        <td>Diseño de APIs, análisis de casos de uso detallados</td>
+      </tr>
+      <tr>
+        <td>Comunicación</td>
+        <td>Interacciones entre objetos con énfasis en las relaciones</td>
+        <td>Verificar colaboración entre componentes</td>
+      </tr>
+      <tr>
+        <td>Tiempos</td>
+        <td>Cambios de estado de objetos en función del tiempo real</td>
+        <td>Sistemas embebidos, tiempo real</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:18px;color:var(--navy);margin:28px 0 14px;">Herramientas CASE para modelado UML</h3>
+  <div class="row g-3">
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">EA</div>
+        <h4>Enterprise Architect</h4>
+        <p>Herramienta profesional de Sparx Systems. Ampliamente usada en entornos corporativos. Soporta UML 2.x completo, generación de código y trazabilidad de requisitos.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">⋆</div>
+        <h4>StarUML</h4>
+        <p>Herramienta de código abierto ligera. Ideal para proyectos académicos y de mediana escala. Soporta la mayoría de diagramas UML 2.x.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">◇</div>
+        <h4>draw.io / Diagrams.net</h4>
+        <p>Gratuito y basado en web. No requiere instalación. Excelente para colaboración en tiempo real. No aplica semántica UML estricta, pero muy accesible.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">P</div>
+        <h4>PlantUML</h4>
+        <p>Define diagramas mediante texto plano. Se integra con IDEs y wikis. Permite versionar los modelos en el mismo repositorio de código que el sistema.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">L</div>
+        <h4>Lucidchart</h4>
+        <p>Herramienta colaborativa en la nube. Muy usada en equipos que trabajan de forma remota. Permite comentarios y revisiones en tiempo real sobre los diagramas.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+      <div class="technique-card">
+        <div class="tech-num" style="font-size:20px;">VP</div>
+        <h4>Visual Paradigm</h4>
+        <p>Suite completa con soporte para UML, BPMN, ERD y arquitecturas ágiles. Integra modelado con gestión de proyectos y documentación automática.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — MODELO 4+1 -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Modelo de vistas <span class="gold">4+1</span></h2>
+  <p>Propuesto por <strong>Philippe Kruchten</strong> en su artículo <em>The 4+1 View Model of Architecture</em> (IEEE Software, 1995), este modelo organiza la descripción arquitectónica de un sistema software en <strong>cinco vistas concurrentes</strong>. Cada vista aborda las preocupaciones de una audiencia diferente y usa diferentes notaciones y herramientas.</p>
+
+  <div class="concept-box">
+    <div class="concept-label">Motivación del modelo</div>
+    <p>La arquitectura de software es demasiado compleja para describirse desde un único punto de vista. Intentar capturar toda la arquitectura en un solo diagrama produce uno que es <em>o demasiado abstracto para ser útil, o demasiado detallado para ser comprensible</em>. El modelo 4+1 resuelve esto separando las preocupaciones en vistas especializadas. — <em>Kruchten, 1995</em></p>
+  </div>
+
+  <!-- Diagrama conceptual 4+1 -->
+  <div class="cuatro-mas-uno anim">
+    <div>
+      <span class="centro">Vista de Escenarios (+1)<br><small style="font-size:11px;font-weight:400;">Integra y valida las cuatro vistas</small></span>
+    </div>
+    <div class="flecha-grid">
+      <span>↙</span><span>↓</span><span>↓</span><span>↘</span>
+    </div>
+    <div class="vistas-grid">
+      <div class="vista-chip">
+        Vista Lógica
+        <div class="chip-sub">Funcionalidad</div>
+      </div>
+      <div class="vista-chip">
+        Vista de Desarrollo
+        <div class="chip-sub">Estructura del código</div>
+      </div>
+      <div class="vista-chip">
+        Vista de Proceso
+        <div class="chip-sub">Concurrencia</div>
+      </div>
+      <div class="vista-chip">
+        Vista Física
+        <div class="chip-sub">Despliegue</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-3">A continuación se describe cada vista en detalle, incluyendo su propósito, la audiencia a la que va dirigida y los diagramas UML que la representan.</p>
+
+  <!-- Las 5 vistas -->
+  <div class="row g-3 mt-1">
+
+    <!-- Vista Lógica -->
+    <div class="col-12">
+      <div class="vista-card v-logica">
+        <span class="vista-badge">Vista 1</span>
+        <h4>Vista Lógica <em style="font-style:italic;font-size:14px;font-family:inherit;font-weight:400;color:var(--muted);">(Logical View)</em></h4>
+        <div class="vista-pregunta">¿Qué servicios y funcionalidades ofrece el sistema?</div>
+        <p>La vista lógica describe cómo está estructurado el sistema para satisfacer los <strong>requisitos funcionales</strong>. Se centra en las abstracciones clave del dominio: las clases, sus responsabilidades, relaciones e interacciones. Es la vista que más directamente mapea el modelo de dominio del negocio al modelo orientado a objetos del sistema.</p>
+        <p>En términos prácticos, muestra los grandes subsistemas o capas (presentación, lógica de negocio, datos), las clases principales de cada subsistema y los patrones de diseño que estructuran sus relaciones.</p>
+        <ul>
+          <li><strong>Audiencia:</strong> Diseñadores de software, arquitectos, desarrolladores senior</li>
+          <li><strong>Preguntas que responde:</strong> ¿Cuáles son las abstracciones centrales del dominio? ¿Cómo se organizan las clases? ¿Qué patrones de diseño se aplican?</li>
+        </ul>
+        <div class="vista-diagramas">Diagramas UML: Clases · Objetos · Máquina de estados · Colaboración</div>
+      </div>
+    </div>
+
+    <!-- Vista de Desarrollo -->
+    <div class="col-12">
+      <div class="vista-card v-desarrollo">
+        <span class="vista-badge">Vista 2</span>
+        <h4>Vista de Desarrollo <em style="font-style:italic;font-size:14px;font-family:inherit;font-weight:400;color:var(--muted);">(Development View)</em></h4>
+        <div class="vista-pregunta">¿Cómo se organiza el código fuente para que el equipo pueda desarrollarlo?</div>
+        <p>También llamada <strong>vista de implementación</strong>, describe la organización del software desde la perspectiva del programador. Se concentra en la gestión del código: cómo se agrupan las unidades de código en módulos, paquetes, bibliotecas o subsistemas, y cuáles son las dependencias entre ellos.</p>
+        <p>Esta vista es crítica para la gestión del proyecto, ya que permite asignar partes del sistema a diferentes equipos o desarrolladores. También sirve como guía para el control de versiones y la integración continua, ya que refleja la estructura de carpetas y proyectos en el repositorio.</p>
+        <ul>
+          <li><strong>Audiencia:</strong> Programadores, líderes técnicos, gestores de proyecto</li>
+          <li><strong>Preguntas que responde:</strong> ¿En qué módulos se divide el código? ¿Cuáles son las capas del sistema? ¿Qué bibliotecas o frameworks se usan? ¿Cómo evitar dependencias circulares?</li>
+        </ul>
+        <div class="vista-diagramas">Diagramas UML: Componentes · Paquetes · Estructura compuesta</div>
+      </div>
+    </div>
+
+    <!-- Vista de Proceso -->
+    <div class="col-12">
+      <div class="vista-card v-proceso">
+        <span class="vista-badge">Vista 3</span>
+        <h4>Vista de Proceso <em style="font-style:italic;font-size:14px;font-family:inherit;font-weight:400;color:var(--muted);">(Process View)</em></h4>
+        <div class="vista-pregunta">¿Cómo se comporta el sistema en tiempo de ejecución bajo carga concurrente?</div>
+        <p>La vista de proceso aborda los aspectos <strong>dinámicos y de tiempo de ejecución</strong> del sistema. Se enfoca en la concurrencia, el paralelismo, la sincronización y la comunicación entre procesos. Es la vista más relevante para analizar el rendimiento, la disponibilidad y la tolerancia a fallos del sistema.</p>
+        <p>Describe los procesos activos del sistema — hilos, procesos del sistema operativo, actores concurrentes — y explica cómo se comunican, qué recursos comparten y cómo se sincronizan para mantener la integridad del estado global. En sistemas distribuidos, también modela los mecanismos de comunicación entre servicios.</p>
+        <ul>
+          <li><strong>Audiencia:</strong> Integradores de sistemas, arquitectos de rendimiento, equipos de QA de carga</li>
+          <li><strong>Preguntas que responde:</strong> ¿Qué tareas se ejecutan en paralelo? ¿Cómo se comunican los procesos? ¿Dónde pueden ocurrir condiciones de carrera? ¿Cómo responde el sistema bajo carga?</li>
+        </ul>
+        <div class="vista-diagramas">Diagramas UML: Actividad · Secuencia · Comunicación · Tiempos</div>
+      </div>
+    </div>
+
+    <!-- Vista Física -->
+    <div class="col-12">
+      <div class="vista-card v-fisica">
+        <span class="vista-badge">Vista 4</span>
+        <h4>Vista Física <em style="font-style:italic;font-size:14px;font-family:inherit;font-weight:400;color:var(--muted);">(Physical View)</em></h4>
+        <div class="vista-pregunta">¿Cómo se distribuye el software en la infraestructura de hardware?</div>
+        <p>También llamada <strong>vista de despliegue</strong>, mapea los componentes de software a los nodos físicos de hardware donde se ejecutan: servidores, contenedores, dispositivos, servicios en la nube. Es la vista más concreta y la más cercana a la realidad operativa del sistema.</p>
+        <p>Esta vista es fundamental para decisiones de infraestructura: qué tan escalable es el sistema, qué sucede si un nodo falla, cómo se distribuye la carga entre instancias, dónde se almacenan los datos y cómo fluyen por la red. En arquitecturas modernas también refleja la configuración de contenedores Docker, orquestación con Kubernetes o distribución en servicios cloud.</p>
+        <ul>
+          <li><strong>Audiencia:</strong> Ingenieros de sistemas, equipos de operaciones (DevOps/SRE), arquitectos de infraestructura</li>
+          <li><strong>Preguntas que responde:</strong> ¿En qué servidores se ejecuta cada componente? ¿Cómo se comunican los nodos? ¿Dónde están los cuellos de botella de red? ¿Cómo se implementa la alta disponibilidad?</li>
+        </ul>
+        <div class="vista-diagramas">Diagramas UML: Despliegue (Deployment Diagram)</div>
+      </div>
+    </div>
+
+    <!-- Vista de Escenarios -->
+    <div class="col-12">
+      <div class="vista-card v-escenarios">
+        <span class="vista-badge">Vista +1 — Escenarios</span>
+        <h4>Vista de Escenarios <em style="font-style:italic;font-size:14px;font-family:inherit;font-weight:400;color:var(--muted);">(Use-Case View)</em></h4>
+        <div class="vista-pregunta">¿Cómo interactúan los usuarios con el sistema para lograr sus objetivos?</div>
+        <p>La vista de escenarios es el <strong>"+1"</strong> del modelo: no es una vista más en el mismo nivel que las cuatro anteriores, sino la vista que <em>las valida y las integra a todas</em>. Los escenarios son instancias de los casos de uso más importantes del sistema, descritos como secuencias concretas de interacciones entre actores y componentes.</p>
+        <p>Su rol es doble. Por un lado, durante el diseño, los escenarios sirven para descubrir elementos arquitectónicos que no habrían aparecido examinando las otras cuatro vistas de manera aislada. Por otro lado, durante la validación, confirman que las decisiones tomadas en cada vista permiten efectivamente que el sistema ejecute los casos de uso requeridos de extremo a extremo.</p>
+        <ul>
+          <li><strong>Audiencia:</strong> Todos los stakeholders — es la vista más comprensible para perfiles no técnicos</li>
+          <li><strong>Preguntas que responde:</strong> ¿Qué puede hacer el sistema? ¿Cómo colaboran los componentes de las otras vistas para ejecutar un flujo de usuario? ¿Se han contemplado todos los requisitos funcionales en la arquitectura?</li>
+        </ul>
+        <div class="vista-diagramas">Diagramas UML: Casos de uso · Secuencia de escenarios · Colaboración</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — RELACIÓN ENTRE VISTAS -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+  <h2>Relación e <span class="gold">integración</span> entre vistas</h2>
+  <p>Las cinco vistas no son independientes: <strong>se complementan y se restringen mutuamente</strong>. Una decisión tomada en la vista lógica (como elegir una arquitectura en capas) tiene consecuencias directas en la vista de desarrollo (cómo se organizan los paquetes), en la vista de proceso (qué capa se ejecuta en qué hilo) y en la vista física (qué capa se despliega en qué servidor).</p>
 
   <div class="row g-3 mt-1">
     <div class="col-md-6">
-      <div class="req-type-card">
-        <div class="req-label">Tipo 01</div>
-        <h4>Principios Generales</h4>
-        <p>Los principios generales establecen las bases filosóficas del modelado:</p>
- 
-        <ul>
-        <li><strong>Modelar lo importante</strong>: No todo requiere un modelo formal. Enfócate en los aspectos críticos del sistema que impacten directamente en su éxito.</li>
-        
-        <li><strong>Modelos simples y necesarios</strong>: La simplicidad es clave. Los modelos deben ser lo suficientemente complejos para capturar la esencia del problema, pero no excesivamente complicados.</li>
-        
-        <li><strong>Crear modelos que evolucionen</strong>: El software no es estático. Los modelos deben ser diseñados con la intención de que evolucionen con el tiempo, permitiendo cambios y mejoras iterativas.</li>
-        
-        <li><strong>Modelos útiles con propósito</strong>: Cada modelo debe servir un propósito específico. Un modelo sin propósito es un ejercicio académico sin valor práctico.</li>
-        
-        <li><strong>Confiar en tu instinto</strong>: La intuición y la experiencia son valiosas. Si algo no se siente correcto en el modelo, probablemente hay un problema subyacente.</li>
-        
-        <li><strong>No ser dogmático</strong>: La flexibilidad es esencial. No existe un conjunto rígido de reglas que funcione para todos los proyectos.</li>
-        
-        <li><strong>Recibir retroalimentación</strong>: Los modelos son herramientas de comunicación. La retroalimentación de los stakeholders y del equipo es crucial para validar y mejorar los modelos.</li>
-        </ul>
+      <div class="process-step">
+        <div class="step-num">Lógica → Desarrollo</div>
+        <h4>Del diseño al código</h4>
+        <p>Las clases y subsistemas de la vista lógica se mapean a módulos y paquetes en la vista de desarrollo. Una buena vista lógica facilita una estructura de código cohesiva y con bajo acoplamiento.</p>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="req-type-card">
-        <div class="req-label">Tipo 02</div>
-        <h4>Principios de Modelado Específicos</h4>
-        <p>Estos principios se centran en aspectos técnicos del modelado:</p>
-
-        <ul>
-        <li><strong>Modelar con el nivel de detalle adecuado</strong>: El nivel de detalle debe ser suficiente para comunicar la información necesaria sin abrumar a los stakeholders.</li>
-        
-        <li><strong>Modelar con la audiencia en mente</strong>: Los modelos deben ser diseñados considerando quién los va a usar y qué información necesitan.</li>
-        
-        <li><strong>Modelar para la comunicación, no para la perfección</strong>: El objetivo principal del modelado es facilitar la comunicación, no crear un modelo perfecto o completo.</li>
-        
-        <li><strong>Modelar con consistencia</strong>: La consistencia entre diferentes modelos es crucial para evitar confusiones y malentendidos.</li>
-        
-        <li><strong>Modelar con herramientas adecuadas</strong>: La elección de las herramientas de modelado debe basarse en su capacidad para satisfacer las necesidades del proyecto y del equipo.</li>
-        
-        <li><strong>Modelar con iteración</strong>: El modelado es un proceso iterativo. Los modelos deben ser revisados y refinados a medida que se obtiene nueva información y se avanza en el proyecto.</li>
-        
-        <li><strong>Modelar con documentación clara</strong>: La documentación que acompaña a los modelos debe ser clara y concisa para facilitar su comprensión y uso.</li>
-        </ul>
+      <div class="process-step">
+        <div class="step-num">Proceso → Física</div>
+        <h4>De hilos a nodos</h4>
+        <p>Los procesos y activos concurrentes identificados en la vista de proceso deben asignarse a nodos físicos en la vista de despliegue, lo que influye directamente en decisiones de escalabilidad y tolerancia a fallos.</p>
       </div>
     </div>
-</div>
-
-<hr class="rule-double"/>
-
-<!-- SECCIÓN IV — PROCESO -->
-<div class="blog-section anim" id="sec-4">
-  <div class="section-num">IV</div>
-    <h2>Herramientas de <span class="gold">modelado</span></h2>
-    <p>Las herramientas de modelado son esenciales para aplicar los principios de modelado de Pressman de manera efectiva. Estas herramientas permiten a los ingenieros crear representaciones visuales de sistemas complejos, facilitando la comunicación y la comprensión entre los diferentes stakeholders.</p>
-    <p>Algunas de las herramientas de modelado más comunes incluyen:</p>
-    <ul>
-      <li><strong>Diagramas de clases</strong>: Utilizados para representar la estructura estática de un sistema, mostrando las clases, sus atributos, métodos y las relaciones entre ellas.</li>
-      
-      <li><strong>Diagramas de secuencia</strong>: Representan la interacción entre objetos a lo largo del tiempo, mostrando cómo los objetos se comunican para llevar a cabo una función específica.</li>
-      
-      <li><strong>Diagramas de casos de uso</strong>: Describen las funcionalidades del sistema desde la perspectiva del usuario, mostrando los actores y sus interacciones con el sistema.</li>
-      
-      <li><strong>Diagramas de actividad</strong>: Representan los flujos de trabajo y los procesos dentro del sistema, mostrando las actividades y las decisiones que se toman.</li>
-      
-      <li><strong>Diagramas de estado</strong>: Muestran los diferentes estados por los que puede pasar un objeto a lo largo de su vida, así como las transiciones entre esos estados.</li>
-        <li><strong>Diagramas de componentes</strong>: Representan la organización y las dependencias entre los componentes de software, mostrando cómo se ensamblan para formar el sistema completo.</li>
-    </ul>
-  </div>
-</div>
-
-<hr class="rule-double"/>
-
-<!-- SECCIÓN V — TÉCNICAS -->
-<div class="blog-section anim" id="sec-5">
-  <div class="section-num">V</div>
-    <h2>Modelo <span class="gold">4 + 1</span></h2>
-    <p>El modelo 4 + 1 es un enfoque de modelado que organiza los modelos de software en cinco vistas distintas, cada una enfocada en un aspecto específico del sistema:</p>
-    <ul>
-      <li><strong>Vista lógica</strong>: Se centra en la funcionalidad del sistema, mostrando cómo se organizan las clases y los objetos para cumplir con los requisitos funcionales.</li>
-      
-      <li><strong>Vista de desarrollo</strong>: Describe la organización del software desde la perspectiva del desarrollador, mostrando los módulos, paquetes y componentes que conforman el sistema.</li>
-      
-      <li><strong>Vista de proceso</strong>: Se enfoca en la dinámica del sistema, mostrando cómo los procesos y subprocesos interactúan para llevar a cabo las funciones del sistema.</li>
-      
-      <li><strong>Vista física</strong>: Representa la arquitectura física del sistema, mostrando cómo se distribuyen los componentes de software en el hardware.</li>
-      
-      <li><strong>Vista de casos de uso</strong>: Proporciona una perspectiva centrada en el usuario, mostrando cómo los usuarios interactúan con el sistema para lograr sus objetivos.</li>
-    </ul>
+    <div class="col-md-6">
+      <div class="process-step">
+        <div class="step-num">Escenarios → Todas</div>
+        <h4>Validación integral</h4>
+        <p>Cada escenario del "+1" debe poder trazarse a través de las cuatro vistas: ¿qué clases participan (lógica)? ¿Qué módulos se invocan (desarrollo)? ¿Qué procesos se activan (proceso)? ¿En qué nodos ocurre (física)?</p>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="process-step">
+        <div class="step-num">Consistencia global</div>
+        <h4>La coherencia arquitectónica</h4>
+        <p>La arquitectura es sólida cuando las decisiones en cada vista son coherentes con las de las demás. Inconsistencias entre vistas — como un componente que existe en la vista lógica pero no tiene correspondencia en la física — revelan vacíos en el diseño.</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="pull-quote anim">
-    <p>"El modelado de software es una herramienta poderosa para gestionar la complejidad y facilitar la comunicación en el desarrollo de software. Al seguir los principios de modelado de Pressman y utilizar herramientas adecuadas, los ingenieros pueden crear modelos que no solo representen el sistema de manera efectiva, sino que también evolucionen con él a lo largo del tiempo."</p>
-
+  <p>"La arquitectura es la suma de las decisiones importantes de diseño sobre la estructura de un sistema. Pero ninguna decisión aislada define la arquitectura: es el conjunto coherente de decisiones en todas sus dimensiones — lógica, de desarrollo, de proceso, física y de escenarios — lo que la constituye."</p>
+  <cite>— Adaptado de Kruchten, <em>The 4+1 View Model of Architecture</em>, IEEE Software, 1995</cite>
 </div>
 
 <!-- CONCLUSIÓN -->
-<div class="conclusion anim" id="sec-6">
-  <h2>🏁 Conclusión</h2>
-  <p>El modelado de software es una práctica fundamental en el desarrollo de sistemas complejos. Proporciona una base sólida para la comunicación, la planificación y la implementación del software, permitiendo gestionar la complejidad y mejorar la calidad del producto final.</p>
-  
+<div class="conclusion anim" id="sec-7">
+  <h2>Conclusión</h2>
+  <p>Los principios de modelado de Pressman establecen que modelar bien no es cuestión de dibujar muchos diagramas, sino de modelar con propósito, con el nivel de abstracción correcto y con la disposición de refinar continuamente los modelos a medida que crece el entendimiento del sistema.</p>
+  <p>UML proporciona el vocabulario común para expresar esos modelos de forma estandarizada, con catorce tipos de diagramas que cubren tanto la estructura estática como el comportamiento dinámico del software. Y el modelo 4+1 de Kruchten ofrece el marco organizativo que integra todo: cinco vistas especializadas que, tomadas en conjunto, permiten describir la arquitectura de cualquier sistema de software de manera completa, sin redundancias y sin vacíos.</p>
+  <p>Comprender estos tres pilares no solo mejora la calidad de los artefactos de diseño producidos — también mejora la calidad del diálogo dentro del equipo y con los stakeholders, que es, en última instancia, el propósito más profundo del modelado.</p>
 </div>
 
 <!-- REFERENCIAS -->
 <div class="mt-4 pt-3" style="border-top:0.5px solid var(--rule-lt);">
   <div class="section-label">Referencias bibliográficas</div>
   <ul style="font-size:13.5px;line-height:1.9;color:var(--muted);padding-left:20px;">
-    <li>Pressman, R. S. (2010). <em>Software Engineering: A Practitioner's Approach</em>.</li>
-    <li>Kruchten, P. (1995). <em>The 4+1 View Model of Software Architecture</em>.</li>
-    <li>Booch, G., Rumbaugh, J., & Jacobson, I. (2006). <em>The Unified Modeling Language User Guide</em>.</li>
-    <li>UML 2.0 Specification (Object Management Group)</li>
+    <li>Pressman, R. S. (2010). <em>Software Engineering: A Practitioner's Approach, 7th Edition.</em> McGraw-Hill.</li>
+    <li>Kruchten, P. (1995). <em>The 4+1 View Model of Software Architecture.</em> IEEE Software, 12(6), 42–50.</li>
+    <li>Booch, G., Rumbaugh, J., &amp; Jacobson, I. (2006). <em>The Unified Modeling Language User Guide, 2nd Edition.</em> Addison-Wesley.</li>
+    <li>Object Management Group (2017). <em>OMG Unified Modeling Language Specification, Version 2.5.1.</em> OMG.</li>
+    <li>Bass, L., Clements, P., &amp; Kazman, R. (2012). <em>Software Architecture in Practice, 3rd Edition.</em> Addison-Wesley.</li>
   </ul>
 </div>
 
 <div class="tags mt-4">
-  <span class="tag">#ElicitaciónDeRequisitos</span>
-  <span class="tag">#TiposDeRequerimientos</span>
+  <span class="tag">#PrincipiosDeModelado</span>
+  <span class="tag">#Pressman</span>
+  <span class="tag">#UML</span>
+  <span class="tag">#Modelo4más1</span>
+  <span class="tag">#ArquitecturaDeSoftware</span>
+  <span class="tag">#Kruchten</span>
   <span class="tag">#IngenieríaDeSoftware</span>
-  <span class="tag">#MapaConceptual</span>
-  <span class="tag">#RequisitosNoFuncionales</span>
-  <span class="tag">#CasosDeUso</span>
-  <span class="tag">#SWEBOK</span>
+  <span class="tag">#DiagramasUML</span>
 </div>

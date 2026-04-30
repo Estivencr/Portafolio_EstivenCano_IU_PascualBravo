@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(head -50 assets/css/styles.scss)",
+      "Bash(head -50 assets/css/styles.css)"
+    ]
+  }
+}
