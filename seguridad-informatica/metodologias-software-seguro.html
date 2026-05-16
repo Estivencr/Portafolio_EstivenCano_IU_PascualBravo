@@ -1,0 +1,526 @@
+---
+layout: blog
+title: "Metodologías para desarrollar software seguro"
+title_display: "Metodologías para desarrollar <em>software seguro</em>"
+description: "SDL, CbyC, CLASP, OpenSAMM y DevSecOps: resumen comparativo de los marcos formales para integrar seguridad en el ciclo de vida del software."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "II"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "MET"
+breadcrumb_current: "Metodologías software seguro"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. II"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Metodologías para desarrollar software seguro"
+    url: /seguridad-informatica/metodologias-software-seguro
+    num: "II"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Reducción de vulnerabilidades"
+  value: "~50 %"
+  description: "menos vulnerabilidades críticas reportadas por Microsoft tras adoptar SDL de forma obligatoria en todos sus productos"
+  source: "— Microsoft SDL Impact Report, 2010"
+---
+<style>
+  /* ── Methodology header card ───────────────────────── */
+  .meth-header {
+    border: 0.5px solid var(--rule);
+    border-left: 4px solid var(--navy);
+    border-radius: 0 4px 4px 0;
+    padding: 18px 22px;
+    margin: 20px 0;
+    background: var(--white);
+  }
+  .meth-header .mh-kicker {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .meth-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+  }
+  .meth-header .mh-origin {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── SDL phase timeline ────────────────────────────── */
+  .sdl-phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin: 18px 0;
+  }
+  .sdl-phase {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    position: relative;
+  }
+  .sdl-phase .sp-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    line-height: 1;
+  }
+  .sdl-phase h4 {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 4px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .sdl-phase ul {
+    font-size: 12px;
+    color: var(--muted);
+    padding-left: 14px;
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  /* ── CbyC principle cards ──────────────────────────── */
+  .cbyc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+  }
+  .cbyc-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+  .cbyc-card .cc-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .cbyc-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 6px;
+  }
+  .cbyc-card p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ── Compact method cards (for CLASP/SAMM/DevSecOps) ─ */
+  .compact-method {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px 22px;
+    height: 100%;
+  }
+  .compact-method .cm-badge {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(15,52,96,.08);
+    color: var(--navy);
+    padding: 3px 8px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .compact-method h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .compact-method p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .compact-method ul {
+    font-size: 13px;
+    color: var(--muted);
+    padding-left: 16px;
+    margin: 0;
+    line-height: 1.8;
+  }
+  .cm-origin {
+    font-size: 11.5px;
+    color: var(--gold);
+    font-style: italic;
+    margin-top: 10px;
+    display: block;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>Desarrollar software seguro no depende únicamente de herramientas o de buenas intenciones: requiere un proceso. Las metodologías de desarrollo seguro son marcos formales que definen <em>qué hacer</em>, <em>cuándo hacerlo</em> y <em>quién es responsable</em> de cada actividad de seguridad a lo largo del ciclo de vida. Este blog resume los marcos más influyentes — SDL, CbyC, CLASP, OpenSAMM y DevSecOps —, sus principios fundamentales y el contexto en el que brillan.</p>
+</div>
+
+<!-- SECCIÓN I — CONTEXTO -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>El problema que resuelven: <span class="gold">seguridad como proceso</span></h2>
+  <p>Históricamente, la seguridad se trataba como una fase al final del desarrollo: las pruebas de penetración llegaban días antes del despliegue. El resultado era predecible — vulnerabilidades costosas de corregir a última hora o productos lanzados con fallos conocidos.</p>
+  <p>Las metodologías modernas invierten esta lógica. Parten de un principio compartido: <strong>la seguridad es más barata cuanto más temprano se integra</strong>. Cada marco propone una forma distinta de lograrlo, adaptada a su contexto de origen y a las capacidades del equipo que lo adopta.</p>
+
+  <div class="row g-3 mt-2">
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">📐</div>
+        <h3>SDL</h3>
+        <p>Microsoft · integración formal en cada fase del SDLC</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">∀</div>
+        <h3>CbyC</h3>
+        <p>Praxis · corrección formal desde los requerimientos</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">📋</div>
+        <h3>CLASP</h3>
+        <p>OWASP · catálogo de actividades de seguridad por rol</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">📊</div>
+        <h3>OpenSAMM</h3>
+        <p>OWASP · modelo de madurez por prácticas y niveles</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — SDL -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>SDL — <span class="gold">Security Development Lifecycle</span></h2>
+
+  <div class="meth-header">
+    <div class="mh-kicker">Microsoft · 2002 – presente</div>
+    <h3>Security Development Lifecycle (SDL)</h3>
+    <p class="mh-origin">Nació del memorando <em>«Trustworthy Computing»</em> de Bill Gates (enero 2002), que ordenó detener el desarrollo de Windows para revisar toda la seguridad. La versión pública se publicó en 2008 y hoy es el estándar de facto en la industria.</p>
+  </div>
+
+  <p>El SDL es un conjunto de prácticas y requisitos de seguridad <strong>obligatorios</strong> integrados en cada fase del ciclo de desarrollo. No es una lista de verificación opcional: cada fase tiene entregables de seguridad específicos que deben cumplirse antes de avanzar a la siguiente.</p>
+
+  <div class="sdl-phases">
+    <div class="sdl-phase">
+      <div class="sp-num">01</div>
+      <h4>Formación</h4>
+      <ul>
+        <li>Capacitación de seguridad para todo el equipo</li>
+        <li>OWASP Top 10, codificación segura</li>
+        <li>Certificaciones obligatorias por rol</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">02</div>
+      <h4>Requerimientos</h4>
+      <ul>
+        <li>Definir umbrales de seguridad y privacidad</li>
+        <li>Identificar requerimientos de cumplimiento</li>
+        <li>Clasificación de datos</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">03</div>
+      <h4>Diseño</h4>
+      <ul>
+        <li>Modelado de amenazas (STRIDE)</li>
+        <li>Análisis de superficie de ataque</li>
+        <li>Revisión de arquitectura</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">04</div>
+      <h4>Implementación</h4>
+      <ul>
+        <li>Lista de herramientas aprobadas</li>
+        <li>Funciones prohibidas (gets, strcpy…)</li>
+        <li>Análisis estático (SAST) en CI</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">05</div>
+      <h4>Verificación</h4>
+      <ul>
+        <li>Análisis dinámico (DAST) y fuzzing</li>
+        <li>Revisión final de superficie de ataque</li>
+        <li>Penetration testing</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">06</div>
+      <h4>Lanzamiento</h4>
+      <ul>
+        <li>Plan de respuesta a incidentes</li>
+        <li>Final security review (FSR)</li>
+        <li>Archivo de evidencias</li>
+      </ul>
+    </div>
+    <div class="sdl-phase">
+      <div class="sp-num">07</div>
+      <h4>Respuesta</h4>
+      <ul>
+        <li>Proceso de divulgación responsable</li>
+        <li>Parches de seguridad</li>
+        <li>Lecciones aprendidas → ciclo</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pull-quote anim">
+    <p>Tras adoptar SDL de forma obligatoria, Microsoft reportó una reducción de aproximadamente el 50 % en vulnerabilidades críticas en sus productos. Windows Vista fue el primer sistema operativo desarrollado íntegramente bajo SDL.</p>
+    <cite>— Michael Howard & Steve Lipner, <em>The Security Development Lifecycle</em>, Microsoft Press, 2006</cite>
+  </div>
+
+  <p><strong>Cuándo usarlo:</strong> equipos medianos o grandes con productos de ciclo largo, contextos regulados (banca, salud, gobierno) o proyectos donde un fallo de seguridad tiene consecuencias de alto impacto reputacional o legal.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — CbyC -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>CbyC — <span class="gold">Correctness by Construction</span></h2>
+
+  <div class="meth-header">
+    <div class="mh-kicker">Praxis Critical Systems (Reino Unido) · 1990s – presente</div>
+    <h3>Correctness by Construction (CbyC)</h3>
+    <p class="mh-origin">Desarrollado por Praxis Critical Systems (hoy Altran UK) para sistemas de alta integridad: aviónica, defensa, infraestructura nuclear. Su premisa filosófica proviene de la corriente de <em>métodos formales</em> de E. Dijkstra y C.A.R. Hoare.</p>
+  </div>
+
+  <p>CbyC invierte el paradigma tradicional: en lugar de <em>escribir y luego corregir</em>, aplica técnicas formales para <strong>construir correctamente desde el principio</strong>. Cada paso del desarrollo produce un artefacto verificable; si no puede revisarse formalmente, no se produce. El costo de un error en CbyC es fijo en cada paso, en lugar de crecer exponencialmente conforme avanza el proyecto.</p>
+
+  <h3 class="mt-4" style="font-size:15.5px; color:var(--navy);">Principios fundamentales</h3>
+  <div class="cbyc-grid">
+    <div class="cbyc-card">
+      <div class="cc-icon">📝</div>
+      <h4>Especificación formal completa</h4>
+      <p>Antes de codificar, cada propiedad de seguridad y comportamiento crítico se expresa en un lenguaje matemático verificable (Z, B-Method, SPARK). No existen requisitos ambiguos.</p>
+    </div>
+    <div class="cbyc-card">
+      <div class="cc-icon">🔁</div>
+      <h4>Refinamiento paso a paso</h4>
+      <p>El sistema se construye en niveles de abstracción decrecientes. Cada nivel se deriva formalmente del anterior; el proceso es trazable y auditable de requerimiento a código.</p>
+    </div>
+    <div class="cbyc-card">
+      <div class="cc-icon">✔️</div>
+      <h4>Revisión obligatoria en cada paso</h4>
+      <p>Ningún artefacto avanza sin pasar una revisión formal. Los errores se detectan antes de que puedan propagarse al siguiente nivel, donde serían más costosos de eliminar.</p>
+    </div>
+    <div class="cbyc-card">
+      <div class="cc-icon">🎯</div>
+      <h4>Simplicidad intencionada</h4>
+      <p>Se prefieren diseños simples y verificables sobre diseños ingeniosos pero difíciles de demostrar. La complejidad innecesaria es un riesgo de seguridad en CbyC.</p>
+    </div>
+  </div>
+
+  <div class="table-responsive mt-3">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Dimensión</th>
+          <th>Desarrollo convencional</th>
+          <th>CbyC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Detección de errores</strong></td>
+          <td>Durante pruebas y producción</td>
+          <td>En el paso de construcción donde ocurren</td>
+        </tr>
+        <tr>
+          <td><strong>Costo de corrección</strong></td>
+          <td>Crece exponencialmente (Boehm)</td>
+          <td>Constante — se paga al inicio</td>
+        </tr>
+        <tr>
+          <td><strong>Base de la confianza</strong></td>
+          <td>Pruebas exhaustivas</td>
+          <td>Demostración formal + pruebas</td>
+        </tr>
+        <tr>
+          <td><strong>Casos de uso típicos</strong></td>
+          <td>Productos de consumo, web apps</td>
+          <td>Aviónica, defensa, sistemas críticos</td>
+        </tr>
+        <tr>
+          <td><strong>Curva de adopción</strong></td>
+          <td>Baja</td>
+          <td>Alta — requiere formación en métodos formales</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="mt-3"><strong>Proyecto emblemático:</strong> el sistema de comunicaciones seguras SHOLIS para helicópteros navales de la Royal Navy (UK) fue desarrollado íntegramente con CbyC — 94.000 líneas de código SPARK entregadas sin ningún defecto de seguridad conocido en producción.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — OTROS MARCOS -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Otros marcos <span class="gold">complementarios</span></h2>
+  <p>SDL y CbyC representan los extremos del espectro — uno pragmático y orientado a proceso, el otro formal y matemático. Entre medias existen marcos que priorizan la adopción gradual y la medición de madurez.</p>
+
+  <div class="row g-3 mt-2">
+    <div class="col-lg-4 col-md-6">
+      <div class="compact-method">
+        <span class="cm-badge">OWASP · 2006</span>
+        <h3>CLASP</h3>
+        <p><strong>Comprehensive, Lightweight Application Security Process.</strong> Catálogo de 30 actividades de seguridad organizadas por <em>rol</em> (desarrollador, arquitecto, auditor, QA) que se superpone a cualquier SDLC existente sin reemplazarlo.</p>
+        <ul>
+          <li>5 perspectivas de análisis</li>
+          <li>Mapeo de actividades a vulnerabilidades conocidas</li>
+          <li>Integrable con Scrum y XP</li>
+        </ul>
+        <span class="cm-origin">Ideal para equipos que quieren adoptar seguridad sin cambiar su proceso base.</span>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-6">
+      <div class="compact-method">
+        <span class="cm-badge">OWASP · 2009 – presente</span>
+        <h3>OpenSAMM</h3>
+        <p><strong>Software Assurance Maturity Model.</strong> Marco de evaluación y mejora de programas de seguridad, organizado en 5 funciones de negocio y 15 prácticas de seguridad, cada una con 3 niveles de madurez.</p>
+        <ul>
+          <li>Funciones: Gobernanza, Diseño, Implementación, Verificación, Operaciones</li>
+          <li>Permite comparar la madurez entre organizaciones</li>
+          <li>Hoja de ruta de mejora incremental</li>
+        </ul>
+        <span class="cm-origin">Ideal para directores de seguridad que necesitan medir y comunicar el estado del programa.</span>
+      </div>
+    </div>
+    <div class="col-lg-4 col-md-12">
+      <div class="compact-method">
+        <span class="cm-badge">Industria · 2012 – presente</span>
+        <h3>DevSecOps</h3>
+        <p><strong>Development + Security + Operations.</strong> Extiende la filosofía DevOps integrando seguridad como responsabilidad compartida en el pipeline de CI/CD mediante automatización continua.</p>
+        <ul>
+          <li><em>Shift-left</em>: SAST en el IDE antes del commit</li>
+          <li>Escaneo de dependencias y secretos automático</li>
+          <li>DAST en el entorno de staging de forma continua</li>
+          <li>Gestión de vulnerabilidades como backlog</li>
+        </ul>
+        <span class="cm-origin">Ideal para equipos con pipelines modernos que buscan velocidad sin sacrificar seguridad.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — COMPARATIVA -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Cuadro comparativo: <span class="gold">¿cuál aplicar?</span></h2>
+  <p>No existe una metodología universalmente superior; la elección depende del contexto del equipo, el tipo de sistema y el nivel de madurez en seguridad de la organización.</p>
+
+  <div class="table-responsive mt-2">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Metodología</th>
+          <th>Origen</th>
+          <th>Enfoque principal</th>
+          <th>Complejidad de adopción</th>
+          <th>Tipo de sistema ideal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SDL</strong></td>
+          <td>Microsoft, 2002</td>
+          <td>Proceso por fases con entregables obligatorios</td>
+          <td>Media</td>
+          <td>Productos comerciales, sistemas empresariales</td>
+        </tr>
+        <tr>
+          <td><strong>CbyC</strong></td>
+          <td>Praxis UK, ~1995</td>
+          <td>Corrección formal desde los requerimientos</td>
+          <td>Alta</td>
+          <td>Sistemas de alta integridad (aviónica, defensa)</td>
+        </tr>
+        <tr>
+          <td><strong>CLASP</strong></td>
+          <td>OWASP, 2006</td>
+          <td>Actividades de seguridad por rol</td>
+          <td>Baja–Media</td>
+          <td>Cualquier SDLC; mínima disrupción</td>
+        </tr>
+        <tr>
+          <td><strong>OpenSAMM</strong></td>
+          <td>OWASP, 2009</td>
+          <td>Medición y mejora de madurez</td>
+          <td>Media</td>
+          <td>Programas de seguridad organizacional</td>
+        </tr>
+        <tr>
+          <td><strong>DevSecOps</strong></td>
+          <td>Industria, ~2012</td>
+          <td>Automatización de seguridad en CI/CD</td>
+          <td>Media–Alta</td>
+          <td>Aplicaciones web/cloud con entregas continuas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="mt-3">En la práctica, las organizaciones maduras no eligen uno solo: combinan SDL o DevSecOps como proceso base, OpenSAMM para medir avances y CLASP como guía de actividades concretas. CbyC permanece como referente en dominios donde un fallo de seguridad puede costar vidas.</p>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-6">
+  <h2>Conclusión</h2>
+  <p>SDL demuestra que la seguridad puede industrializarse en organizaciones de cualquier tamaño con un proceso disciplinado por fases. CbyC eleva el estándar al máximo posible, demostrando matemáticamente la corrección de sistemas donde el margen de error es cero. CLASP y OpenSAMM bajan la barrera de adopción para equipos que necesitan empezar el camino sin reestructurar todo su proceso. DevSecOps lleva estos principios al contexto moderno de entregas continuas.</p>
+  <p>La metodología correcta no es la más sofisticada sino la que el equipo puede <em>mantener consistentemente</em>. Un SDL parcialmente aplicado genera más valor real que CbyC abandonado a mitad de camino.</p>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#SDL</span>
+  <span class="tag">#CbyC</span>
+  <span class="tag">#CLASP</span>
+  <span class="tag">#OpenSAMM</span>
+  <span class="tag">#DevSecOps</span>
+  <span class="tag">#DesarrolloSeguro</span>
+</div>

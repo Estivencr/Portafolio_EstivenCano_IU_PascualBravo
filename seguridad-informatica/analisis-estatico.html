@@ -1,0 +1,508 @@
+---
+layout: blog
+title: "Análisis estático de código"
+title_display: "Análisis <em>estático</em> de código"
+description: "Qué es el análisis estático de código, cómo funciona, principales herramientas SAST y su rol dentro de un pipeline de desarrollo seguro."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "IV"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "SAST"
+breadcrumb_current: "Análisis estático"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. IV"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+image: /img/AnalisisEstatico.png
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Metodologías para desarrollar software seguro"
+    url: /seguridad-informatica/metodologias-software-seguro
+    num: "II"
+  - title: "Metodología a seleccionar"
+    url: /seguridad-informatica/metodologia-seleccionada
+    num: "III"
+  - title: "Análisis estático de código"
+    url: /seguridad-informatica/analisis-estatico
+    num: "IV"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Detección sin ejecución"
+  value: "85 %"
+  description: "de las vulnerabilidades más comunes del OWASP Top 10 pueden detectarse con análisis estático antes de ejecutar una sola línea"
+  source: "— NIST SARD Benchmark, 2022"
+---
+<style>
+  /* ── How-it-works steps ─────────────────────────────── */
+  .how-steps {
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 20px 0;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .how-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+    border-bottom: 0.5px solid var(--rule);
+    background: var(--white);
+  }
+  .how-step:last-child { border-bottom: none; }
+  .how-step:nth-child(even) { background: var(--parchment); }
+  .hs-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    min-width: 28px;
+    line-height: 1.1;
+    padding-top: 2px;
+  }
+  .hs-body h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 4px;
+  }
+  .hs-body p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ── Technique cards ────────────────────────────────── */
+  .tech-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    height: 100%;
+  }
+  .tech-card .tc-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: rgba(15,52,96,.07);
+    padding: 3px 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .tech-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .tech-card p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .tech-card .tc-example {
+    font-size: 12px;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ── Tool cards ─────────────────────────────────────── */
+  .tool-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 4px 4px 0;
+    padding: 14px 18px;
+    height: 100%;
+  }
+  .tool-card .tool-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 4px;
+  }
+  .tool-card .tool-lang {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .tool-card p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 6px;
+  }
+  .tool-card .tool-license {
+    font-size: 11px;
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  /* ── Pros / cons grid ───────────────────────────────── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  @media (max-width: 600px) { .pros-cons { grid-template-columns: 1fr; } }
+  .pros-box, .cons-box {
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+  .pros-box { border-top: 3px solid #2d7a4f; }
+  .cons-box { border-top: 3px solid #b84040; }
+  .pros-box .pb-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #2d7a4f; margin-bottom: 10px; }
+  .cons-box .pb-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #b84040; margin-bottom: 10px; }
+  .pros-box ul, .cons-box ul {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.8;
+    padding-left: 16px;
+    margin: 0;
+  }
+
+  /* ── Map container (lightbox) ────────────────────────── */
+  .map-container {
+    position: relative;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: var(--parchment);
+  }
+  .map-container a { display: block; }
+  .page-article .map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute;
+    bottom: 10px; right: 10px;
+    background: rgba(26,22,18,.65);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 0.5px solid var(--rule);
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>El análisis estático examina el código fuente sin ejecutarlo — como un revisor experto que lee un manuscrito antes de imprimirlo. Es la técnica más temprana del ciclo de seguridad: actúa directamente en el editor del desarrollador o en el pipeline de CI antes de que el programa corra por primera vez. Su ventaja es su velocidad y alcance; su desafío, distinguir los hallazgos reales de los falsos positivos. Este blog explora cómo funciona, qué técnicas emplea, qué herramientas lo implementan y cómo integrarlo efectivamente en DevSecOps.</p>
+</div>
+
+<!-- SECCIÓN I — QUÉ ES -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>¿Qué es el <span class="gold">análisis estático?</span></h2>
+  <p>El <strong>análisis estático de código</strong> (Static Application Security Testing, SAST) es el proceso de examinar el código fuente, bytecode o binario de una aplicación <em>sin ejecutarla</em>, con el objetivo de detectar vulnerabilidades de seguridad, defectos de calidad y violaciones de políticas de codificación.</p>
+  <p>A diferencia del análisis dinámico (DAST), que necesita que la aplicación esté en ejecución para encontrar fallos, el SAST trabaja directamente sobre los artefactos de código: archivos fuente, librerías, configuraciones e infraestructura como código (IaC). Esto lo convierte en la primera línea de defensa y la más barata de operar, porque los defectos se detectan antes de compilar o desplegar.</p>
+
+  <div class="row g-3 mt-2">
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">⚡</div>
+        <h3>Feedback inmediato</h3>
+        <p>El desarrollador ve el defecto en el momento de escribir el código, no días después.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">📂</div>
+        <h3>Cobertura total</h3>
+        <p>Analiza el 100 % del código base, incluyendo rutas raramente ejecutadas en pruebas.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">🔁</div>
+        <h3>Automatizable</h3>
+        <p>Se integra en el repositorio y el pipeline CI/CD sin intervención manual.</p>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="benefit-card">
+        <div class="benefit-icon">💰</div>
+        <h3>Bajo costo</h3>
+        <p>Detectar un fallo en esta fase cuesta hasta 100× menos que en producción.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — CÓMO FUNCIONA -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>¿Cómo <span class="gold">funciona?</span></h2>
+  <p>El proceso interno de una herramienta SAST sigue una cadena de pasos que transforma el código fuente en una lista priorizada de hallazgos de seguridad.</p>
+
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="hs-num">1</div>
+      <div class="hs-body">
+        <h4>Parseo y construcción del AST</h4>
+        <p>La herramienta analiza la sintaxis del código y construye un <em>Abstract Syntax Tree</em> (AST) — una representación estructurada del programa en forma de árbol que preserva la semántica sin importar el formato del archivo.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">2</div>
+      <div class="hs-body">
+        <h4>Análisis de flujo de datos (<em>taint analysis</em>)</h4>
+        <p>Se rastrean las variables desde su origen (<em>source</em>) — entrada del usuario, parámetros HTTP, archivos — hasta los puntos donde son consumidas (<em>sink</em>) — consultas SQL, comandos del sistema, salidas HTML. Si un dato no sanitizado llega a un sink peligroso, se genera un hallazgo.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">3</div>
+      <div class="hs-body">
+        <h4>Análisis de flujo de control</h4>
+        <p>Se construye un grafo de flujo de control (CFG) que representa todas las rutas posibles de ejecución. Permite detectar condiciones de carrera, código inalcanzable, y lógica de autenticación defectuosa.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">4</div>
+      <div class="hs-body">
+        <h4>Coincidencia de patrones y reglas</h4>
+        <p>El motor compara el código contra un catálogo de patrones conocidos de vulnerabilidades (CWE, OWASP Top 10). Por ejemplo: uso de <code>eval()</code> con datos externos, funciones criptográficas deprecadas o sentencias SQL concatenadas.</p>
+      </div>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">5</div>
+      <div class="hs-body">
+        <h4>Priorización y reporte</h4>
+        <p>Los hallazgos se clasifican por severidad (crítica, alta, media, baja) y se generan reportes con la ubicación exacta en el código, la regla violada, el nivel de confianza y la remediación sugerida.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — TÉCNICAS -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Técnicas de <span class="gold">análisis estático</span></h2>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6">
+      <div class="tech-card">
+        <span class="tc-badge">Flujo de datos</span>
+        <h4>Taint Analysis</h4>
+        <p>Sigue el recorrido de datos no confiables desde la entrada hasta los puntos de uso crítico. Es la técnica más efectiva para detectar inyecciones SQL, XSS y command injection.</p>
+        <span class="tc-example">Detecta: SQL injection, XSS, path traversal, SSRF.</span>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="tech-card">
+        <span class="tc-badge">Flujo de control</span>
+        <h4>Control Flow Graph (CFG)</h4>
+        <p>Modela todas las rutas de ejecución posibles. Permite detectar condiciones de autenticación que pueden ser saltadas, recursos que no se liberan en todos los caminos o lógica de autorización inconsistente.</p>
+        <span class="tc-example">Detecta: broken access control, resource leaks, dead code.</span>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="tech-card">
+        <span class="tc-badge">Semántica</span>
+        <h4>Abstract Interpretation</h4>
+        <p>Ejecuta el programa de forma abstracta sobre todos los estados posibles simultáneamente, sin ejecutarlo realmente. Permite probar ausencia de ciertos errores con garantía matemática.</p>
+        <span class="tc-example">Detecta: desbordamientos de entero, accesos nulos, buffer overflows.</span>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="tech-card">
+        <span class="tc-badge">Patrones</span>
+        <h4>Pattern Matching</h4>
+        <p>Compara el AST o el código fuente contra una biblioteca de patrones de vulnerabilidades conocidas. Rápido de implementar y fácil de extender con reglas personalizadas.</p>
+        <span class="tc-example">Detecta: uso de APIs inseguras, algoritmos criptográficos débiles, hardcoded secrets.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — HERRAMIENTAS -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Herramientas <span class="gold">SAST principales</span></h2>
+  <p>El ecosistema de herramientas de análisis estático es amplio. Algunas son de uso general; otras están especializadas por lenguaje o tipo de proyecto.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">SonarQube</div>
+        <div class="tool-lang">Java · JS · Python · C# · 30+ lenguajes</div>
+        <p>Plataforma de inspección continua de calidad y seguridad. Se integra nativamente en pipelines CI/CD (Jenkins, GitHub Actions, GitLab CI). Dashboard centralizado con tendencias históricas.</p>
+        <span class="tool-license">Community Edition: gratuita · Enterprise: de pago</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">Semgrep</div>
+        <div class="tool-lang">Multi-lenguaje · Reglas personalizables</div>
+        <p>Motor de análisis basado en patrones con sintaxis de reglas simple y expresiva. El repositorio público de reglas cubre OWASP Top 10, CWE y patrones de frameworks específicos.</p>
+        <span class="tool-license">OSS: gratuito · Pro/Teams: de pago</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">Bandit</div>
+        <div class="tool-lang">Python</div>
+        <p>Herramienta especializada de la OpenStack Security Group. Analiza el AST de Python buscando llamadas inseguras, uso de módulos peligrosos y malas prácticas de cifrado.</p>
+        <span class="tool-license">Open source · Apache 2.0</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">CodeQL</div>
+        <div class="tool-lang">C/C++ · Java · JS · Python · Go · Ruby</div>
+        <p>Motor de análisis de GitHub que trata el código como una base de datos consultable. Permite escribir consultas personalizadas en QL para detectar patrones complejos de vulnerabilidad.</p>
+        <span class="tool-license">Gratuito para repos públicos · GitHub Advanced Security para privados</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">Checkmarx SAST</div>
+        <div class="tool-lang">Enterprise · 35+ lenguajes</div>
+        <p>Solución empresarial líder del mercado. Ofrece análisis de flujo de datos incremental, integración con IDEs y gestión centralizada de hallazgos a escala organizacional.</p>
+        <span class="tool-license">Comercial · Licencia por proyecto</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="tool-card">
+        <div class="tool-name">ESLint + plugins</div>
+        <div class="tool-lang">JavaScript · TypeScript</div>
+        <p>Linter extensible con plugins de seguridad (<code>eslint-plugin-security</code>, <code>no-unsanitized</code>) que detecta vulnerabilidades comunes en el ecosistema JS directamente en el editor.</p>
+        <span class="tool-license">Open source · MIT</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — PROS Y CONTRAS -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Fortalezas y <span class="gold">limitaciones</span></h2>
+  <p>El análisis estático es poderoso pero no infalible. Entender sus límites permite combinarlo correctamente con otras técnicas de seguridad.</p>
+
+  <div class="pros-cons">
+    <div class="pros-box">
+      <div class="pb-title">Fortalezas</div>
+      <ul>
+        <li>Detecta vulnerabilidades antes de ejecutar el código</li>
+        <li>Cubre el 100 % del código, incluidas rutas poco probadas</li>
+        <li>Totalmente automatizable en CI/CD</li>
+        <li>Señala la línea exacta del defecto</li>
+        <li>Sin impacto en ambientes de producción</li>
+        <li>Escala fácilmente a codebases grandes</li>
+      </ul>
+    </div>
+    <div class="cons-box">
+      <div class="pb-title">Limitaciones</div>
+      <ul>
+        <li>Tasa de falsos positivos que consume tiempo del equipo</li>
+        <li>No detecta vulnerabilidades de tiempo de ejecución ni de configuración</li>
+        <li>Lógica de negocio insegura es difícil de modelar con reglas</li>
+        <li>Requiere ajuste de reglas por proyecto para ser preciso</li>
+        <li>No reemplaza las pruebas de penetración manuales</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pull-quote anim">
+    <p>El SAST no encuentra todos los bugs; encuentra los bugs que pueden ser descritos formalmente. Es exactamente por eso que debe combinarse con DAST, revisión de código manual y penetration testing — ninguna técnica por sí sola basta.</p>
+    <cite>— Gary McGraw, <em>Software Security: Building Security In</em>, 2006</cite>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — EVIDENCIA -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+  <h2>Evidencia: <span class="gold">análisis estático en práctica</span></h2>
+  <p>La siguiente captura corresponde a la ejecución de un análisis estático de seguridad realizado como parte de la práctica de la asignatura, aplicando las herramientas y conceptos estudiados sobre un proyecto de código real.</p>
+
+  <div class="map-container">
+    <a href="{{ '/img/AnalisisEstatico.png' | relative_url }}"
+       class="glightbox"
+       data-title="Análisis estático de código — Evidencia de práctica"
+       data-description="Ejecución de SAST · Seguridad Informática, SEG-03 · 2026">
+      <img
+        src="{{ '/img/AnalisisEstatico.png' | relative_url }}"
+        alt="Captura de análisis estático de código — Seguridad Informática SEG-03"
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Análisis estático de seguridad (SAST) &nbsp;·&nbsp; Seguridad Informática, SEG-03 &nbsp;·&nbsp; 2026
+    </div>
+  </div>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-7">
+  <h2>Conclusión</h2>
+  <p>El análisis estático es la primera y más accesible barrera de seguridad en el ciclo de desarrollo. Su capacidad de operar directamente en el código fuente, antes de cualquier compilación o despliegue, lo convierte en el aliado natural del principio <em>shift-left</em> de DevSecOps. Integrado en el pipeline CI/CD, transforma la seguridad de una revisión periódica en una verificación continua que acompaña cada commit.</p>
+  <p>Su complemento necesario son el análisis dinámico, la revisión manual y las pruebas de penetración: juntos cubren los ángulos que ninguna técnica puede cubrir sola.</p>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#SAST</span>
+  <span class="tag">#AnálisisEstático</span>
+  <span class="tag">#DevSecOps</span>
+  <span class="tag">#SonarQube</span>
+  <span class="tag">#CodeQL</span>
+  <span class="tag">#ShiftLeft</span>
+</div>

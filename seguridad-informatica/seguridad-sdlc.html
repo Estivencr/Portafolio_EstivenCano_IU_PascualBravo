@@ -1,0 +1,640 @@
+---
+layout: blog
+title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+title_display: "Seguridad en el <em>SDLC</em>"
+description: "STRIDE, requerimientos de seguridad, diseño seguro, árboles de ataque y técnicas de testing integradas en el ciclo de vida del software."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "I"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "SEC"
+breadcrumb_current: "Seguridad en el SDLC"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. I"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+image: /img/seguridadEnSDLC.png
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Costo promedio de una brecha"
+  value: "$4.88M"
+  description: "USD por incidente de seguridad en 2024; el 46 % de ataques explotó errores en diseño o requerimientos"
+  source: "— IBM Cost of Data Breach Report 2024"
+---
+<style>
+  /* ── STRIDE cards ─────────────────────────────────────── */
+  .stride-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .stride-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stride-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--navy);
+  }
+  .stride-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 38px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stride-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .stride-desc {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .stride-example {
+    font-size: 11.5px;
+    color: var(--gold);
+    font-style: italic;
+  }
+  .stride-countermeasure {
+    font-size: 11px;
+    color: var(--navy);
+    background: rgba(15, 52, 96, 0.06);
+    border-radius: 2px;
+    padding: 4px 8px;
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* ── Attack tree ─────────────────────────────────────── */
+  .atree {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    margin: 20px 0;
+    overflow-x: auto;
+  }
+  .atree ul {
+    padding-left: 28px;
+    list-style: none;
+    position: relative;
+  }
+  .atree ul::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 14px;
+    width: 1px;
+    background: var(--rule);
+  }
+  .atree li {
+    position: relative;
+    padding: 6px 0 6px 18px;
+    line-height: 1.5;
+  }
+  .atree li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    width: 14px; height: 1px;
+    background: var(--rule);
+    transform: translateY(-50%);
+  }
+  .atree-root {
+    display: inline-block;
+    background: var(--navy);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 13.5px;
+    padding: 8px 16px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+  .atree-or  > span.atree-node { border: 1.5px solid var(--gold); border-radius: 3px; padding: 4px 10px; }
+  .atree-and > span.atree-node { border: 1.5px solid var(--navy); border-radius: 3px; padding: 4px 10px; }
+  .atree-leaf span.atree-node  { background: rgba(229,160,13,.10); padding: 4px 10px; border-radius: 3px; font-style: italic; color: var(--ink); }
+  .atree-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .badge-or  { background: rgba(229,160,13,.18); color: #8a6000; }
+  .badge-and { background: rgba(15,52,96,.12);   color: var(--navy); }
+
+  /* ── Testing technique cards ─────────────────────────── */
+  .test-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    height: 100%;
+  }
+  .test-card .tc-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .test-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .test-card p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .test-card .tc-phase {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Req-security cards ──────────────────────────────── */
+  .req-sec-card {
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 20px;
+    height: 100%;
+    background: var(--white);
+  }
+  .req-sec-card .rs-icon {
+    font-size: 26px;
+    margin-bottom: 10px;
+  }
+  .req-sec-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .req-sec-card p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ── Map container (lightbox) ────────────────────────── */
+  .map-container {
+    position: relative;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: var(--parchment);
+  }
+  .map-container a { display: block; }
+  .page-article .map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute;
+    bottom: 10px; right: 10px;
+    background: rgba(26,22,18,.65);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 0.5px solid var(--rule);
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── Design principles list ─────────────────────────── */
+  .design-principle {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--rule);
+    align-items: flex-start;
+  }
+  .design-principle:last-child { border-bottom: none; }
+  .dp-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    min-width: 28px;
+    line-height: 1.1;
+  }
+  .dp-content h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 4px;
+  }
+  .dp-content p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>La seguridad no es un complemento que se añade al final del desarrollo; es una propiedad que debe tejerse en cada fase del SDLC. Los ataques más costosos de la historia no explotaron fallos de cifrado sofisticados, sino omisiones en el análisis de requerimientos o decisiones descuidadas en el diseño. Este blog integra las herramientas fundamentales para construir software seguro desde su origen: el modelo de amenazas STRIDE, los requerimientos y el diseño seguros, los árboles de ataque y las técnicas de testing especializadas.</p>
+</div>
+
+<!-- SECCIÓN I — STRIDE -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>STRIDE: <span class="gold">modelo de clasificación de amenazas</span></h2>
+  <p>STRIDE es un modelo creado por Microsoft en 1999 (Loren Kohnfelder y Praerit Garg) que clasifica las amenazas de seguridad en seis categorías. Cada letra representa un tipo de ataque y, en el análisis de amenazas, se mapea contra las propiedades de seguridad que viola.</p>
+
+  <div class="stride-grid">
+    <div class="stride-card">
+      <div class="stride-letter">S</div>
+      <div class="stride-name">Spoofing · Suplantación</div>
+      <p class="stride-desc">El atacante finge ser otro usuario, proceso o componente del sistema para obtener acceso no autorizado.</p>
+      <span class="stride-example">Ej: robo de sesión, phishing de credenciales, ARP spoofing.</span>
+      <span class="stride-countermeasure">Contramedida: autenticación fuerte (MFA, certificados).</span>
+    </div>
+    <div class="stride-card">
+      <div class="stride-letter">T</div>
+      <div class="stride-name">Tampering · Manipulación</div>
+      <p class="stride-desc">Modificación no autorizada de datos en tránsito o en reposo, alterando la integridad del sistema.</p>
+      <span class="stride-example">Ej: inyección SQL, modificación de parámetros HTTP, MITM.</span>
+      <span class="stride-countermeasure">Contramedida: firmas digitales, hashing, HTTPS/TLS.</span>
+    </div>
+    <div class="stride-card">
+      <div class="stride-letter">R</div>
+      <div class="stride-name">Repudiation · Repudio</div>
+      <p class="stride-desc">Un actor niega haber realizado una acción que sí ejecutó; sin auditoría, el sistema no puede probarlo.</p>
+      <span class="stride-example">Ej: borrado de logs, transacciones anónimas no trazables.</span>
+      <span class="stride-countermeasure">Contramedida: auditoría firmada, registros inmutables.</span>
+    </div>
+    <div class="stride-card">
+      <div class="stride-letter">I</div>
+      <div class="stride-name">Information Disclosure · Exposición</div>
+      <p class="stride-desc">Acceso a información que el actor no debería ver: datos personales, secretos de negocio o configuraciones internas.</p>
+      <span class="stride-example">Ej: errores verbose, directory traversal, fugas en logs.</span>
+      <span class="stride-countermeasure">Contramedida: cifrado, control de acceso, error handling genérico.</span>
+    </div>
+    <div class="stride-card">
+      <div class="stride-letter">D</div>
+      <div class="stride-name">Denial of Service · Denegación</div>
+      <p class="stride-desc">El atacante agota recursos (CPU, memoria, red) para impedir que usuarios legítimos accedan al servicio.</p>
+      <span class="stride-example">Ej: flood de peticiones HTTP, ataques a la capa de aplicación.</span>
+      <span class="stride-countermeasure">Contramedida: rate limiting, CDN, escalado automático.</span>
+    </div>
+    <div class="stride-card">
+      <div class="stride-letter">E</div>
+      <div class="stride-name">Elevation of Privilege · Escalada</div>
+      <p class="stride-desc">Un usuario con privilegios bajos obtiene capacidades de un rol superior, comprometiendo el control de acceso.</p>
+      <span class="stride-example">Ej: vulnerabilidades en sudo, IDOR, JWT sin firma verificada.</span>
+      <span class="stride-countermeasure">Contramedida: principio de mínimo privilegio, RBAC estricto.</span>
+    </div>
+  </div>
+
+  <div class="pull-quote anim">
+    <p>STRIDE no es una lista de vulnerabilidades: es una lente de análisis. Se aplica a cada componente del diagrama de flujo de datos (DFD) — procesos, almacenes, flujos y entidades externas — para generar una lista exhaustiva de amenazas antes de escribir una sola línea de código.</p>
+    <cite>— Microsoft Security Development Lifecycle (SDL) Threat Modeling</cite>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — SEGURIDAD EN ANÁLISIS DE REQUERIMIENTOS -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Seguridad en el <span class="gold">análisis de requerimientos</span></h2>
+  <p>Integrar la seguridad en la fase de requerimientos significa capturar explícitamente las necesidades de protección del sistema <em>al mismo tiempo</em> que los requerimientos funcionales. Las técnicas más efectivas son los <strong>abuse cases</strong> (casos de abuso) y los <strong>misuse cases</strong>, que modelan el comportamiento de actores maliciosos.</p>
+
+  <h3 class="mt-4" style="font-size:16px; color:var(--navy);">Tríada CIA como base de requerimientos no funcionales</h3>
+  <div class="row g-3 mt-1">
+    <div class="col-md-4">
+      <div class="req-sec-card">
+        <div class="rs-icon">🔒</div>
+        <h4>Confidencialidad</h4>
+        <p>Solo los actores autorizados deben acceder a la información. Se traduce en requerimientos de control de acceso, cifrado en reposo y en tránsito, y gestión de identidades.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="req-sec-card">
+        <div class="rs-icon">✅</div>
+        <h4>Integridad</h4>
+        <p>La información solo puede modificarse de formas autorizadas y conocidas. Implica auditoría, validación de entradas, firmas digitales y controles de integridad de bases de datos.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="req-sec-card">
+        <div class="rs-icon">🌐</div>
+        <h4>Disponibilidad</h4>
+        <p>El sistema debe ser accesible cuando los usuarios lo necesiten. Se captura en SLA de tiempo de actividad, planes de recuperación ante desastres y protección contra DoS.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="mt-4" style="font-size:16px; color:var(--navy);">Abuse Cases y Misuse Cases</h3>
+  <p>Los <strong>abuse cases</strong> son una extensión de los casos de uso que modelan explícitamente cómo un actor malicioso puede explotar el sistema. A diferencia de un caso de uso estándar que describe el <em>flujo normal</em>, un abuse case describe el <em>flujo de ataque</em>.</p>
+
+  <div class="table-responsive mt-2">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Elemento</th>
+          <th>Caso de uso normal</th>
+          <th>Abuse case / Misuse case</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Actor</strong></td><td>Usuario legítimo</td><td>Atacante / actor malicioso</td></tr>
+        <tr><td><strong>Objetivo</strong></td><td>Lograr una función del negocio</td><td>Dañar, robar o interrumpir el sistema</td></tr>
+        <tr><td><strong>Resultado</strong></td><td>Valor para el usuario</td><td>Daño al sistema o a sus datos</td></tr>
+        <tr><td><strong>Utilidad</strong></td><td>Guía el desarrollo funcional</td><td>Guía controles de seguridad</td></tr>
+        <tr><td><strong>Herramienta</strong></td><td>Casos de uso UML, User Stories</td><td>Diagrama de amenazas, STRIDE</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="mt-3">En la práctica, por cada <em>caso de uso</em> que se levanta, el equipo de seguridad debe preguntarse: <strong>«¿Cómo podría un atacante abusar de esta funcionalidad?»</strong>. Las respuestas se convierten en requerimientos de seguridad trazables que acompañan al caso de uso hasta las pruebas de aceptación.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — SEGURIDAD EN EL DISEÑO -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Seguridad en el <span class="gold">diseño del sistema</span></h2>
+  <p>La fase de diseño es donde las amenazas identificadas con STRIDE se convierten en decisiones arquitectónicas concretas. Un diseño seguro no restringe las funcionalidades; define las barreras que hacen que violarlas sea computacionalmente costoso o imposible.</p>
+
+  <div class="mt-3">
+    <div class="design-principle">
+      <div class="dp-num">01</div>
+      <div class="dp-content">
+        <h4>Mínimo privilegio (<em>Least Privilege</em>)</h4>
+        <p>Cada componente, proceso o usuario opera con los permisos mínimos necesarios para cumplir su función. Limita el radio de explosión si un componente es comprometido.</p>
+      </div>
+    </div>
+    <div class="design-principle">
+      <div class="dp-num">02</div>
+      <div class="dp-content">
+        <h4>Defensa en profundidad (<em>Defense in Depth</em>)</h4>
+        <p>Múltiples capas de controles de seguridad independientes: firewall → WAF → autenticación → autorización → auditoría. Un atacante que rompe una capa enfrenta la siguiente.</p>
+      </div>
+    </div>
+    <div class="design-principle">
+      <div class="dp-num">03</div>
+      <div class="dp-content">
+        <h4>Superficie de ataque mínima</h4>
+        <p>Reducir el número de puntos de entrada expuestos: deshabilitar servicios innecesarios, cerrar puertos, ocultar versiones de software y limitar los endpoints públicos.</p>
+      </div>
+    </div>
+    <div class="design-principle">
+      <div class="dp-num">04</div>
+      <div class="dp-content">
+        <h4>Fallo seguro (<em>Fail Secure</em>)</h4>
+        <p>Si un componente falla o lanza una excepción no esperada, el sistema debe denegar el acceso por defecto, no otorgarlo. Los errores nunca deben revelar información sensible.</p>
+      </div>
+    </div>
+    <div class="design-principle">
+      <div class="dp-num">05</div>
+      <div class="dp-content">
+        <h4>Separación de privilegios y responsabilidades</h4>
+        <p>Descomponer operaciones críticas de modo que ningún componente individual pueda comprometer el sistema completo. Patrón aplicado en sistemas bancarios y certificados digitales.</p>
+      </div>
+    </div>
+    <div class="design-principle">
+      <div class="dp-num">06</div>
+      <div class="dp-content">
+        <h4>No confiar en la entrada del cliente (<em>Never Trust Input</em>)</h4>
+        <p>Toda entrada proveniente del exterior — parámetros HTTP, archivos subidos, datos de APIs — debe validarse, sanitizarse y codificarse antes de ser procesada o almacenada.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — ÁRBOLES DE ATAQUE -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Árboles de ataque: <span class="gold">modelado formal de amenazas</span></h2>
+  <p>Los árboles de ataque, introducidos por Bruce Schneier en 1999, son estructuras jerárquicas que representan la lógica de un ataque. El <strong>nodo raíz</strong> es el objetivo del atacante; los nodos hijos son las formas de alcanzarlo. Los nodos intermedios pueden combinarse con operadores <strong>OR</strong> (basta uno) o <strong>AND</strong> (se necesitan todos).</p>
+
+  <h3 class="mt-4" style="font-size:15px; color:var(--navy);">Ejemplo: «Obtener acceso administrativo a la aplicación»</h3>
+  <div class="atree anim">
+    <div class="atree-root">Obtener acceso administrativo</div>
+    <ul>
+      <li class="atree-or">
+        <span class="atree-badge badge-or">OR</span>
+        <span class="atree-node">Comprometer credenciales de administrador</span>
+        <ul>
+          <li class="atree-or">
+            <span class="atree-badge badge-or">OR</span>
+            <span class="atree-node">Ataque de fuerza bruta</span>
+            <ul>
+              <li class="atree-and"><span class="atree-badge badge-and">AND</span><span class="atree-node">Sin límite de intentos</span></li>
+              <li class="atree-and"><span class="atree-badge badge-and">AND</span><span class="atree-node">Contraseña débil en uso</span></li>
+            </ul>
+          </li>
+          <li class="atree-leaf"><span class="atree-node">Phishing / ingeniería social</span></li>
+          <li class="atree-leaf"><span class="atree-node">Filtración de base de datos de usuarios</span></li>
+        </ul>
+      </li>
+      <li class="atree-or">
+        <span class="atree-badge badge-or">OR</span>
+        <span class="atree-node">Escalada de privilegios en la aplicación</span>
+        <ul>
+          <li class="atree-leaf"><span class="atree-node">Explotación de IDOR en endpoint de admin</span></li>
+          <li class="atree-leaf"><span class="atree-node">JWT sin verificación de firma</span></li>
+          <li class="atree-leaf"><span class="atree-node">Inyección de rol en parámetro oculto</span></li>
+        </ul>
+      </li>
+      <li class="atree-or">
+        <span class="atree-badge badge-or">OR</span>
+        <span class="atree-node">Comprometer el servidor subyacente</span>
+        <ul>
+          <li class="atree-and"><span class="atree-badge badge-and">AND</span><span class="atree-node">RCE mediante dependencia vulnerable</span></li>
+          <li class="atree-and"><span class="atree-badge badge-and">AND</span><span class="atree-node">Proceso con privilegios de sistema</span></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <p class="mt-3">Los árboles de ataque permiten cuantificar el riesgo asignando <strong>costo, probabilidad y factibilidad</strong> a cada hoja. El camino de menor costo para el atacante revela la prioridad de las contramedidas a implementar. Son especialmente útiles durante el diseño para comparar architecturas bajo el criterio: <em>«¿qué tan difícil es llegar a la raíz del árbol?»</em>.</p>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — TÉCNICAS DE TESTING -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Técnicas de <span class="gold">testing de seguridad</span></h2>
+  <p>Las pruebas de seguridad no son una etapa al final del ciclo; se distribuyen en todo el SDLC. Cada técnica tiene un momento óptimo y un tipo de defecto que encuentra mejor que las demás.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Análisis estático</div>
+        <h4>SAST</h4>
+        <p>Analiza el código fuente sin ejecutarlo. Detecta vulnerabilidades como inyecciones, desbordamientos y manejo inseguro de datos directamente en el repositorio.</p>
+        <span class="tc-phase">Fase: Codificación / CI pipeline</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Análisis dinámico</div>
+        <h4>DAST</h4>
+        <p>Prueba la aplicación en ejecución enviando entradas maliciosas a través de sus interfaces. Simula ataques reales sin acceso al código fuente.</p>
+        <span class="tc-phase">Fase: Testing / Staging</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Análisis interactivo</div>
+        <h4>IAST</h4>
+        <p>Agente instrumentado que monitorea el comportamiento de la aplicación durante las pruebas funcionales, correlacionando tráfico con ejecución interna para detectar fallos en tiempo real.</p>
+        <span class="tc-phase">Fase: QA / Pruebas funcionales</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Prueba de intrusión</div>
+        <h4>Penetration Testing</h4>
+        <p>Simulación controlada de un ataque real por un equipo especializado (red team). Combina técnicas manuales y automatizadas para encontrar rutas de compromiso completas.</p>
+        <span class="tc-phase">Fase: Pre-producción / Revisión periódica</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Inyección aleatoria</div>
+        <h4>Fuzzing</h4>
+        <p>Envía entradas inesperadas, malformadas o aleatorias a la aplicación para provocar crashs, desbordamientos o comportamientos anómalos no anticipados en el diseño.</p>
+        <span class="tc-phase">Fase: Codificación / Testing</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+      <div class="test-card">
+        <div class="tc-label">Revisión manual</div>
+        <h4>Secure Code Review</h4>
+        <p>Inspección por pares orientada a seguridad con checklist derivado de OWASP Top 10 y CWE/SANS 25. Detecta lógica de negocio insegura que las herramientas automatizadas pasan por alto.</p>
+        <span class="tc-phase">Fase: Pull requests / Diseño detallado</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-responsive mt-4">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Técnica</th>
+          <th>Requiere código fuente</th>
+          <th>Detecta lógica de negocio</th>
+          <th>Automatizable</th>
+          <th>Costo relativo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>SAST</strong></td><td>Sí</td><td>Parcialmente</td><td>Alto</td><td>Bajo</td></tr>
+        <tr><td><strong>DAST</strong></td><td>No</td><td>No</td><td>Alto</td><td>Medio</td></tr>
+        <tr><td><strong>IAST</strong></td><td>No</td><td>Parcialmente</td><td>Medio</td><td>Medio</td></tr>
+        <tr><td><strong>Pen Testing</strong></td><td>Opcional</td><td>Sí</td><td>Bajo</td><td>Alto</td></tr>
+        <tr><td><strong>Fuzzing</strong></td><td>No</td><td>No</td><td>Alto</td><td>Bajo</td></tr>
+        <tr><td><strong>Code Review</strong></td><td>Sí</td><td>Sí</td><td>Bajo</td><td>Medio</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — EVIDENCIA DE PRUEBA -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+  <h2>Evidencia de práctica: <span class="gold">prueba en el SDLC</span></h2>
+  <p>La siguiente captura corresponde a una prueba de seguridad realizada como parte de la práctica de la materia, aplicando los conceptos de análisis de amenazas y técnicas de testing sobre un entorno de desarrollo controlado.</p>
+
+  <div class="map-container">
+    <a href="{{ '/img/seguridadEnSDLC.png' | relative_url }}"
+       class="glightbox"
+       data-title="Prueba de seguridad en el SDLC"
+       data-description="Evidencia de práctica de seguridad · Seguridad Informática, SEG-03 · 2026">
+      <img
+        src="{{ '/img/seguridadEnSDLC.png' | relative_url }}"
+        alt="Captura de prueba de seguridad en el SDLC — Seguridad Informática SEG-03"
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Prueba de seguridad en el SDLC &nbsp;·&nbsp; Seguridad Informática, SEG-03 &nbsp;·&nbsp; 2026
+    </div>
+  </div>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-7">
+  <h2>Conclusión</h2>
+  <p>Integrar seguridad en el SDLC no es una práctica opcional para sistemas críticos: es el estándar mínimo de responsabilidad profesional en el desarrollo de software. STRIDE proporciona el vocabulario para nombrar y clasificar amenazas; los requerimientos de seguridad garantizan que esas amenazas tengan dueño y criterio de aceptación; el diseño seguro traduce la teoría en arquitectura; los árboles de ataque cuantifican el riesgo; y las técnicas de testing cierran el ciclo verificando que los controles implementados resisten los ataques para los que fueron diseñados.</p>
+  <p>Un equipo que recorre este flujo completo construye software que no solo <em>funciona</em>, sino que <em>resiste</em>.</p>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#STRIDE</span>
+  <span class="tag">#SDLC</span>
+  <span class="tag">#ÁrbolesDeAtaque</span>
+  <span class="tag">#SecurityTesting</span>
+  <span class="tag">#DiseñoSeguro</span>
+  <span class="tag">#ThreatModeling</span>
+</div>

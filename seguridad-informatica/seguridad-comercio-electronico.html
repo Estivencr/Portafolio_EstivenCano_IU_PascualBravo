@@ -1,0 +1,448 @@
+---
+layout: blog
+title: "Seguridad en el comercio electrónico"
+title_display: "Seguridad en el <em>comercio electrónico</em>"
+description: "Amenazas, protocolos, autenticación, protección de datos, marco legal colombiano y buenas prácticas de seguridad para e-commerce y m-commerce."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "VI"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "ECO"
+breadcrumb_current: "Seguridad en e-commerce"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. VI"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Metodologías para desarrollar software seguro"
+    url: /seguridad-informatica/metodologias-software-seguro
+    num: "II"
+  - title: "Metodología a seleccionar"
+    url: /seguridad-informatica/metodologia-seleccionada
+    num: "III"
+  - title: "Análisis estático de código"
+    url: /seguridad-informatica/analisis-estatico
+    num: "IV"
+  - title: "Ingeniería de requisitos de seguridad"
+    url: /seguridad-informatica/ingenieria-requisitos-seguridad
+    num: "V"
+  - title: "Seguridad en el comercio electrónico"
+    url: /seguridad-informatica/seguridad-comercio-electronico
+    num: "VI"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Pérdidas globales por fraude"
+  value: "$48B"
+  description: "USD en pérdidas por fraude en e-commerce estimadas para 2023, impulsadas por phishing, carding y robo de identidad"
+  source: "— Juniper Research, 2023"
+---
+<style>
+  /* ── Mind-map hub ───────────────────────────────────── */
+  .mindmap-hub {
+    text-align: center;
+    padding: 22px 28px;
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 6px;
+    margin: 20px auto 0;
+    max-width: 360px;
+    position: relative;
+  }
+  .mindmap-hub .mh-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .mindmap-hub h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--white);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .mindmap-hub::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 24px;
+    background: var(--rule);
+    margin: 0 auto;
+  }
+
+  /* ── Dimension cards ────────────────────────────────── */
+  .dim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    margin: 0 0 20px;
+  }
+  .dim-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 18px;
+    position: relative;
+  }
+  .dim-card .dc-num {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    line-height: 1;
+  }
+  .dim-card .dc-icon {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  .dim-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 10px;
+    padding-right: 32px;
+  }
+  .dim-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .dim-card ul li {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--muted);
+    padding-left: 14px;
+    position: relative;
+  }
+  .dim-card ul li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .dim-card ul li strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  /* ── Connector bar between hub and grid ─────────────── */
+  .mindmap-connector {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .mindmap-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 1px;
+    background: var(--rule);
+  }
+  .mindmap-connector .mc-node {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--navy);
+    margin: -3px auto 0;
+  }
+
+  /* ── m-commerce special card ────────────────────────── */
+  .mcommerce-card {
+    border: 0.5px solid var(--rule);
+    border-top: 3px solid var(--gold);
+    border-radius: 4px;
+    padding: 18px 22px;
+    background: var(--white);
+    margin-top: 4px;
+  }
+  .mcommerce-card .mc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .mcommerce-card .mc-icon { font-size: 22px; }
+  .mcommerce-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 15.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+  }
+  .mcommerce-card .mc-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: rgba(229,160,13,.15);
+    color: #7a5a00;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: auto;
+  }
+  .mcommerce-card p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .mcommerce-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .mcommerce-card ul li {
+    font-size: 13px;
+    color: var(--muted);
+    background: rgba(200,191,170,.18);
+    padding: 5px 12px;
+    border-radius: 3px;
+    line-height: 1.5;
+  }
+  .mcommerce-card ul li strong { color: var(--ink); font-weight: 600; }
+
+  /* ── References ─────────────────────────────────────── */
+  .references {
+    border-top: 0.5px solid var(--rule);
+    margin-top: 36px;
+    padding-top: 20px;
+  }
+  .references .ref-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .references ol {
+    padding-left: 20px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .references ol li {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .references ol li a {
+    color: var(--navy);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>El comercio electrónico (e-commerce) y el comercio móvil (m-commerce) han transformado la economía digital, democratizando el acceso a mercados globales y redefiniendo la relación entre empresas y consumidores. Sin embargo, este crecimiento exponencial también ha ampliado de forma proporcional la superficie de ataque disponible para actores maliciosos: cada transacción, cada dato de tarjeta y cada sesión de usuario representan un objetivo potencial que debe protegerse con rigor técnico y legal.</p>
+  <p>La seguridad en estos entornos no puede tratarse como una capa añadida al final del desarrollo; abarca múltiples dimensiones que deben trabajarse de forma integral desde el diseño del sistema, desde los protocolos de comunicación hasta el cumplimiento del marco regulatorio colombiano e internacional. Esta entrada sintetiza las siete dimensiones fundamentales de la seguridad en e-commerce en un mapa mental estructurado.</p>
+</div>
+
+<!-- SECCIÓN I — MAPA MENTAL -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Mapa mental: <span class="gold">7 dimensiones de seguridad</span></h2>
+  <p>El siguiente mapa conceptual organiza las dimensiones de seguridad del comercio electrónico en torno a un núcleo central, mostrando las relaciones entre amenazas, controles técnicos, marcos regulatorios y buenas prácticas.</p>
+
+  <!-- Hub central -->
+  <div class="mindmap-hub">
+    <div class="mh-label">Núcleo central</div>
+    <h3>Seguridad en<br>E-Commerce &amp; M-Commerce</h3>
+  </div>
+
+  <div class="mindmap-connector">
+    <div class="mc-node"></div>
+  </div>
+
+  <!-- 6 dimension cards -->
+  <div class="dim-grid">
+
+    <div class="dim-card">
+      <span class="dc-num">1</span>
+      <div class="dc-icon">⚠️</div>
+      <h4>Amenazas principales</h4>
+      <ul>
+        <li><strong>Phishing:</strong> suplantación de sitios legítimos para robar credenciales de acceso y datos de pago mediante páginas falsas y correos fraudulentos.</li>
+        <li><strong>Carding:</strong> uso fraudulento de tarjetas de crédito robadas para realizar compras antes de que el titular detecte el fraude.</li>
+        <li><strong>Malware:</strong> software malicioso (keyloggers, skimmers web) que intercepta transacciones o roba datos directamente del navegador o dispositivo.</li>
+      </ul>
+    </div>
+
+    <div class="dim-card">
+      <span class="dc-num">2</span>
+      <div class="dc-icon">🔐</div>
+      <h4>Protocolos de seguridad</h4>
+      <ul>
+        <li><strong>HTTPS / TLS:</strong> cifrado de la comunicación cliente-servidor que garantiza confidencialidad e integridad de los datos en tránsito.</li>
+        <li><strong>Certificados SSL/TLS:</strong> verificación criptográfica de la identidad del servidor; previene ataques de intermediario (MITM).</li>
+        <li><strong>PCI DSS:</strong> estándar de seguridad de la industria de tarjetas de pago; obligatorio para cualquier sistema que procese, almacene o transmita datos de tarjetas.</li>
+      </ul>
+    </div>
+
+    <div class="dim-card">
+      <span class="dc-num">3</span>
+      <div class="dc-icon">🔑</div>
+      <h4>Autenticación</h4>
+      <ul>
+        <li><strong>MFA / 2FA:</strong> verificación en dos o más pasos que reduce drásticamente el riesgo de acceso no autorizado incluso si la contraseña es comprometida.</li>
+        <li><strong>OAuth / JWT:</strong> estándares de autenticación y autorización segura entre servicios, APIs y aplicaciones de terceros sin compartir credenciales.</li>
+        <li><strong>Gestión de sesiones:</strong> expiración automática, tokens de sesión aleatorios y revocación inmediata al cerrar sesión para evitar secuestro de sesión.</li>
+      </ul>
+    </div>
+
+    <div class="dim-card">
+      <span class="dc-num">4</span>
+      <div class="dc-icon">🛡️</div>
+      <h4>Protección de datos</h4>
+      <ul>
+        <li><strong>Cifrado AES-256:</strong> algoritmo de cifrado simétrico de grado militar para proteger datos sensibles almacenados en bases de datos (datos en reposo).</li>
+        <li><strong>Tokenización:</strong> sustitución de datos de tarjeta de crédito reales por tokens sin valor propio; el token se usa en transacciones pero no expone el número real si es interceptado.</li>
+      </ul>
+    </div>
+
+    <div class="dim-card">
+      <span class="dc-num">5</span>
+      <div class="dc-icon">⚖️</div>
+      <h4>Marco legal y regulatorio</h4>
+      <ul>
+        <li><strong>GDPR:</strong> Reglamento General de Protección de Datos de la Unión Europea; aplica a cualquier sistema que procese datos de ciudadanos europeos, independientemente del país del operador.</li>
+        <li><strong>Ley 1581 de 2012 (Colombia):</strong> régimen general de protección de datos personales; establece principios de finalidad, necesidad y consentimiento informado.</li>
+        <li><strong>Ley 527 de 1999 (Colombia):</strong> marco legal del comercio electrónico; reconoce la validez jurídica de los mensajes de datos, firmas digitales y contratos electrónicos.</li>
+      </ul>
+    </div>
+
+    <div class="dim-card">
+      <span class="dc-num">6</span>
+      <div class="dc-icon">✅</div>
+      <h4>Buenas prácticas</h4>
+      <ul>
+        <li><strong>Backups periódicos:</strong> copias de seguridad automatizadas con verificación de integridad y planes de recuperación ante desastres (RTO/RPO definidos).</li>
+        <li><strong>WAF (Web Application Firewall):</strong> filtrado de tráfico HTTP/HTTPS en tiempo real para bloquear ataques de inyección, XSS, DDoS y otras amenazas en la capa de aplicación antes de que alcancen el servidor.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- m-commerce — dimension 7 -->
+  <div class="mcommerce-card">
+    <div class="mc-header">
+      <span class="mc-icon">📱</span>
+      <h4>Dimensión 7 — Seguridad en M-Commerce</h4>
+      <span class="mc-badge">Mobile</span>
+    </div>
+    <p>El comercio móvil amplía los vectores de ataque al incorporar redes inalámbricas inseguras, dispositivos personales no gestionados y aplicaciones de terceros. Los controles específicos para m-commerce son:</p>
+    <ul>
+      <li><strong>APIs REST seguras</strong> con autenticación robusta (JWT + MFA) y validación estricta de entradas en cada endpoint.</li>
+      <li><strong>Certificado pinning:</strong> la app verifica que el certificado TLS del servidor coincide con el esperado, previniendo ataques MITM en redes comprometidas.</li>
+      <li><strong>Autenticación biométrica:</strong> huella dactilar o reconocimiento facial como segundo factor en dispositivos móviles, reduciendo la dependencia de contraseñas.</li>
+      <li><strong>Almacenamiento seguro:</strong> uso de Keychain (iOS) y Keystore (Android) para credenciales; prohibición de datos sensibles en almacenamiento externo.</li>
+    </ul>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — RELACIÓN ENTRE DIMENSIONES -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Relación entre <span class="gold">dimensiones</span></h2>
+  <p>Las siete dimensiones no son independientes: se refuerzan mutuamente y en conjunto conforman una postura de seguridad coherente. La siguiente tabla muestra cómo cada amenaza de la dimensión 1 es neutralizada por controles de otras dimensiones.</p>
+
+  <div class="table-responsive mt-2">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Amenaza</th>
+          <th>Control técnico</th>
+          <th>Control legal</th>
+          <th>Buena práctica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Phishing</strong></td>
+          <td>HTTPS + Certificado SSL verificado</td>
+          <td>Ley 1581 — deber de notificación de brechas</td>
+          <td>MFA obliga una segunda verificación aunque la contraseña sea robada</td>
+        </tr>
+        <tr>
+          <td><strong>Carding</strong></td>
+          <td>PCI DSS + Tokenización</td>
+          <td>Ley 527 — validez del contrato electrónico</td>
+          <td>WAF bloquea intentos de enumeración de tarjetas automatizados</td>
+        </tr>
+        <tr>
+          <td><strong>Malware / Skimmer</strong></td>
+          <td>CSP + AES-256 en reposo</td>
+          <td>GDPR — minimización de datos almacenados</td>
+          <td>Backups garantizan recuperación si hay compromiso total</td>
+        </tr>
+        <tr>
+          <td><strong>Secuestro de sesión</strong></td>
+          <td>JWT + expiración + HttpOnly cookies</td>
+          <td>Ley 1581 — responsabilidad del custodio</td>
+          <td>WAF + monitoreo de anomalías de sesión</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-3">
+  <h2>Conclusión</h2>
+  <p>La seguridad en el comercio electrónico no es un componente opcional sino una condición fundamental para la confianza del usuario y la viabilidad del negocio digital. Implementar protocolos robustos como HTTPS, TLS y PCI DSS; cumplir el marco regulatorio colombiano (Ley 527 de 1999 y Ley 1581 de 2012) e internacional (GDPR); adoptar autenticación multifactor y tokenización; y complementar todo ello con WAF, backups y una estrategia específica para m-commerce son los pilares de un e-commerce verdaderamente seguro. La seguridad, en este contexto, no es un gasto de infraestructura: es la variable que determina si un usuario completa la compra o abandona el carrito al primer síntoma de desconfianza.</p>
+</div>
+
+<!-- REFERENCIAS -->
+<div class="references anim">
+  <div class="ref-label">Referencias · APA 7ª edición</div>
+  <ol>
+    <li>Laudon, K. C., &amp; Traver, C. G. (2021). <em>E-commerce 2021–2022: Business, Technology, Society</em> (17th ed.). Pearson.</li>
+    <li>OWASP Foundation. (2023). <em>OWASP Top Ten</em>. https://owasp.org/Top10/</li>
+    <li>Ministerio de Comercio, Industria y Turismo. (1999). <em>Ley 527 de 1999: Por medio de la cual se define y reglamenta el acceso y uso de los mensajes de datos, del comercio electrónico y de las firmas digitales</em>. Congreso de Colombia.</li>
+    <li>Superintendencia de Industria y Comercio. (2012). <em>Ley 1581 de 2012: Por la cual se dictan disposiciones generales para la protección de datos personales</em>. Congreso de Colombia.</li>
+  </ol>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#ECommerce</span>
+  <span class="tag">#MCommerce</span>
+  <span class="tag">#PCIDSS</span>
+  <span class="tag">#Phishing</span>
+  <span class="tag">#Tokenización</span>
+  <span class="tag">#Ley527</span>
+  <span class="tag">#Ley1581</span>
+</div>

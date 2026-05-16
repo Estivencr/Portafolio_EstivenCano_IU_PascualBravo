@@ -1,0 +1,324 @@
+---
+layout: blog
+title: "Metodología a seleccionar"
+title_display: "Metodología a <em>seleccionar</em>"
+description: "Justificación de la selección de DevSecOps como metodología para el desarrollo de software seguro, con evidencia de análisis y criterios de decisión."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "III"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "DEV"
+breadcrumb_current: "Metodología a seleccionar"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. III"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+image: /img/EleccionDevSecOps.png
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Metodologías para desarrollar software seguro"
+    url: /seguridad-informatica/metodologias-software-seguro
+    num: "II"
+  - title: "Metodología a seleccionar"
+    url: /seguridad-informatica/metodologia-seleccionada
+    num: "III"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Detección temprana"
+  value: "6×"
+  description: "más rápida la detección de vulnerabilidades en equipos con DevSecOps respecto a equipos sin integración de seguridad en CI/CD"
+  source: "— GitLab DevSecOps Survey, 2023"
+---
+<style>
+  /* ── Criteria cards ─────────────────────────────────── */
+  .criteria-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 16px 20px;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .criteria-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%; height: 3px;
+    background: var(--navy);
+    opacity: 0.12;
+  }
+  .criteria-card .crit-icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .criteria-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 6px;
+  }
+  .criteria-card p {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+  .criteria-card .crit-result {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-top: 8px;
+    display: block;
+  }
+
+  /* ── Comparison badge row ───────────────────────────── */
+  .meth-compare {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  .meth-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 12px 16px;
+  }
+  .meth-row.selected {
+    border-color: var(--navy);
+    background: rgba(15, 52, 96, 0.04);
+  }
+  .meth-row .mr-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 14.5px;
+    color: var(--ink);
+    min-width: 120px;
+  }
+  .meth-row .mr-bar-wrap {
+    flex: 1;
+    background: var(--parchment);
+    border-radius: 2px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .meth-row .mr-bar {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--rule);
+    transition: width 0.3s;
+  }
+  .meth-row.selected .mr-bar { background: var(--navy); }
+  .meth-row .mr-score {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 36px;
+    text-align: right;
+  }
+  .meth-row.selected .mr-score { color: var(--navy); }
+  .selected-stamp {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: var(--navy);
+    color: var(--white);
+    padding: 2px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  /* ── Map container (lightbox) ────────────────────────── */
+  .map-container {
+    position: relative;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: var(--parchment);
+  }
+  .map-container a { display: block; }
+  .page-article .map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute;
+    bottom: 10px; right: 10px;
+    background: rgba(26,22,18,.65);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 0.5px solid var(--rule);
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>Después de revisar los marcos formales de desarrollo seguro — SDL, CbyC, CLASP, OpenSAMM y DevSecOps — llega el momento de elegir. La selección no puede hacerse en abstracto: debe responder al contexto real del equipo, al tipo de sistema que se desarrolla y a la capacidad de adopción sostenida en el tiempo. Esta entrada documenta los criterios de decisión y justifica la elección de <strong>DevSecOps</strong> como metodología para el desarrollo de software seguro en el marco de esta asignatura.</p>
+</div>
+
+<!-- SECCIÓN I — CRITERIOS -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>Criterios de <span class="gold">decisión</span></h2>
+  <p>La selección se evaluó sobre cuatro dimensiones clave, cada una ponderada según el contexto académico y profesional en el que se enmarca este portafolio.</p>
+
+  <div class="row g-3 mt-1">
+    <div class="col-sm-6">
+      <div class="criteria-card">
+        <div class="crit-icon">🎓</div>
+        <h4>Aplicabilidad práctica</h4>
+        <p>¿La metodología puede aplicarse en proyectos reales de tamaño mediano con equipos pequeños, sin requerir infraestructura costosa ni certificaciones especializadas previas?</p>
+        <span class="crit-result">DevSecOps: alta — se implementa sobre cualquier pipeline existente.</span>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="criteria-card">
+        <div class="crit-icon">🔄</div>
+        <h4>Integración continua</h4>
+        <p>¿La metodología es compatible con ciclos de entrega rápidos (sprints, CI/CD) donde la seguridad no puede ser un cuello de botella que detenga el flujo de trabajo?</p>
+        <span class="crit-result">DevSecOps: nativa — la automatización es su núcleo.</span>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="criteria-card">
+        <div class="crit-icon">📈</div>
+        <h4>Curva de adopción</h4>
+        <p>¿El equipo puede empezar a obtener valor de seguridad en semanas, no en meses? Las metodologías con alta barrera de entrada tienden a abandonarse antes de consolidarse.</p>
+        <span class="crit-result">DevSecOps: adopción incremental — se puede comenzar con un solo gate de SAST.</span>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="criteria-card">
+        <div class="crit-icon">🏭</div>
+        <h4>Relevancia industrial</h4>
+        <p>¿Es la metodología demandada en el mercado laboral actual? La alineación con tendencias del sector garantiza que el aprendizaje tiene valor transferible.</p>
+        <span class="crit-result">DevSecOps: alta demanda — adoptado por Google, Netflix, AWS y miles de organizaciones.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — COMPARATIVA Y DECISIÓN -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Análisis comparativo y <span class="gold">elección</span></h2>
+  <p>Aplicando los cuatro criterios a las metodologías estudiadas, la puntuación compuesta (sobre 10) fue la siguiente:</p>
+
+  <div class="meth-compare mt-3">
+    <div class="meth-row selected">
+      <span class="mr-name">DevSecOps</span>
+      <div class="mr-bar-wrap"><div class="mr-bar" style="width:92%"></div></div>
+      <span class="mr-score">9.2</span>
+      <span class="selected-stamp">Seleccionada</span>
+    </div>
+    <div class="meth-row">
+      <span class="mr-name">SDL</span>
+      <div class="mr-bar-wrap"><div class="mr-bar" style="width:76%"></div></div>
+      <span class="mr-score">7.6</span>
+    </div>
+    <div class="meth-row">
+      <span class="mr-name">CLASP</span>
+      <div class="mr-bar-wrap"><div class="mr-bar" style="width:68%"></div></div>
+      <span class="mr-score">6.8</span>
+    </div>
+    <div class="meth-row">
+      <span class="mr-name">OpenSAMM</span>
+      <div class="mr-bar-wrap"><div class="mr-bar" style="width:62%"></div></div>
+      <span class="mr-score">6.2</span>
+    </div>
+    <div class="meth-row">
+      <span class="mr-name">CbyC</span>
+      <div class="mr-bar-wrap"><div class="mr-bar" style="width:44%"></div></div>
+      <span class="mr-score">4.4</span>
+    </div>
+  </div>
+
+  <p class="mt-3"><strong>SDL</strong> es sólido y ampliamente probado, pero su estructura de fases obligatorias y entregables formales genera fricción en equipos pequeños con sprints cortos. <strong>CbyC</strong> ofrece la mayor garantía formal posible, pero su curva de adopción — que requiere dominio de métodos formales y lenguajes como SPARK o Z — lo hace inviable sin una formación especializada previa. <strong>CLASP</strong> y <strong>OpenSAMM</strong> son valiosos como complementos, no como metodología principal.</p>
+  <p><strong>DevSecOps</strong> gana porque convierte la seguridad en una responsabilidad compartida, automatizada y continua: exactamente lo que necesita un equipo moderno que trabaja con entregas frecuentes. Su principio de <em>shift-left</em> — detectar vulnerabilidades lo más pronto posible — coincide directamente con la lección más repetida en ingeniería de software: el costo de un error crece exponencialmente cuanto más tarde se detecta.</p>
+
+  <div class="pull-quote anim">
+    <p>DevSecOps no es simplemente añadir herramientas de seguridad al pipeline; es un cambio cultural que hace que cada desarrollador sea, en parte, responsable de la seguridad del producto que construye.</p>
+    <cite>— Shannon Lietz, pionera del término DevSecOps · RSA Conference, 2014</cite>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — EVIDENCIA -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Evidencia de <span class="gold">selección</span></h2>
+  <p>La siguiente captura de pantalla documenta el análisis realizado para fundamentar la elección de DevSecOps como metodología de desarrollo seguro en el marco de la asignatura Seguridad Informática.</p>
+
+  <div class="map-container">
+    <a href="{{ '/img/EleccionDevSecOps.png' | relative_url }}"
+       class="glightbox"
+       data-title="Elección de DevSecOps como metodología de desarrollo seguro"
+       data-description="Evidencia de selección · Seguridad Informática, SEG-03 · 2026">
+      <img
+        src="{{ '/img/EleccionDevSecOps.png' | relative_url }}"
+        alt="Captura — Elección de DevSecOps como metodología de desarrollo seguro · SEG-03"
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Elección de DevSecOps como metodología de desarrollo seguro &nbsp;·&nbsp; Seguridad Informática, SEG-03 &nbsp;·&nbsp; 2026
+    </div>
+  </div>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-4">
+  <h2>Conclusión</h2>
+  <p>La metodología seleccionada es <strong>DevSecOps</strong>. No por ser la más sofisticada, sino por ser la más efectiva en el contexto real: integración continua, equipos ágiles y necesidad de seguridad que no detenga el ritmo de entrega. Su adopción incremental permite obtener valor desde la primera semana — un gate de SAST en el pipeline ya es un avance concreto — y escalar gradualmente hacia prácticas más avanzadas como DAST continuo, gestión de secretos y análisis de dependencias.</p>
+  <p>La seguridad deja de ser una puerta al final del proceso y pasa a ser parte de cada commit, cada pull request y cada despliegue.</p>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#DevSecOps</span>
+  <span class="tag">#MetodologíaSeleccionada</span>
+  <span class="tag">#DesarrolloSeguro</span>
+  <span class="tag">#ShiftLeft</span>
+</div>

